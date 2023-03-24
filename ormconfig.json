@@ -1,0 +1,12 @@
+{
+  "type": "postgres",
+  "port": 5432,
+  "host": "localhost",
+  "password": "password_duel_monsters",
+  "database": "db_duel_monsters"
+  // "migrations": ["./src/shared/infra/typeorm/migrations/*.ts"],
+  // "entities": ["./src/modules/**/entities/*.ts"],
+  // "cli": {
+  //   "migrationsDir": "./src/shared/infra/typeorm/migrations"
+  // }
+}
