@@ -2,43 +2,30 @@ import {
   Column,
   CreateDateColumn,
   DeleteDateColumn,
-  Entity,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 
-export enum UserTypeEnum {
-  MAGIC = 'MAGIC',
-  TRAP = 'TRAP',
-}
-
-@Entity({ name: 'users' })
-export class User {
+// @Entity({ name: 'users' })
+export abstract class User {
   @PrimaryGeneratedColumn('uuid')
   id: number;
 
-  @Column({ name: 'name' })
+  @Column()
   name: string;
 
-  @Column({ name: 'email' })
+  @Column()
   email: string;
 
-  @Column({ name: 'password' })
+  @Column()
   password: string;
-
-  @Column({
-    type: 'enum',
-    enum: UserTypeEnum,
-    default: UserTypeEnum.MAGIC,
-  })
-  type: string;
 
   @CreateDateColumn({ name: 'created_at' })
   createdAt: string;
 
-  @UpdateDateColumn({ name: 'updated_ap' })
-  updateAt: string;
+  @UpdateDateColumn({ name: 'updated_at' })
+  updatedAt: string;
 
-  @DeleteDateColumn({ name: 'delete_at' })
+  @DeleteDateColumn({ name: 'deleted_at' })
   deletedAt: string;
 }
