@@ -1,5 +1,5 @@
 import { Column, Entity } from 'typeorm';
-import { User } from './user.entity';
+import { User } from '../../user/entities/user.entity';
 
 @Entity('players')
 export class Player extends User {
@@ -7,5 +7,5 @@ export class Player extends User {
   deck: string;
 
   @Column()
-  cartas: string;
+  cards: string;
 }
