@@ -8,8 +8,10 @@ import {
 } from 'class-validator';
 import { Unique } from 'typeorm';
 import { User } from '../entities/user.entity';
+import { IsUniqueEmail } from '../is-unique-email.validator';
 
 export class CreateUserDto {
+  @IsUniqueEmail({ message: 'email must be unique' })
   @IsEmail()
   @IsNotEmpty()
   // @Unique()

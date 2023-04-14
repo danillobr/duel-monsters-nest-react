@@ -1135,10 +1135,10 @@
   dependencies:
     "@types/superagent" "*"
 
-"@types/validator@^13.7.10":
-  "integrity" "sha512-J6OAed6rhN6zyqL9Of6ZMamhlsOEU/poBVvbHr/dKOYKTeuYYMlDkMv+b6UUV0o2i0tw73cgyv/97WTWaUl0/g=="
-  "resolved" "https://registry.npmjs.org/@types/validator/-/validator-13.7.14.tgz"
-  "version" "13.7.14"
+"@types/validator@13.0.0":
+  "integrity" "sha512-WAy5txG7aFX8Vw3sloEKp5p/t/Xt8jD3GRD9DacnFv6Vo8ubudAsRTXgxpQwU0mpzY/H8U4db3roDuCMjShBmw=="
+  "resolved" "https://registry.npmjs.org/@types/validator/-/validator-13.0.0.tgz"
+  "version" "13.0.0"
 
 "@types/yargs-parser@*":
   "integrity" "sha512-iO9ZQHkZxHn4mSakYV0vFHAVDyEOIJQrV2uZ06HxEPcx+mt8swXoZHIbaaJ2crJYFfErySgktuTZ3BeLz+XmFA=="
@@ -1890,19 +1890,20 @@
   "resolved" "https://registry.npmjs.org/cjs-module-lexer/-/cjs-module-lexer-1.2.2.tgz"
   "version" "1.2.2"
 
-"class-transformer@*", "class-transformer@^0.5.1":
-  "integrity" "sha512-SQa1Ws6hUbfC98vKGxZH3KFY0Y1lm5Zm0SY8XX9zbK7FJCyVEac3ATW0RIpwzW+oOfmHE5PMPufDG9hCfoEOMw=="
-  "resolved" "https://registry.npmjs.org/class-transformer/-/class-transformer-0.5.1.tgz"
-  "version" "0.5.1"
+"class-transformer@*", "class-transformer@0.2.3":
+  "integrity" "sha512-qsP+0xoavpOlJHuYsQJsN58HXSl8Jvveo+T37rEvCEeRfMWoytAyR0Ua/YsFgpM6AZYZ/og2PJwArwzJl1aXtQ=="
+  "resolved" "https://registry.npmjs.org/class-transformer/-/class-transformer-0.2.3.tgz"
+  "version" "0.2.3"
 
-"class-validator@*", "class-validator@^0.14.0":
-  "integrity" "sha512-ct3ltplN8I9fOwUd8GrP8UQixwff129BkEtuWDKL5W45cQuLd19xqmTLu5ge78YDm/fdje6FMt0hGOhl0lii3A=="
-  "resolved" "https://registry.npmjs.org/class-validator/-/class-validator-0.14.0.tgz"
-  "version" "0.14.0"
+"class-validator@*", "class-validator@0.12.2":
+  "integrity" "sha512-TDzPzp8BmpsbPhQpccB3jMUE/3pK0TyqamrK0kcx+ZeFytMA+O6q87JZZGObHHnoo9GM8vl/JppIyKWeEA/EVw=="
+  "resolved" "https://registry.npmjs.org/class-validator/-/class-validator-0.12.2.tgz"
+  "version" "0.12.2"
   dependencies:
-    "@types/validator" "^13.7.10"
-    "libphonenumber-js" "^1.10.14"
-    "validator" "^13.7.0"
+    "@types/validator" "13.0.0"
+    "google-libphonenumber" "^3.2.8"
+    "tslib" ">=1.9.0"
+    "validator" "13.0.0"
 
 "cli-cursor@^3.1.0":
   "integrity" "sha512-I/zHAwsKf9FqGoXM4WWRACob9+SNukZTd94DWF57E4toouRulbCxcUh6RKUEOQlYTHJnzkPMySvPNaaSLNfLZw=="
@@ -2881,6 +2882,11 @@
     "merge2" "^1.4.1"
     "slash" "^3.0.0"
 
+"google-libphonenumber@^3.2.8":
+  "integrity" "sha512-mcNgakausov/B/eTgVeX8qc8IwWjRrupk9UzZZ/QDEvdh5fAjE7Aa211bkZpZj42zKkeS6MTT8avHUwjcLxuGQ=="
+  "resolved" "https://registry.npmjs.org/google-libphonenumber/-/google-libphonenumber-3.2.32.tgz"
+  "version" "3.2.32"
+
 "graceful-fs@^4.1.2", "graceful-fs@^4.1.6", "graceful-fs@^4.2.0", "graceful-fs@^4.2.4", "graceful-fs@^4.2.9":
   "integrity" "sha512-RbJ5/jmFcNNCcDV5o9eTnBLJ/HszWV0P73bc+Ff4nS/rJj+YaS6IGyiOL0VoBYX+l1Wrl3k63h/KrH+nhJ0XvQ=="
   "resolved" "https://registry.npmjs.org/graceful-fs/-/graceful-fs-4.2.11.tgz"
@@ -3671,11 +3677,6 @@
   dependencies:
     "prelude-ls" "^1.2.1"
     "type-check" "~0.4.0"
-
-"libphonenumber-js@^1.10.14":
-  "integrity" "sha512-3Dk8f5AmrcWqg+oHhmm9hwSTqpWHBdSqsHmjCJGroULFubi0+x7JEIGmRZCuL3TI8Tx39xaKqfnhsDQ4ALa/Nw=="
-  "resolved" "https://registry.npmjs.org/libphonenumber-js/-/libphonenumber-js-1.10.24.tgz"
-  "version" "1.10.24"
 
 "lines-and-columns@^1.1.6":
   "integrity" "sha512-7ylylesZQ/PV29jhEDl3Ufjo6ZX7gCqJr5F7PKrqc93v7fzSymt1BpwEU8nAUXs8qzzvqhbjhK5QZg6Mt/HkBg=="
@@ -5130,7 +5131,7 @@
   "resolved" "https://registry.npmjs.org/tslib/-/tslib-1.14.1.tgz"
   "version" "1.14.1"
 
-"tslib@^2.1.0", "tslib@2.5.0":
+"tslib@^2.1.0", "tslib@>=1.9.0", "tslib@2.5.0":
   "integrity" "sha512-336iVw3rtn2BUK7ORdIAHTyxHGRIHVReokCR3XjbckJMK7ms8FysBfhLR8IXnAgy7T0PTPNBWKiH514FOW/WSg=="
   "resolved" "https://registry.npmjs.org/tslib/-/tslib-2.5.0.tgz"
   "version" "2.5.0"
@@ -5276,10 +5277,10 @@
     "@types/istanbul-lib-coverage" "^2.0.1"
     "convert-source-map" "^1.6.0"
 
-"validator@^13.7.0":
-  "integrity" "sha512-B+dGG8U3fdtM0/aNK4/X8CXq/EcxU2WPrPEkJGslb47qyHsxmbggTWK0yEA4qnYVNF+nxNlN88o14hIcPmSIEA=="
-  "resolved" "https://registry.npmjs.org/validator/-/validator-13.9.0.tgz"
-  "version" "13.9.0"
+"validator@13.0.0":
+  "integrity" "sha512-anYx5fURbgF04lQV18nEQWZ/3wHGnxiKdG4aL8J+jEDsm98n/sU/bey+tYk6tnGJzm7ioh5FoqrAiQ6m03IgaA=="
+  "resolved" "https://registry.npmjs.org/validator/-/validator-13.0.0.tgz"
+  "version" "13.0.0"
 
 "vary@^1", "vary@~1.1.2":
   "integrity" "sha512-BNGbWLfd0eUPabhkXUVm0j8uuvREyTh5ovRa/dyow/BqAbZJyC+5fU+IzQOzmAKzYqYRAISoRhdQr3eIZ/PXqg=="

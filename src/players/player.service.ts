@@ -13,7 +13,4 @@ export class PlayerService {
   async create(data: CreatePlayerDto): Promise<Player> {
     return await this.playerRepository.save(this.playerRepository.create(data));
   }
-  async findById(id: string): Promise<Player> {
-    return this.playerRepository.findOne(id);
-  }
 }
