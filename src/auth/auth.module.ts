@@ -4,14 +4,16 @@ import { AuthService } from './auth.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserRepository } from '../users/repositories/users.repository';
 import { JwtModule } from '@nestjs/jwt';
+import * as dotenv from 'dotenv';
+dotenv.config();
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([UserRepository]),
     JwtModule.register({
-      secret: 'super-secret',
+      secret: process.env.JWT_SECRET,
       signOptions: {
-        expiresIn: 18000,
+        expiresIn: Number(process.env.JWT_EXPIRES_IN),
       },
     }),
   ],
