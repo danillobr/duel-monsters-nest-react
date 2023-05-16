@@ -6,13 +6,18 @@ import { UserRepository } from './repositories/users.repository';
 
 @Injectable()
 export class UsersService {
-  constructor(private readonly userRepository: UserRepository) {}
+  constructor(
+    private readonly userRepository: UserRepository, // private jwtService: JwtService,
+  ) {}
 
   async createAdminUser(createUserDto: CreateUserDto): Promise<User> {
     if (createUserDto.password != createUserDto.passwordConfirmation) {
       throw new UnprocessableEntityException('As senhas não conferem');
     } else {
-      return this.userRepository.createUser(createUserDto, UserRole.ADMIN);
+      return await this.userRepository.createUser(
+        createUserDto,
+        UserRole.ADMIN,
+      );
     }
   }
 }
