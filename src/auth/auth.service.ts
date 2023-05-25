@@ -11,6 +11,7 @@ import { UserRole } from '../users/user-roles.enum';
 import { CredentialsDto } from './dtos/credentials.dto';
 import { JwtService } from '@nestjs/jwt';
 import { MailerService } from '@nestjs-modules/mailer';
+import { randomBytes } from 'crypto';
 
 @Injectable()
 export class AuthService {
@@ -63,5 +64,26 @@ export class AuthService {
       { confirmationToken: null },
     );
     if (result.affected === 0) throw new NotFoundException('Token inválido');
+  }
+
+  async sendRecoverPasswordEmail(email: string): Promise<void> {
+    const user = await this.userRepository.findOne({ where: { email } });
+
+    if (!user)
+      throw new NotFoundException('Não há usuário cadastrado com esse email.');
+
+    user.recoverToken = randomBytes(32).toString('hex');
+    await user.save();
+
+    const mail = {
+      to: user.email,
+      from: 'noreply@application.com',
+      subject: 'Recuperação de senha',
+      template: 'recover-password',
+      context: {
+        token: user.recoverToken,
+      },
+    };
+    await this.mailerService.sendMail(mail);
   }
 }
