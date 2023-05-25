@@ -8,6 +8,8 @@ import { APP_INTERCEPTOR } from '@nestjs/core';
 import { LoggerInterceptor } from './interceptors/logger.interceptor';
 import { WinstonModule } from 'nest-winston';
 import { winstonConfig } from './configs/winston.config';
+import { MailerModule } from '@nestjs-modules/mailer';
+import { mailerConfig } from './configs/mailer.config';
 
 dotenv.config();
 
@@ -15,6 +17,7 @@ dotenv.config();
   imports: [
     TypeOrmModule.forRoot(typeOrmConfig),
     WinstonModule.forRoot(winstonConfig),
+    MailerModule.forRoot(mailerConfig),
     UsersModule,
     AuthModule,
   ],
