@@ -1,25 +1,31 @@
-import { TypeOrmModuleOptions } from '@nestjs/typeorm';
-import * as dotenv from 'dotenv';
-dotenv.config();
+// import { TypeOrmModuleOptions } from '@nestjs/typeorm';
+// import * as dotenv from 'dotenv';
+// dotenv.config();
 
-export const typeOrmConfig: TypeOrmModuleOptions = {
-  type: 'postgres',
+// export const typeOrmConfig: TypeOrmModuleOptions = {
+//   type: 'postgres',
 
-  host: process.env.DB_HOST,
+//   host: process.env.DB_HOST,
 
-  port: Number(process.env.DB_PORT),
+//   port: Number(process.env.DB_PORT),
 
-  username: process.env.DB_USERNAME,
+//   username: process.env.DB_USERNAME,
 
-  password: process.env.DB_PASSWORD,
+//   password: process.env.DB_PASSWORD,
 
-  database: process.env.DB_DATABASE,
+//   database: process.env.DB_DATABASE,
 
-  entities: [__dirname + '/../**/*.entity.{js,ts}'],
+//   entities: ['dist/**/*.entity.js'],
 
-  extra: {
-    charset: 'utf8mb4_unicode_ci',
-  },
+//   migrations: ["dist/db/migrations/*.js"],
 
-  synchronize: true,
-};
+//   // subscribers: ["dist/src/subscriber/**/*.entity.js"],
+
+//   // migrationsTransactionMode: "each",
+
+//   extra: {
+//     charset: 'utf8mb4_unicode_ci',
+//   },
+
+//   synchronize: false,
+// };
