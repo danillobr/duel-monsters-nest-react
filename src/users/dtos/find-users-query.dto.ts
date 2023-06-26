@@ -1,4 +1,4 @@
-import { BaseQueryParametersDto } from '../../shared/typeorm/dtos/base-query-parameters.dto';
+import { BaseQueryParametersDto } from './base-query-parameters.dto';
 
 export class FindUsersQueryDto extends BaseQueryParametersDto {
   name: string;

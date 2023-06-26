@@ -22,9 +22,9 @@
     "migration:generate": "npm run typeorm -- migration:generate",
     "migration:run": "npm run typeorm -- migration:run",
     "migration:revert": "npm run typeorm -- migration:revert",
-    "seed:config": "ts-node ./node_modules/typeorm-seeding/dist/cli.js config -n src/config/typeorm.config-migrations.ts",
-    "seed:run": "ts-node ./node_modules/typeorm-seeding/dist/cli.js seed -n src/config/typeorm.config-migrations.ts",
-    "db:refresh": "npm run typeorm:cli schema:drop && npm run migration:run && npm run seed:run"
+    "seed:admin": "npm run src/db/seeds/admin-create.ts",
+    "seed:run": "ts-node dist/db/seeds/admin-create.js",
+    "db:refresh": "npm run typeorm schema:drop && npm run migration:run && npm run seed:run"
   },
   "dependencies": {
     "@nestjs-modules/mailer": "^1.8.1",
