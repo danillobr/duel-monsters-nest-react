@@ -1,8 +1,9 @@
 import { DataSource, DataSourceOptions } from "typeorm";
-import * as dotenv from 'dotenv';
-dotenv.config();
+import 'dotenv/config';
+import { SeederOptions } from "typeorm-extension";
+import { MainSedeer } from "./seeds/main-seeder";
 
-export const dataSourceOptions: DataSourceOptions = {
+export const dataSourceOptions: DataSourceOptions & SeederOptions= {
   type: 'postgres',
 
   host: process.env.DB_HOST,
@@ -15,9 +16,9 @@ export const dataSourceOptions: DataSourceOptions = {
 
   database: process.env.DB_DATABASE,
 
-  entities: ['dist/**/*.entity.js'],
+  entities: [__dirname + '/../**/*.entity.{js,ts}'],
 
-  migrations: ["dist/db/migrations/*.js"],
+  migrations: [__dirname + '/migrations/*.{js,ts}'],
 
   // subscribers: ["dist/src/subscriber/**/*.entity.js"],
 
@@ -27,7 +28,9 @@ export const dataSourceOptions: DataSourceOptions = {
     charset: 'utf8mb4_unicode_ci',
   },
 
-  synchronize: false,
+  // synchronize: false,
+
+  seeds:[MainSedeer]
 }
 
 const dataSource = new DataSource(dataSourceOptions);

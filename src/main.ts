@@ -2,10 +2,9 @@ import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { useContainer } from 'class-validator';
-import * as dotenv from 'dotenv';
 import { WinstonModule } from 'nest-winston';
 import { winstonConfig } from './configs/winston.config';
-dotenv.config();
+import 'dotenv/config';
 
 async function bootstrap() {
   const logger = WinstonModule.createLogger(winstonConfig);

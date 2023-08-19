@@ -4,10 +4,9 @@ import { AuthService } from './auth.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserRepository } from '../users/repositories/users.repository';
 import { JwtModule } from '@nestjs/jwt';
-import * as dotenv from 'dotenv';
+import 'dotenv/config';
 import { JwtStrategy } from './jwt.strategy';
 import { PassportModule } from '@nestjs/passport';
-dotenv.config();
 
 @Module({
   imports: [
