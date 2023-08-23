@@ -7,6 +7,8 @@ import { APP_INTERCEPTOR } from '@nestjs/core';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { mailerConfig } from './configs/mailer.config';
 import { dataSourceOptions } from './db/data-source-cli';
+import { CardsModule } from './cards/cards.module';
+import { CardsModule } from './cards/cards.module';
 import 'dotenv/config';
 
 @Module({
@@ -15,6 +17,7 @@ import 'dotenv/config';
     MailerModule.forRoot(mailerConfig),
     UsersModule,
     AuthModule,
+    CardsModule,
   ],
   controllers: [],
   // providers: [
