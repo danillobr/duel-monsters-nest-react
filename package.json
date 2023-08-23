@@ -23,6 +23,8 @@
     "db:refresh": "npm run typeorm schema:drop && npm run migration:run && npm run seed:run"
   },
   "dependencies": {
+    "@logtail/node": "^0.4.6",
+    "@logtail/winston": "^0.4.6",
     "@nestjs-modules/mailer": "^1.8.1",
     "@nestjs/common": "^9.4.0",
     "@nestjs/core": "^9.0.0",
@@ -34,7 +36,7 @@
     "class-transformer": "^0.2.3",
     "class-validator": "^0.12.2",
     "handlebars": "^4.7.7",
-    "nest-winston": "^1.9.2",
+    "nest-winston": "^1.9.3",
     "passport": "^0.6.0",
     "passport-jwt": "^4.0.1",
     "pg": "^8.11.0",
@@ -42,7 +44,7 @@
     "rxjs": "^7.2.0",
     "typeorm": "^0.3.17",
     "typeorm-extension": "^3.0.1",
-    "winston": "^3.8.2"
+    "winston": "^3.10.0"
   },
   "devDependencies": {
     "@nestjs/cli": "^9.0.0",
