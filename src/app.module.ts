@@ -8,7 +8,6 @@ import { MailerModule } from '@nestjs-modules/mailer';
 import { mailerConfig } from './configs/mailer.config';
 import { dataSourceOptions } from './db/data-source-cli';
 import { CardsModule } from './cards/cards.module';
-import { CardsModule } from './cards/cards.module';
 import 'dotenv/config';
 
 @Module({

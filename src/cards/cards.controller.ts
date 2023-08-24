@@ -1,16 +1,39 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  ValidationPipe,
+} from '@nestjs/common';
 import { CardsService } from './cards.service';
 import { CreateCardDto } from './dto/create-card.dto';
 import { UpdateCardDto } from './dto/update-card.dto';
+import { CreateUserDto } from 'src/users/dtos/create-user.dto';
 
 @Controller('cards')
 export class CardsController {
   constructor(private readonly cardsService: CardsService) {}
 
   @Post()
-  create(@Body() createCardDto: CreateCardDto) {
-    return this.cardsService.create(createCardDto);
+  async create(
+    @Body(ValidationPipe) createCardDto: CreateCardDto,
+  ): Promise<void> {
+    // return this.cardsService.create(createCardDto);
+    const card = await this.cardsService.create(createCardDto);
   }
+
+  // async createAdminUser(
+  //   @Body(ValidationPipe) createUserDto: CreateUserDto,
+  // ): Promise<ReturnUserDto> {
+  //   const user = await this.usersService.createAdminUser(createUserDto);
+  //   return {
+  //     user,
+  //     message: 'Administrador cadastrado com sucesso',
+  //   };
+  // }
 
   @Get()
   findAll() {

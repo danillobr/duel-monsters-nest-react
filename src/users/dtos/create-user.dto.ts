@@ -4,6 +4,7 @@ import {
   MaxLength,
   MinLength,
   Matches,
+  IsString,
 } from 'class-validator';
 
 export class CreateUserDto {
@@ -21,6 +22,7 @@ export class CreateUserDto {
   })
   email: string;
 
+  @IsString()
   @IsNotEmpty({
     message: 'Informe o nome do usuário',
   })
@@ -29,6 +31,7 @@ export class CreateUserDto {
   })
   name: string;
 
+  @IsString()
   @IsNotEmpty({
     message: 'Informe uma senha',
   })
@@ -41,6 +44,7 @@ export class CreateUserDto {
   })
   password: string;
 
+  @IsString()
   @IsNotEmpty({
     message: 'Informe a confirmação de senha',
   })
