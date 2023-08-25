@@ -8,50 +8,59 @@ import {
   Delete,
   ValidationPipe,
 } from '@nestjs/common';
-import { CardsService } from './cards.service';
-import { CreateCardDto } from './dto/create-card.dto';
 import { UpdateCardDto } from './dto/update-card.dto';
-import { CreateUserDto } from 'src/users/dtos/create-user.dto';
+import { MonstersService } from './monsters.service';
+import { CreateMonsterDto } from './dto/create-monster.dto';
+import { ReturnCardDto } from './dto/return-card.dto';
+import { CreateTrapDto } from './dto/create-trap.dto';
+import { TrapsService } from './trap.service';
 
 @Controller('cards')
 export class CardsController {
-  constructor(private readonly cardsService: CardsService) {}
+  constructor(
+    private readonly monstersService: MonstersService,
+    private readonly trapsService: TrapsService,
+  ) {}
 
-  @Post()
-  async create(
-    @Body(ValidationPipe) createCardDto: CreateCardDto,
-  ): Promise<void> {
-    // return this.cardsService.create(createCardDto);
-    const card = await this.cardsService.create(createCardDto);
+  @Post('monsters')
+  async createMonster(
+    @Body(ValidationPipe) createMonsterDto: CreateMonsterDto,
+  ): Promise<ReturnCardDto> {
+    const card = await this.monstersService.create(createMonsterDto);
+    return {
+      card,
+      message: 'Carta de monstro criada com sucesso',
+    };
   }
 
-  // async createAdminUser(
-  //   @Body(ValidationPipe) createUserDto: CreateUserDto,
-  // ): Promise<ReturnUserDto> {
-  //   const user = await this.usersService.createAdminUser(createUserDto);
-  //   return {
-  //     user,
-  //     message: 'Administrador cadastrado com sucesso',
-  //   };
-  // }
+  @Post('traps')
+  async createTrap(
+    @Body(ValidationPipe) createTrapDto: CreateTrapDto,
+  ): Promise<ReturnCardDto> {
+    const card = await this.trapsService.create(createTrapDto);
+    return {
+      card,
+      message: 'Carta armadilha criada com sucesso',
+    };
+  }
 
   @Get()
   findAll() {
-    return this.cardsService.findAll();
+    return this.monstersService.findAll();
   }
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.cardsService.findOne(+id);
+    return this.monstersService.findOne(+id);
   }
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateCardDto: UpdateCardDto) {
-    return this.cardsService.update(+id, updateCardDto);
+    return this.monstersService.update(+id, updateCardDto);
   }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.cardsService.remove(+id);
+    return this.monstersService.remove(+id);
   }
 }

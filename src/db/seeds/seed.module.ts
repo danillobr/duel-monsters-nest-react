@@ -5,11 +5,8 @@ import { UsersModule } from 'src/users/users.module';
 import { UserRepository } from 'src/users/repositories/users.repository';
 
 @Module({
-  imports: [
-    TypeOrmModule.forRoot(dataSourceOptions),
-    UsersModule,
-  ],
+  imports: [TypeOrmModule.forRoot(dataSourceOptions), UsersModule],
   controllers: [],
-  providers: [UserRepository]
+  providers: [UserRepository],
 })
 export class SeedModule {}

@@ -7,24 +7,24 @@ import {
 import { Card } from '../entities/card.entity';
 import { CreateMonsterDto } from '../dto/create-monster.dto';
 import { Monster } from '../entities/monster.entity';
+import { Trap } from '../entities/trap.entity';
+import { CreateTrapDto } from '../dto/create-trap.dto';
+import { TrapSymbol } from '../trap-symbol.enum';
 
 @Injectable()
-export class MonstersRepository extends Repository<Monster> {
+export class TrapsRepository extends Repository<Trap> {
   constructor(private dataSource: DataSource) {
-    super(Monster, dataSource.createEntityManager());
+    super(Trap, dataSource.createEntityManager());
   }
 
-  async createMonster(createMonsterDto: CreateMonsterDto): Promise<Card> {
-    const { atk, def, description, img, level, name, specialAbility } =
-      createMonsterDto;
+  async createTrap(createTrapDto: CreateTrapDto): Promise<Card> {
+    const { description, effectDuration, img, name, symbol } = createTrapDto;
     const card = this.create();
-    card.atk = atk;
-    card.def = def;
     card.description = description;
     card.img = img;
-    card.level = level;
     card.name = name;
-    card.specialAbility = specialAbility;
+    card.effectDuration = effectDuration;
+    card.symbol = symbol;
     try {
       await card.save();
       return card;
