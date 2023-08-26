@@ -1,7 +1,7 @@
 import { DataSource, DataSourceOptions } from 'typeorm';
 import 'dotenv/config';
 import { SeederOptions } from 'typeorm-extension';
-// import { MainSedeer } from "./seeds/main-seeder";
+import { MainSedeer } from './seeds/main-seeder';
 
 export const dataSourceOptions: DataSourceOptions & SeederOptions = {
   type: 'postgres',
@@ -30,7 +30,7 @@ export const dataSourceOptions: DataSourceOptions & SeederOptions = {
 
   // synchronize: false,
 
-  // seeds: [MainSedeer],
+  seeds: [MainSedeer],
 };
 
 const dataSource = new DataSource(dataSourceOptions);

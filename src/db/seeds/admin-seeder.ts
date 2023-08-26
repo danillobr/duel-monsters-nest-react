@@ -1,12 +1,8 @@
 import { v4 as uuidV4 } from 'uuid';
 import * as bcrypt from 'bcrypt';
-import {
-  Seeder,
-  SeederFactoryManager,
-  useSeederFactory,
-} from 'typeorm-extension';
+import { Seeder, SeederFactoryManager } from 'typeorm-extension';
 import { DataSource } from 'typeorm';
-import { User } from 'src/users/entities/user.entity';
+import { User } from '../../users/entities/user.entity';
 
 export class AdminSeeder implements Seeder {
   public async run(

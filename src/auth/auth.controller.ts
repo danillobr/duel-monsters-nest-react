@@ -16,7 +16,7 @@ import { AuthGuard } from '@nestjs/passport';
 import { User } from '../users/entities/user.entity';
 import { GetUser } from './decorations/get-user.decorator';
 import { ChangePasswordDto } from './dtos/change-password.dto';
-import { UserRole } from 'src/users/user-roles.enum';
+import { UserRole } from '../users/user-roles.enum';
 
 @Controller('auth')
 export class AuthController {
