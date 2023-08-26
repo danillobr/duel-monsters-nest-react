@@ -1,6 +1,7 @@
-import { Column, Entity } from 'typeorm';
+import { Column, Entity, ManyToOne } from 'typeorm';
 import { Card } from './card.entity';
-import { SpellSymbol } from '../spell-symbol.enum';
+import { SpellSymbol } from '../enum/spell-symbol.enum';
+import { User } from '../../users/entities/user.entity';
 
 @Entity('spells')
 export class Spell extends Card {

@@ -16,7 +16,7 @@ import { UsersService } from './users.service';
 import { ReturnUserDto } from './dtos/return-user.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { RolesGuard } from '../auth/roles.guard';
-import { UserRole } from './user-roles.enum';
+import { UserRole } from './enum/user-roles.enum';
 import { Role } from '../auth/decorations/role.decorator';
 import { GetUser } from '../auth/decorations/get-user.decorator';
 import { UpdateUserDto } from './dtos/update-user.dto';

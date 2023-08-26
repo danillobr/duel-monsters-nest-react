@@ -6,8 +6,16 @@ import {
   Column,
   CreateDateColumn,
   UpdateDateColumn,
+  OneToMany,
+  ManyToMany,
+  JoinTable,
 } from 'typeorm';
 import * as bcrypt from 'bcrypt';
+import { UserRole } from '../enum/user-roles.enum';
+import { Card } from '../../cards/entities/card.entity';
+import { Spell } from '../../cards/entities/spell.entity';
+import { Trap } from '../../cards/entities/trap.entity';
+import { Monster } from '../../cards/entities/monster.entity';
 
 @Entity('users')
 @Unique(['email'])
@@ -21,7 +29,7 @@ export class User extends BaseEntity {
   @Column({ nullable: false, type: 'varchar', length: 200 })
   name: string;
 
-  @Column({ nullable: false, type: 'varchar', length: 20 })
+  @Column({ nullable: false, enum: UserRole })
   role: string;
 
   @Column({ nullable: false, default: true })
@@ -44,6 +52,18 @@ export class User extends BaseEntity {
 
   @UpdateDateColumn()
   updatedAt: Date;
+
+  @ManyToMany(() => Spell)
+  @JoinTable()
+  spells: Spell[];
+
+  @ManyToMany(() => Trap)
+  @JoinTable()
+  traps: Trap[];
+
+  @ManyToMany(() => Monster)
+  @JoinTable()
+  monsters: Monster[];
 
   async checkPassword(password: string): Promise<boolean> {
     const hash = await bcrypt.hash(password, this.salt);

@@ -1,5 +1,5 @@
 export enum TrapSymbol {
   INFINITE = 'INFINITO',
   ARROW = 'SETA',
-  NOSYMBOL = 'SEM SÍMBOLO',
+  NO_SYMBOL = 'SEM SÍMBOLO',
 }

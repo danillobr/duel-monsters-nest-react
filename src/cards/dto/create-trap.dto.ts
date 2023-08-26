@@ -1,6 +1,6 @@
 import { IsEnum, IsInt, IsNotEmpty } from 'class-validator';
 import { CreateCardDto } from './create-card.dto';
-import { TrapSymbol } from '../trap-symbol.enum';
+import { TrapSymbol } from '../enum/trap-symbol.enum';
 
 export class CreateTrapDto extends CreateCardDto {
   @IsNotEmpty({

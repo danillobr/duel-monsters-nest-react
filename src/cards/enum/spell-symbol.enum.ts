@@ -2,6 +2,6 @@ export enum SpellSymbol {
   CROSS = 'CRUZ',
   INFINITE = 'INFINITO',
   RAY = 'RAIO',
-  WINDROSE = 'ROSA DOS VENTOS',
+  WIND_ROSE = 'ROSA DOS VENTOS',
   FLAME = 'CHAMA',
 }

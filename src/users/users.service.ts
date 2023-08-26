@@ -4,7 +4,7 @@ import {
   NotFoundException,
   UnprocessableEntityException,
 } from '@nestjs/common';
-import { UserRole } from './user-roles.enum';
+import { UserRole } from './enum/user-roles.enum';
 import { User } from './entities/user.entity';
 import { CreateUserDto } from './dtos/create-user.dto';
 import { UserRepository } from './repositories/users.repository';

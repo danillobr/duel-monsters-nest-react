@@ -1,6 +1,6 @@
 import { IsEnum, IsInt, IsNotEmpty } from 'class-validator';
 import { CreateCardDto } from './create-card.dto';
-import { SpellSymbol } from '../spell-symbol.enum';
+import { SpellSymbol } from '../enum/spell-symbol.enum';
 
 export class CreateSpellDto extends CreateCardDto {
   @IsNotEmpty({

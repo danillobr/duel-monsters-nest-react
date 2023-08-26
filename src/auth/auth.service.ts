@@ -7,7 +7,7 @@ import {
 import { UserRepository } from '../users/repositories/users.repository';
 import { CreateUserDto } from '../users/dtos/create-user.dto';
 import { User } from '../users/entities/user.entity';
-import { UserRole } from '../users/user-roles.enum';
+import { UserRole } from '../users/enum/user-roles.enum';
 import { CredentialsDto } from './dtos/credentials.dto';
 import { JwtService } from '@nestjs/jwt';
 import { MailerService } from '@nestjs-modules/mailer';
@@ -104,11 +104,10 @@ export class AuthService {
     recoverToken: string,
     changePasswordDto: ChangePasswordDto,
   ): Promise<void> {
-    const user = await this.userRepository.findOne(
-      { where: { recoverToken },
-        select: ['id'],
-      },
-    );
+    const user = await this.userRepository.findOne({
+      where: { recoverToken },
+      select: ['id'],
+    });
     if (!user) throw new NotFoundException('Token inválido.');
 
     try {
