@@ -4,8 +4,10 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { PassportModule } from '@nestjs/passport';
 import { MonstersRepository } from './repositories/monsters.repository';
 import { MonstersService } from './monsters.service';
-import { TrapsService } from './trap.service';
-import { TrapsRepository } from './repositories/trap.repository';
+import { TrapsService } from './traps.service';
+import { TrapsRepository } from './repositories/traps.repository';
+import { SpellsRepository } from './repositories/spells.repository';
+import { SpellsService } from './spells.service';
 
 @Module({
   imports: [
@@ -14,8 +16,10 @@ import { TrapsRepository } from './repositories/trap.repository';
   ],
   providers: [
     MonstersService,
+    SpellsService,
     TrapsService,
     MonstersRepository,
+    SpellsRepository,
     TrapsRepository,
   ],
   controllers: [CardsController],

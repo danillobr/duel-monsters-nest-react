@@ -1,15 +1,8 @@
 import { DataSource, Repository } from 'typeorm';
-import {
-  ConflictException,
-  Injectable,
-  InternalServerErrorException,
-} from '@nestjs/common';
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { Card } from '../entities/card.entity';
-import { CreateMonsterDto } from '../dto/create-monster.dto';
-import { Monster } from '../entities/monster.entity';
 import { Trap } from '../entities/trap.entity';
 import { CreateTrapDto } from '../dto/create-trap.dto';
-import { TrapSymbol } from '../trap-symbol.enum';
 
 @Injectable()
 export class TrapsRepository extends Repository<Trap> {

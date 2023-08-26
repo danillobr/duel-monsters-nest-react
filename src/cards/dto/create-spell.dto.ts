@@ -1,8 +1,8 @@
 import { IsEnum, IsInt, IsNotEmpty } from 'class-validator';
 import { CreateCardDto } from './create-card.dto';
-import { TrapSymbol } from '../trap-symbol.enum';
+import { SpellSymbol } from '../spell-symbol.enum';
 
-export class CreateTrapDto extends CreateCardDto {
+export class CreateSpellDto extends CreateCardDto {
   @IsNotEmpty({
     message: 'Informe o tempo de duração do efeito',
   })
@@ -12,6 +12,6 @@ export class CreateTrapDto extends CreateCardDto {
   @IsNotEmpty({
     message: 'Informe o simbolo',
   })
-  @IsEnum(TrapSymbol)
-  symbol: TrapSymbol;
+  @IsEnum(SpellSymbol)
+  symbol: SpellSymbol;
 }

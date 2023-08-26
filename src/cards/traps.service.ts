@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { UpdateCardDto } from './dto/update-card.dto';
 import { Card } from './entities/card.entity';
-import { TrapsRepository } from './repositories/trap.repository';
+import { TrapsRepository } from './repositories/traps.repository';
 import { CreateTrapDto } from './dto/create-trap.dto';
 
 @Injectable()

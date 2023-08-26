@@ -13,13 +13,16 @@ import { MonstersService } from './monsters.service';
 import { CreateMonsterDto } from './dto/create-monster.dto';
 import { ReturnCardDto } from './dto/return-card.dto';
 import { CreateTrapDto } from './dto/create-trap.dto';
-import { TrapsService } from './trap.service';
+import { TrapsService } from './traps.service';
+import { SpellsService } from './spells.service';
+import { CreateSpellDto } from './dto/create-spell.dto';
 
 @Controller('cards')
 export class CardsController {
   constructor(
     private readonly monstersService: MonstersService,
     private readonly trapsService: TrapsService,
+    private readonly spellsService: SpellsService,
   ) {}
 
   @Post('monsters')
@@ -41,6 +44,17 @@ export class CardsController {
     return {
       card,
       message: 'Carta armadilha criada com sucesso',
+    };
+  }
+
+  @Post('spells')
+  async createSpell(
+    @Body(ValidationPipe) createSpellDto: CreateSpellDto,
+  ): Promise<ReturnCardDto> {
+    const card = await this.spellsService.create(createSpellDto);
+    return {
+      card,
+      message: 'Carta magica criada com sucesso',
     };
   }
 
