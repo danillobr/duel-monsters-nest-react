@@ -93,17 +93,13 @@ export class UsersService {
     try {
       const card = await this.spellsService.findCardById(id);
       user.spells.push(card);
-    } catch (error) {
+    } catch (NotFoundException) {
       try {
         const card = await this.trapsService.findCardById(id);
         user.traps.push(card);
-      } catch (error) {
-        try {
-          const card = await this.monstersService.findCardById(id);
-          user.monsters.push(card);
-        } catch (error) {
-          throw new NotFoundException('Essa carta não existe');
-        }
+      } catch (NotFoundException) {
+        const card = await this.monstersService.findCardById(id);
+        user.monsters.push(card);
       }
     }
 

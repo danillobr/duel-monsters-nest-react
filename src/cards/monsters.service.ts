@@ -18,13 +18,13 @@ export class MonstersService {
   }
 
   async findCardById(id: string): Promise<Monster> {
-    const card = this.monstersRepository.findById(id);
+    const card = await this.monstersRepository.findById(id);
     if (!card) throw new NotFoundException('Carta não encontrada');
     return card;
   }
 
   async findCardByName(name: string): Promise<Monster> {
-    const card = this.monstersRepository.findById(name);
+    const card = await this.monstersRepository.findById(name);
     if (!card) throw new NotFoundException('Carta não encontrada');
     return card;
   }
