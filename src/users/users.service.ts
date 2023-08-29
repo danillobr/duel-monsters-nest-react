@@ -12,10 +12,6 @@ import { UpdateUserDto } from './dtos/update-user.dto';
 import { FindUsersQueryDto } from './dtos/find-users-query.dto';
 import { SpellsService } from '../cards/spells.service';
 import { AddCardUserDto } from './dtos/add-card-user.dto';
-import { Card } from '../cards/entities/card.entity';
-import { CreateSpellDto } from '../cards/dto/create-spell.dto';
-import { Spell } from '../cards/entities/spell.entity';
-import { SpellSymbol } from '../cards/enum/spell-symbol.enum';
 import { TrapsService } from '../cards/traps.service';
 import { MonstersService } from '../cards/monsters.service';
 
@@ -111,9 +107,5 @@ export class UsersService {
         'Erro ao salvar os dados no banco de dados',
       );
     }
-  }
-
-  async createSpellCard(createSpellCardDto: CreateSpellDto): Promise<Card> {
-    return await this.spellsService.create(createSpellCardDto);
   }
 }

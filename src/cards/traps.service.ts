@@ -33,7 +33,10 @@ export class TrapsService {
     return `This action updates a #${id} card`;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} card`;
+  async remove(cardId: string) {
+    const result = await this.trapsRepository.delete({ id: cardId });
+    if (result.affected === 0) {
+      throw new NotFoundException('Não foi encontrada a carta do ID informado');
+    }
   }
 }

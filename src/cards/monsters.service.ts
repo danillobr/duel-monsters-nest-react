@@ -33,7 +33,10 @@ export class MonstersService {
     return `This action updates a #${id} card`;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} card`;
+  async remove(id: string) {
+    const result = await this.monstersRepository.delete({ id });
+    if (result.affected === 0) {
+      throw new NotFoundException('Não foi encontrada a carta do ID informado');
+    }
   }
 }

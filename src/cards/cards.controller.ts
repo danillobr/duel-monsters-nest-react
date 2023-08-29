@@ -9,7 +9,6 @@ import {
   ValidationPipe,
   UseGuards,
 } from '@nestjs/common';
-import { UpdateCardDto } from './dto/update-card.dto';
 import { MonstersService } from './monsters.service';
 import { CreateMonsterDto } from './dto/create-monster.dto';
 import { ReturnCardDto } from './dto/return-card.dto';
@@ -82,8 +81,30 @@ export class CardsController {
   //   return this.monstersService.update(+id, updateCardDto);
   // }
 
-  // @Delete(':id')
-  // remove(@Param('id') id: string) {
-  //   return this.monstersService.remove(+id);
-  // }
+  @Role(UserRole.ADMIN)
+  @Delete('/monsters/:id')
+  async removeMonster(@Param('id') id: string) {
+    await this.monstersService.remove(id);
+    return {
+      message: 'Carta removida com sucesso',
+    };
+  }
+
+  @Role(UserRole.ADMIN)
+  @Delete('/traps/:id')
+  async removeTrap(@Param('id') id: string) {
+    await this.trapsService.remove(id);
+    return {
+      message: 'Carta removida com sucesso',
+    };
+  }
+
+  @Role(UserRole.ADMIN)
+  @Delete('/spells/:id')
+  async removeSpell(@Param('id') id: string) {
+    await this.spellsService.remove(id);
+    return {
+      message: 'Carta removida com sucesso',
+    };
+  }
 }

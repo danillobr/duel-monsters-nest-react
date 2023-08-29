@@ -78,12 +78,17 @@ export class UsersController {
   }
 
   @Delete(':id')
-  @Role(UserRole.ADMIN)
-  async deleteUser(@Param('id') id: string) {
-    await this.usersService.deleteUser(id);
-    return {
-      message: 'Usuário removido com sucesso',
-    };
+  async deleteUser(@Param('id') id: string, @GetUser() user: User) {
+    if (user.role != UserRole.ADMIN && user.id.toString() != id) {
+      throw new ForbiddenException(
+        'Você não tem autorização para acessar esse recurso',
+      );
+    } else {
+      await this.usersService.deleteUser(id);
+      return {
+        message: 'Usuário removido com sucesso',
+      };
+    }
   }
 
   @Get()
