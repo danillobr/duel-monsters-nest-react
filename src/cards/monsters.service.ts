@@ -1,8 +1,9 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { UpdateCardDto } from './dto/update-card.dto';
 import { CreateMonsterDto } from './dto/create-monster.dto';
 import { Card } from './entities/card.entity';
 import { MonstersRepository } from './repositories/monsters.repository';
+import { Monster } from './entities/monster.entity';
 
 @Injectable()
 export class MonstersService {
@@ -16,8 +17,16 @@ export class MonstersService {
     return `This action returns all cards`;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} card`;
+  async findCardById(id: string): Promise<Monster> {
+    const card = this.monstersRepository.findById(id);
+    if (!card) throw new NotFoundException('Carta não encontrada');
+    return card;
+  }
+
+  async findCardByName(name: string): Promise<Monster> {
+    const card = this.monstersRepository.findById(name);
+    if (!card) throw new NotFoundException('Carta não encontrada');
+    return card;
   }
 
   update(id: number, updateCardDto: UpdateCardDto) {

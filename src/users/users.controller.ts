@@ -22,6 +22,10 @@ import { GetUser } from '../auth/decorations/get-user.decorator';
 import { UpdateUserDto } from './dtos/update-user.dto';
 import { User } from './entities/user.entity';
 import { FindUsersQueryDto } from './dtos/find-users-query.dto';
+import { AddCardUserDto } from './dtos/add-card-user.dto';
+import { SpellsService } from '../cards/spells.service';
+import { CreateSpellDto } from '../cards/dto/create-spell.dto';
+import { ReturnCardDto } from '../cards/dto/return-card.dto';
 
 @Controller('users')
 @UseGuards(AuthGuard(), RolesGuard)
@@ -63,6 +67,14 @@ export class UsersController {
     } else {
       return this.usersService.updateUser(updateUserDto, id);
     }
+  }
+
+  @Patch('/add-card/:id')
+  async addCard(
+    @Body(ValidationPipe) addCardUserDto: AddCardUserDto,
+    @Param('id') id: string,
+  ) {
+    return this.usersService.addCardUser(addCardUserDto, id);
   }
 
   @Delete(':id')

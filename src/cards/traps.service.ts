@@ -1,8 +1,9 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { UpdateCardDto } from './dto/update-card.dto';
 import { Card } from './entities/card.entity';
 import { TrapsRepository } from './repositories/traps.repository';
 import { CreateTrapDto } from './dto/create-trap.dto';
+import { Trap } from './entities/trap.entity';
 
 @Injectable()
 export class TrapsService {
@@ -16,8 +17,16 @@ export class TrapsService {
     return `This action returns all cards`;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} card`;
+  async findCardById(id: string): Promise<Trap> {
+    const card = await this.trapsRepository.findById(id);
+    if (!card) throw new NotFoundException('Carta não encontrada');
+    return card;
+  }
+
+  async findCardByName(name: string): Promise<Trap> {
+    const card = await this.trapsRepository.findById(name);
+    if (!card) throw new NotFoundException('Carta não encontrada');
+    return card;
   }
 
   update(id: number, updateCardDto: UpdateCardDto) {

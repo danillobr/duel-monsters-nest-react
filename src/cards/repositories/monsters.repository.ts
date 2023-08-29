@@ -3,6 +3,7 @@ import {
   ConflictException,
   Injectable,
   InternalServerErrorException,
+  NotFoundException,
 } from '@nestjs/common';
 import { Card } from '../entities/card.entity';
 import { CreateMonsterDto } from '../dto/create-monster.dto';
@@ -29,9 +30,23 @@ export class MonstersRepository extends Repository<Monster> {
       await card.save();
       return card;
     } catch (error) {
-      throw new InternalServerErrorException(
-        'Erro ao salvar a carta no banco de dados',
-      );
+      if (error.code.toString() === '23505') {
+        throw new ConflictException(
+          'Uma carta com esse nome já foi cadastrada',
+        );
+      } else {
+        throw new InternalServerErrorException(
+          'Erro ao salvar salvar carta no banco de dados',
+        );
+      }
     }
+  }
+
+  async findByName(name: string): Promise<Monster> {
+    return await this.findOne({ where: { name } });
+  }
+
+  async findById(id: string): Promise<Monster> {
+    return await this.findOne({ where: { id } });
   }
 }

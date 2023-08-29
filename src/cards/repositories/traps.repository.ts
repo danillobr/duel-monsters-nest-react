@@ -1,5 +1,9 @@
 import { DataSource, Repository } from 'typeorm';
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  InternalServerErrorException,
+} from '@nestjs/common';
 import { Card } from '../entities/card.entity';
 import { Trap } from '../entities/trap.entity';
 import { CreateTrapDto } from '../dto/create-trap.dto';
@@ -22,9 +26,23 @@ export class TrapsRepository extends Repository<Trap> {
       await card.save();
       return card;
     } catch (error) {
-      throw new InternalServerErrorException(
-        'Erro ao salvar a carta no banco de dados',
-      );
+      if (error.code.toString() === '23505') {
+        throw new ConflictException(
+          'Uma carta com esse nome já foi cadastrada',
+        );
+      } else {
+        throw new InternalServerErrorException(
+          'Erro ao salvar salvar carta no banco de dados',
+        );
+      }
     }
+  }
+
+  async findByName(name: string): Promise<Trap> {
+    return await this.findOne({ where: { name } });
+  }
+
+  async findById(id: string): Promise<Trap> {
+    return await this.findOne({ where: { id } });
   }
 }

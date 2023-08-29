@@ -3,9 +3,11 @@ import {
   Column,
   CreateDateColumn,
   PrimaryGeneratedColumn,
+  Unique,
   UpdateDateColumn,
 } from 'typeorm';
 
+@Unique(['name'])
 export abstract class Card extends BaseEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;

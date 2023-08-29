@@ -12,7 +12,7 @@ import { SpellsService } from './spells.service';
 @Module({
   imports: [
     TypeOrmModule.forFeature([MonstersRepository]),
-    // PassportModule.register({ defaultStrategy: 'jwt' }),
+    PassportModule.register({ defaultStrategy: 'jwt' }),
   ],
   providers: [
     MonstersService,
@@ -23,5 +23,13 @@ import { SpellsService } from './spells.service';
     TrapsRepository,
   ],
   controllers: [CardsController],
+  exports: [
+    SpellsService,
+    TrapsService,
+    MonstersService,
+    SpellsRepository,
+    TrapsRepository,
+    MonstersRepository,
+  ],
 })
 export class CardsModule {}

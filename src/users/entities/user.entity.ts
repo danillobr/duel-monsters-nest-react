@@ -53,15 +53,15 @@ export class User extends BaseEntity {
   @UpdateDateColumn()
   updatedAt: Date;
 
-  @ManyToMany(() => Spell)
+  @ManyToMany(() => Spell, { eager: true })
   @JoinTable()
   spells: Spell[];
 
-  @ManyToMany(() => Trap)
+  @ManyToMany(() => Trap, { eager: true })
   @JoinTable()
   traps: Trap[];
 
-  @ManyToMany(() => Monster)
+  @ManyToMany(() => Monster, { eager: true })
   @JoinTable()
   monsters: Monster[];
 
