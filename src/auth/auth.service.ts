@@ -4,7 +4,7 @@ import {
   UnauthorizedException,
   NotFoundException,
 } from '@nestjs/common';
-import { UserRepository } from '../users/repositories/users.repository';
+import { UsersRepository } from '../users/repositories/users.repository';
 import { CreateUserDto } from '../users/dtos/create-user.dto';
 import { User } from '../users/entities/user.entity';
 import { UserRole } from '../users/enum/user-roles.enum';
@@ -17,7 +17,7 @@ import { ChangePasswordDto } from './dtos/change-password.dto';
 @Injectable()
 export class AuthService {
   constructor(
-    private readonly userRepository: UserRepository,
+    private readonly usersRepository: UsersRepository,
     private jwtService: JwtService,
     private mailerService: MailerService,
   ) {}
@@ -26,7 +26,7 @@ export class AuthService {
     if (createUserDto.password != createUserDto.passwordConfirmation) {
       throw new UnprocessableEntityException('As senhas não conferem');
     } else {
-      const user = await this.userRepository.createUser(
+      const user = await this.usersRepository.createUser(
         createUserDto,
         UserRole.USER,
       );
@@ -45,7 +45,7 @@ export class AuthService {
   }
 
   async signIn(credentialsDto: CredentialsDto) {
-    const user = await this.userRepository.checkCredentials(credentialsDto);
+    const user = await this.usersRepository.checkCredentials(credentialsDto);
 
     if (user === null) {
       throw new UnauthorizedException('Credenciais inválidas');
@@ -60,7 +60,7 @@ export class AuthService {
   }
 
   async confirmEmail(confirmationToken: string): Promise<void> {
-    const result = await this.userRepository.update(
+    const result = await this.usersRepository.update(
       { confirmationToken },
       { confirmationToken: null },
     );
@@ -68,7 +68,7 @@ export class AuthService {
   }
 
   async sendRecoverPasswordEmail(email: string): Promise<void> {
-    const user = await this.userRepository.findOne({ where: { email } });
+    const user = await this.usersRepository.findOne({ where: { email } });
 
     if (!user)
       throw new NotFoundException('Não há usuário cadastrado com esse email.');
@@ -97,14 +97,14 @@ export class AuthService {
     if (password != passwordConfirmation)
       throw new UnprocessableEntityException('As senhas não conferem');
 
-    await this.userRepository.changePassword(id, password);
+    await this.usersRepository.changePassword(id, password);
   }
 
   async resetPassword(
     recoverToken: string,
     changePasswordDto: ChangePasswordDto,
   ): Promise<void> {
-    const user = await this.userRepository.findOne({
+    const user = await this.usersRepository.findOne({
       where: { recoverToken },
       select: ['id'],
     });

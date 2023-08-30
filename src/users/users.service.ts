@@ -7,7 +7,7 @@ import {
 import { UserRole } from './enum/user-roles.enum';
 import { User } from './entities/user.entity';
 import { CreateUserDto } from './dtos/create-user.dto';
-import { UserRepository } from './repositories/users.repository';
+import { UsersRepository } from './repositories/users.repository';
 import { UpdateUserDto } from './dtos/update-user.dto';
 import { FindUsersQueryDto } from './dtos/find-users-query.dto';
 import { SpellsService } from '../cards/spells.service';
@@ -18,7 +18,7 @@ import { MonstersService } from '../cards/monsters.service';
 @Injectable()
 export class UsersService {
   constructor(
-    private readonly userRepository: UserRepository,
+    private readonly usersRepository: UsersRepository,
     private spellsService: SpellsService,
     private trapsService: TrapsService,
     private monstersService: MonstersService, // private jwtService: JwtService,
@@ -28,7 +28,7 @@ export class UsersService {
     if (createUserDto.password != createUserDto.passwordConfirmation) {
       throw new UnprocessableEntityException('As senhas não conferem');
     } else {
-      return await this.userRepository.createUser(
+      return await this.usersRepository.createUser(
         createUserDto,
         UserRole.ADMIN,
       );
@@ -36,7 +36,7 @@ export class UsersService {
   }
 
   async findUserById(userId: string): Promise<User> {
-    const user = await this.userRepository.findOne({
+    const user = await this.usersRepository.findOne({
       where: { id: userId },
       select: ['email', 'name', 'role', 'id', 'spells'],
     });
@@ -64,7 +64,7 @@ export class UsersService {
   }
 
   async deleteUser(userId: string) {
-    const result = await this.userRepository.delete({ id: userId });
+    const result = await this.usersRepository.delete({ id: userId });
     if (result.affected === 0) {
       throw new NotFoundException(
         'Não foi encontrado um usuário com o ID informado',
@@ -75,7 +75,7 @@ export class UsersService {
   async findUsers(
     queryDto: FindUsersQueryDto,
   ): Promise<{ users: User[]; total: number }> {
-    const users = await this.userRepository.findUsers(queryDto);
+    const users = await this.usersRepository.findUsers(queryDto);
     return users;
   }
 

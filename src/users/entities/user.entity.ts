@@ -12,10 +12,10 @@ import {
 } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { UserRole } from '../enum/user-roles.enum';
-import { Card } from '../../cards/entities/card.entity';
 import { Spell } from '../../cards/entities/spell.entity';
 import { Trap } from '../../cards/entities/trap.entity';
 import { Monster } from '../../cards/entities/monster.entity';
+import { Deck } from '../../decks/entities/deck.entity';
 
 @Entity('users')
 @Unique(['email'])
@@ -53,17 +53,20 @@ export class User extends BaseEntity {
   @UpdateDateColumn()
   updatedAt: Date;
 
-  @ManyToMany(() => Spell, { eager: true })
+  @ManyToMany(() => Spell)
   @JoinTable()
   spells: Spell[];
 
-  @ManyToMany(() => Trap, { eager: true })
+  @ManyToMany(() => Trap)
   @JoinTable()
   traps: Trap[];
 
-  @ManyToMany(() => Monster, { eager: true })
+  @ManyToMany(() => Monster)
   @JoinTable()
   monsters: Monster[];
+
+  @OneToMany(() => Deck, (deck) => deck.user)
+  decks: Deck[];
 
   async checkPassword(password: string): Promise<boolean> {
     const hash = await bcrypt.hash(password, this.salt);

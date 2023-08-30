@@ -13,7 +13,7 @@ import { CredentialsDto } from '../../auth/dtos/credentials.dto';
 import { FindUsersQueryDto } from '../dtos/find-users-query.dto';
 
 @Injectable()
-export class UserRepository extends Repository<User> {
+export class UsersRepository extends Repository<User> {
   constructor(private dataSource: DataSource) {
     super(User, dataSource.createEntityManager());
   }
