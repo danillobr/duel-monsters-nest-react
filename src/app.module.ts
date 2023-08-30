@@ -8,6 +8,7 @@ import { MailerModule } from '@nestjs-modules/mailer';
 import { mailerConfig } from './configs/mailer.config';
 import { dataSourceOptions } from './db/data-source-cli';
 import { CardsModule } from './cards/cards.module';
+import { DecksModule } from './decks/decks.module';
 import 'dotenv/config';
 
 @Module({
@@ -17,6 +18,7 @@ import 'dotenv/config';
     UsersModule,
     AuthModule,
     CardsModule,
+    DecksModule,
   ],
   controllers: [],
   // providers: [
