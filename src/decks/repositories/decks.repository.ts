@@ -16,11 +16,9 @@ export class DecksRepository extends Repository<Deck> {
   async createDeck(name: string, user: User): Promise<Deck> {
     const deck = this.create();
     deck.name = name;
-
+    deck.user = user;
     try {
       await deck.save();
-      user.decks.push(deck);
-      await user.save();
       return deck;
     } catch (error) {
       if (error.code.toString() === '23505') {

@@ -14,7 +14,7 @@ import {
 } from 'typeorm';
 
 @Entity('decks')
-@Unique(['name'])
+@Unique(['user', 'name'])
 export class Deck extends BaseEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
