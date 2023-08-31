@@ -49,12 +49,4 @@ export class MonstersRepository extends Repository<Monster> {
   async findById(id: string): Promise<Monster> {
     return await this.findOne({ where: { id } });
   }
-
-  async findByIdAndUserId(cardId: string, userId: string): Promise<Monster> {
-    return this.createQueryBuilder('spell')
-      .leftJoinAndSelect('spell.user', 'user')
-      .where('user.id = :userId', { userId })
-      .andWhere('card.id = :cardId', { cardId })
-      .getOne();
-  }
 }

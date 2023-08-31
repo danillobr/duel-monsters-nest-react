@@ -49,12 +49,4 @@ export class SpellsRepository extends Repository<Spell> {
   async findById(id: string): Promise<Spell> {
     return await this.findOne({ where: { id } });
   }
-
-  async findByIdAndUserId(cardId: string, userId: string): Promise<Spell> {
-    return this.createQueryBuilder('spell')
-      .leftJoinAndSelect('spell.user', 'user')
-      .where('user.id = :userId', { userId })
-      .andWhere('card.id = :cardId', { cardId })
-      .getOne();
-  }
 }

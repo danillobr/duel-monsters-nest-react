@@ -10,8 +10,8 @@ import { TrapsService } from '../cards/traps.service';
 import { TrapsRepository } from '../cards/repositories/traps.repository';
 import { MonstersService } from '../cards/monsters.service';
 import { MonstersRepository } from '../cards/repositories/monsters.repository';
-import { DecksService } from 'src/decks/decks.service';
-import { DecksRepository } from 'src/decks/repositories/decks.repository';
+import { DecksService } from '../decks/decks.service';
+import { DecksRepository } from '../decks/repositories/decks.repository';
 
 @Module({
   imports: [

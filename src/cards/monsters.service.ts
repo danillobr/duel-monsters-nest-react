@@ -39,19 +39,4 @@ export class MonstersService {
       throw new NotFoundException('Não foi encontrada a carta do ID informado');
     }
   }
-
-  async findCardByIdAndUserId(
-    cardId: string,
-    userId: string,
-  ): Promise<Monster> {
-    const card = await this.monstersRepository.findByIdAndUserId(
-      cardId,
-      userId,
-    );
-    if (!card)
-      throw new NotFoundException(
-        'Carta não encontrada, certifique-se de usar o id correto',
-      );
-    return card;
-  }
 }
