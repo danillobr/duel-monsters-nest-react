@@ -21,4 +21,13 @@ export class DecksService {
       throw new NotFoundException('Não foi encontrada o deck do ID informado');
     }
   }
+
+  async findByNameAndUserId(nameDeck: string, userId: string): Promise<Deck> {
+    const deck = await this.decksRepository.findByNameAndUserId(
+      nameDeck,
+      userId,
+    );
+    if (!deck) throw new NotFoundException(`O deck ${nameDeck} não existe`);
+    return deck;
+  }
 }

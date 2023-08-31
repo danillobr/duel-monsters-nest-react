@@ -23,6 +23,8 @@ import { UpdateUserDto } from './dtos/update-user.dto';
 import { User } from './entities/user.entity';
 import { FindUsersQueryDto } from './dtos/find-users-query.dto';
 import { AddCardUserDto } from './dtos/add-card-user.dto';
+import { AddCardDeckUserDto } from './dtos/add-card-deck-user.dto';
+import { idText } from 'typescript';
 
 @Controller('users')
 @UseGuards(AuthGuard(), RolesGuard)
@@ -51,6 +53,14 @@ export class UsersController {
     };
   }
 
+  @Patch('/add-card-deck')
+  async addCardDeck(
+    @GetUser() user: User,
+    @Body(ValidationPipe) addCardDeckUserDto: AddCardDeckUserDto,
+  ) {
+    return await this.usersService.addCardDeckUser(addCardDeckUserDto, user);
+  }
+
   @Patch(':id')
   async updateUser(
     @Body(ValidationPipe) updateUserDto: UpdateUserDto,
@@ -69,9 +79,10 @@ export class UsersController {
   @Patch('/add-card/:id')
   async addCard(
     @GetUser() user: User,
-    @Param('id') addCardUserDto: AddCardUserDto,
+    @Param(ValidationPipe) addCardUserDto: AddCardUserDto,
   ) {
-    return await this.usersService.addCardUser(addCardUserDto, user.id);
+    console.log(addCardUserDto);
+    return await this.usersService.addCardUser(addCardUserDto, user);
   }
 
   @Delete(':id')

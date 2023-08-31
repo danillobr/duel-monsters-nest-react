@@ -1,9 +1,7 @@
 import {
   Controller,
-  Get,
   Post,
   Body,
-  Patch,
   Param,
   Delete,
   ValidationPipe,
@@ -65,21 +63,6 @@ export class CardsController {
       message: 'Carta magica criada com sucesso',
     };
   }
-
-  @Get()
-  findAll() {
-    return this.monstersService.findAll();
-  }
-
-  // @Get(':id')
-  // findOne(@Param('id') id: string) {
-  //   return this.monstersService.findOne(+id);
-  // }
-
-  // @Patch(':id')
-  // update(@Param('id') id: string, @Body() updateCardDto: UpdateCardDto) {
-  //   return this.monstersService.update(+id, updateCardDto);
-  // }
 
   @Role(UserRole.ADMIN)
   @Delete('/monsters/:id')

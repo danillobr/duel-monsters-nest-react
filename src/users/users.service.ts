@@ -14,6 +14,8 @@ import { SpellsService } from '../cards/spells.service';
 import { TrapsService } from '../cards/traps.service';
 import { MonstersService } from '../cards/monsters.service';
 import { AddCardUserDto } from './dtos/add-card-user.dto';
+import { AddCardDeckUserDto } from './dtos/add-card-deck-user.dto';
+import { DecksService } from 'src/decks/decks.service';
 
 @Injectable()
 export class UsersService {
@@ -21,7 +23,8 @@ export class UsersService {
     private readonly usersRepository: UsersRepository,
     private spellsService: SpellsService,
     private trapsService: TrapsService,
-    private monstersService: MonstersService, // private jwtService: JwtService,
+    private monstersService: MonstersService,
+    private decksService: DecksService, // private jwtService: JwtService,
   ) {}
 
   async createAdminUser(createUserDto: CreateUserDto): Promise<User> {
@@ -79,12 +82,8 @@ export class UsersService {
     return users;
   }
 
-  async addCardUser(
-    addCardUserDto: AddCardUserDto,
-    userId: string,
-  ): Promise<User> {
+  async addCardUser(addCardUserDto: AddCardUserDto, user: User): Promise<User> {
     const { id } = addCardUserDto;
-    const user = await this.findUserById(userId);
     try {
       const card = await this.spellsService.findCardById(id);
       user.spells.push(card);
@@ -95,6 +94,43 @@ export class UsersService {
       } catch (NotFoundException) {
         const card = await this.monstersService.findCardById(id);
         user.monsters.push(card);
+      }
+    }
+    try {
+      await user.save();
+      return user;
+    } catch (error) {
+      throw new InternalServerErrorException(
+        'Erro ao salvar os dados no banco de dados',
+      );
+    }
+  }
+
+  async addCardDeckUser(
+    addCardDeckUserDto: AddCardDeckUserDto,
+    user: User,
+  ): Promise<User> {
+    const { cardId, nameDeck } = addCardDeckUserDto;
+    const deck = await this.decksService.findByNameAndUserId(nameDeck, user.id);
+    try {
+      const card = await this.spellsService.findCardByIdAndUserId(
+        cardId,
+        user.id,
+      );
+      deck.spells.push(card);
+    } catch (NotFoundException) {
+      try {
+        const card = await this.trapsService.findCardByIdAndUserId(
+          cardId,
+          user.id,
+        );
+        deck.traps.push(card);
+      } catch (NotFoundException) {
+        const card = await this.monstersService.findCardByIdAndUserId(
+          cardId,
+          user.id,
+        );
+        deck.monsters.push(card);
       }
     }
     try {

@@ -45,4 +45,12 @@ export class TrapsRepository extends Repository<Trap> {
   async findById(id: string): Promise<Trap> {
     return await this.findOne({ where: { id } });
   }
+
+  async findByIdAndUserId(cardId: string, userId: string): Promise<Trap> {
+    return this.createQueryBuilder('spell')
+      .leftJoinAndSelect('spell.user', 'user')
+      .where('user.id = :userId', { userId })
+      .andWhere('card.id = :cardId', { cardId })
+      .getOne();
+  }
 }

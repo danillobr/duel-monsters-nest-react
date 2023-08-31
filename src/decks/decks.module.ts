@@ -7,10 +7,11 @@ import { DecksRepository } from './repositories/decks.repository';
 
 @Module({
   imports: [
-    // TypeOrmModule.forFeature([DecksRepository]),
+    TypeOrmModule.forFeature([DecksRepository]),
     PassportModule.register({ defaultStrategy: 'jwt' }),
   ],
   controllers: [DecksController],
   providers: [DecksService, DecksRepository],
+  exports: [DecksService, DecksRepository],
 })
 export class DecksModule {}

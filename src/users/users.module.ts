@@ -10,6 +10,8 @@ import { TrapsService } from '../cards/traps.service';
 import { TrapsRepository } from '../cards/repositories/traps.repository';
 import { MonstersService } from '../cards/monsters.service';
 import { MonstersRepository } from '../cards/repositories/monsters.repository';
+import { DecksService } from 'src/decks/decks.service';
+import { DecksRepository } from 'src/decks/repositories/decks.repository';
 
 @Module({
   imports: [
@@ -25,6 +27,8 @@ import { MonstersRepository } from '../cards/repositories/monsters.repository';
     TrapsRepository,
     MonstersService,
     MonstersRepository,
+    DecksService,
+    DecksRepository,
   ],
   controllers: [UsersController],
 })

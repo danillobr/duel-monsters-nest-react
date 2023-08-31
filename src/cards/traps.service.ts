@@ -39,4 +39,13 @@ export class TrapsService {
       throw new NotFoundException('Não foi encontrada a carta do ID informado');
     }
   }
+
+  async findCardByIdAndUserId(cardId: string, userId: string): Promise<Trap> {
+    const card = await this.trapsRepository.findByIdAndUserId(cardId, userId);
+    if (!card)
+      throw new NotFoundException(
+        'Carta não encontrada, certifique-se de usar o id correto',
+      );
+    return card;
+  }
 }
