@@ -23,9 +23,6 @@ import { UpdateUserDto } from './dtos/update-user.dto';
 import { User } from './entities/user.entity';
 import { FindUsersQueryDto } from './dtos/find-users-query.dto';
 import { AddCardUserDto } from './dtos/add-card-user.dto';
-import { SpellsService } from '../cards/spells.service';
-import { CreateSpellDto } from '../cards/dto/create-spell.dto';
-import { ReturnCardDto } from '../cards/dto/return-card.dto';
 
 @Controller('users')
 @UseGuards(AuthGuard(), RolesGuard)
@@ -71,10 +68,10 @@ export class UsersController {
 
   @Patch('/add-card/:id')
   async addCard(
-    @Body(ValidationPipe) addCardUserDto: AddCardUserDto,
-    @Param('id') id: string,
+    @GetUser() user: User,
+    @Param('id') addCardUserDto: AddCardUserDto,
   ) {
-    return this.usersService.addCardUser(addCardUserDto, id);
+    return await this.usersService.addCardUser(addCardUserDto, user.id);
   }
 
   @Delete(':id')

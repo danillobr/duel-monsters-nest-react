@@ -1,13 +1,11 @@
 import { DataSource, Repository } from 'typeorm';
-import * as bcrypt from 'bcrypt';
-import * as crypto from 'crypto';
 import {
   ConflictException,
   Injectable,
   InternalServerErrorException,
 } from '@nestjs/common';
 import { Deck } from '../entities/deck.entity';
-import { CreateDeckDto } from '../dto/create-deck.dto';
+import { User } from '../../users/entities/user.entity';
 
 @Injectable()
 export class DecksRepository extends Repository<Deck> {
@@ -15,52 +13,30 @@ export class DecksRepository extends Repository<Deck> {
     super(Deck, dataSource.createEntityManager());
   }
 
-  // async createDeck(createDeckDto: CreateDeckDto): Promise<User> {
-  //   const { name } = createDeckDto;
-  //   const user = this.create();
-  //   user.email = email;
-  //   user.name = name;
-  //   user.role = role;
-  //   user.status = true;
-  //   user.confirmationToken = crypto.randomBytes(32).toString('hex');
-  //   user.salt = await bcrypt.genSalt();
-  //   user.password = await this.hashPassword(password, user.salt);
-  //   try {
-  //     await user.save();
-  //     delete user.password;
-  //     delete user.salt;
-  //     return user;
-  //   } catch (error) {
-  //     if (error.code.toString() === '23505') {
-  //       throw new ConflictException('Endereço de email já está em uso');
-  //     } else {
-  //       throw new InternalServerErrorException(
-  //         'Erro ao salvar o usuário no banco de dados',
-  //       );
-  //     }
-  //   }
-  // }
+  async createDeck(name: string, user: User): Promise<Deck> {
+    const deck = this.create();
+    deck.name = name;
 
-  // async changePassword(id: string, password: string) {
-  //   const user = await this.findOne({ where: { id } });
-  //   user.salt = await bcrypt.genSalt();
-  //   user.password = await this.hashPassword(password, user.salt);
-  //   user.recoverToken = null;
-  //   await user.save();
-  // }
+    try {
+      await deck.save();
+      user.decks.push(deck);
+      await user.save();
+      return deck;
+    } catch (error) {
+      if (error.code.toString() === '23505') {
+        throw new ConflictException('Já existe um deck com esse nome');
+      } else {
+        throw new InternalServerErrorException(
+          'Erro ao salvar o deck no banco de dados',
+        );
+      }
+    }
+  }
 
-  // async checkCredentials(credentialsDto: CredentialsDto): Promise<User> {
-  //   const { email, password } = credentialsDto;
-  //   const user = await this.findOne({ where: { email, status: true } });
-
-  //   if (user && (await user.checkPassword(password))) {
-  //     return user;
-  //   } else {
-  //     return null;
-  //   }
-  // }
-
-  // private async hashPassword(password: string, salt: string): Promise<string> {
-  //   return bcrypt.hash(password, salt);
-  // }
+  async findByUserIdAndId(userId: string, deckId: string): Promise<Deck> {
+    const deck = this.findOne({
+      where: { id: deckId, user: { id: userId } },
+    });
+    return deck;
+  }
 }

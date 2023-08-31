@@ -1,34 +1,41 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  Param,
+  Delete,
+  UseGuards,
+} from '@nestjs/common';
 import { DecksService } from './decks.service';
 import { CreateDeckDto } from './dto/create-deck.dto';
-import { UpdateDeckDto } from './dto/update-deck.dto';
+import { AuthGuard } from '@nestjs/passport';
+import { RolesGuard } from '../auth/roles.guard';
+import { GetUser } from '../auth/decorations/get-user.decorator';
+import { User } from '../users/entities/user.entity';
+import { ReturnDeckDto } from './dto/return-deck.dto';
 
 @Controller('decks')
+@UseGuards(AuthGuard(), RolesGuard)
 export class DecksController {
   constructor(private readonly decksService: DecksService) {}
 
   @Post()
-  create(@Body() createDeckDto: CreateDeckDto) {
-    return this.decksService.create(createDeckDto);
+  async create(
+    @Body() createDeckDto: CreateDeckDto,
+    @GetUser() user: User,
+  ): Promise<ReturnDeckDto> {
+    const deck = await this.decksService.create(createDeckDto, user);
+    return {
+      deck,
+      message: 'Deck criado com sucesso',
+    };
   }
 
-  @Get()
-  findAll() {
-    return this.decksService.findAll();
-  }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.decksService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateDeckDto: UpdateDeckDto) {
-    return this.decksService.update(+id, updateDeckDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.decksService.remove(+id);
+  @Delete('/:id')
+  async remove(@Param('id') id: string, @GetUser() user: User) {
+    await this.decksService.remove(user.id, id);
+    return {
+      message: 'Deck removido com sucesso',
+    };
   }
 }

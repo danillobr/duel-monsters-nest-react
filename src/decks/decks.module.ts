@@ -11,6 +11,6 @@ import { DecksRepository } from './repositories/decks.repository';
     PassportModule.register({ defaultStrategy: 'jwt' }),
   ],
   controllers: [DecksController],
-  providers: [DecksService],
+  providers: [DecksService, DecksRepository],
 })
 export class DecksModule {}

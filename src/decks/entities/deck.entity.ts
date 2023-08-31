@@ -22,15 +22,15 @@ export class Deck extends BaseEntity {
   @Column({ nullable: false, type: 'varchar', length: 200 })
   name: string;
 
-  @ManyToMany(() => Spell)
+  @ManyToMany(() => Spell, { eager: true })
   @JoinTable()
   spells: Spell[];
 
-  @ManyToMany(() => Trap)
+  @ManyToMany(() => Trap, { eager: true })
   @JoinTable()
   traps: Trap[];
 
-  @ManyToMany(() => Monster)
+  @ManyToMany(() => Monster, { eager: true })
   @JoinTable()
   monsters: Monster[];
 

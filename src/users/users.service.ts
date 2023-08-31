@@ -11,9 +11,9 @@ import { UsersRepository } from './repositories/users.repository';
 import { UpdateUserDto } from './dtos/update-user.dto';
 import { FindUsersQueryDto } from './dtos/find-users-query.dto';
 import { SpellsService } from '../cards/spells.service';
-import { AddCardUserDto } from './dtos/add-card-user.dto';
 import { TrapsService } from '../cards/traps.service';
 import { MonstersService } from '../cards/monsters.service';
+import { AddCardUserDto } from './dtos/add-card-user.dto';
 
 @Injectable()
 export class UsersService {
@@ -85,7 +85,6 @@ export class UsersService {
   ): Promise<User> {
     const { id } = addCardUserDto;
     const user = await this.findUserById(userId);
-
     try {
       const card = await this.spellsService.findCardById(id);
       user.spells.push(card);
@@ -98,7 +97,6 @@ export class UsersService {
         user.monsters.push(card);
       }
     }
-
     try {
       await user.save();
       return user;
