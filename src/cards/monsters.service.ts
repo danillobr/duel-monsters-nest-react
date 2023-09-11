@@ -4,6 +4,7 @@ import { CreateMonsterDto } from './dto/create-monster.dto';
 import { Card } from './entities/card.entity';
 import { MonstersRepository } from './repositories/monsters.repository';
 import { Monster } from './entities/monster.entity';
+import { In } from 'typeorm';
 
 @Injectable()
 export class MonstersService {
@@ -21,6 +22,10 @@ export class MonstersService {
     const card = await this.monstersRepository.findById(id);
     if (!card) throw new NotFoundException('Carta não encontrada');
     return card;
+  }
+
+  async findBy(ids: string[]): Promise<Monster[]> {
+    return await this.monstersRepository.findBy({ id: In(ids) });
   }
 
   async findCardByName(name: string): Promise<Monster> {

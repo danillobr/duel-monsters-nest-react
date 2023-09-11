@@ -50,6 +50,19 @@ export class UsersRepository extends Repository<User> {
     return { users, total };
   }
 
+  async findUser(userId: string): Promise<User> {
+    return await this.createQueryBuilder('user')
+      .leftJoinAndSelect('user.spellsUser', 'spellsUser')
+      .leftJoinAndSelect('user.monstersUser', 'monstersUser')
+      .leftJoinAndSelect('user.trapsUser', 'trapsUser')
+      .leftJoinAndSelect('spellsUser.spell', 'spell')
+      .leftJoinAndSelect('monstersUser.monster', 'monster')
+      .leftJoinAndSelect('trapsUser.trap', 'trap')
+      .where('user.id = :userId', { userId })
+      // .select(['user.id', 'user.name', 'user.role', 'spellsUser'])
+      .getOne();
+  }
+
   async createUser(
     createUserDto: CreateUserDto,
     role: UserRole,

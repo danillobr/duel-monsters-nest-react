@@ -53,12 +53,28 @@ export class UsersController {
     };
   }
 
-  @Patch('/add-card')
+  @Patch('/add-spell-cards')
+  async addSpellCard(
+    @GetUser() user: User,
+    @Body(ValidationPipe) addCardUserDto: AddCardUserDto,
+  ) {
+    return await this.usersService.addSpellCardsUser(addCardUserDto, user.id);
+  }
+
+  @Patch('/add-trap-cards')
+  async addTrapCard(
+    @GetUser() user: User,
+    @Body(ValidationPipe) addCardUserDto: AddCardUserDto,
+  ) {
+    return await this.usersService.addTrapCardsUser(addCardUserDto, user.id);
+  }
+
+  @Patch('/add-monster-cards')
   async addCard(
     @GetUser() user: User,
     @Body(ValidationPipe) addCardUserDto: AddCardUserDto,
   ) {
-    return await this.usersService.addCardUser(addCardUserDto, user.id);
+    return await this.usersService.addMonsterCardsUser(addCardUserDto, user.id);
   }
 
   @Patch('/add-card-deck')

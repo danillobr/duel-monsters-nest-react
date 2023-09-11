@@ -14,7 +14,7 @@ export class MonsterUser extends BaseEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ nullable: false, type: 'varchar', length: 200 })
+  @Column({ nullable: false, type: 'int' })
   amount: number;
 
   @ManyToOne(() => User, (user) => user.monstersUser, {

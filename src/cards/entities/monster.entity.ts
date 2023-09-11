@@ -18,6 +18,9 @@ export class Monster extends Card {
 
   @OneToMany(() => MonsterUser, (monsterUser) => monsterUser.monster, {
     eager: true,
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
+    cascade: true,
   })
   monstersUser: MonsterUser[];
 }

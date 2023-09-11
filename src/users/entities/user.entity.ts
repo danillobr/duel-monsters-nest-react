@@ -76,11 +76,19 @@ export class User extends BaseEntity {
   })
   spellsUser: SpellUser[];
 
-  @OneToMany(() => TrapUser, (trapUser) => trapUser.user, { eager: true })
+  @OneToMany(() => TrapUser, (trapUser) => trapUser.user, {
+    eager: true,
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
+    cascade: true,
+  })
   trapsUser: TrapUser[];
 
   @OneToMany(() => MonsterUser, (monsterUser) => monsterUser.user, {
     eager: true,
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
+    cascade: true,
   })
   monstersUser: MonsterUser[];
 

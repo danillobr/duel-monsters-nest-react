@@ -4,6 +4,7 @@ import { Card } from './entities/card.entity';
 import { TrapsRepository } from './repositories/traps.repository';
 import { CreateTrapDto } from './dto/create-trap.dto';
 import { Trap } from './entities/trap.entity';
+import { In } from 'typeorm';
 
 @Injectable()
 export class TrapsService {
@@ -21,6 +22,10 @@ export class TrapsService {
     const card = await this.trapsRepository.findById(id);
     if (!card) throw new NotFoundException('Carta não encontrada');
     return card;
+  }
+
+  async findBy(ids: string[]): Promise<Trap[]> {
+    return await this.trapsRepository.findBy({ id: In(ids) });
   }
 
   async findCardByName(name: string): Promise<Trap> {
