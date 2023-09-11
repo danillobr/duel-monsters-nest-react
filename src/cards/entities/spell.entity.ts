@@ -1,7 +1,7 @@
-import { Column, Entity, ManyToOne } from 'typeorm';
+import { Column, Entity, OneToMany } from 'typeorm';
 import { Card } from './card.entity';
 import { SpellSymbol } from '../enum/spell-symbol.enum';
-import { User } from '../../users/entities/user.entity';
+import { SpellUser } from '../../users/entities/spell-user.entity';
 
 @Entity('spells')
 export class Spell extends Card {
@@ -10,4 +10,12 @@ export class Spell extends Card {
 
   @Column({ nullable: false, type: 'varchar', length: 20 })
   symbol: SpellSymbol;
+
+  @OneToMany(() => SpellUser, (spellUser) => spellUser.spell, {
+    eager: true,
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
+    cascade: true,
+  })
+  spellsUser: SpellUser[];
 }

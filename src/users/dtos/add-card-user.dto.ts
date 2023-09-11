@@ -1,7 +1,29 @@
-import { IsNotEmpty, IsUUID } from 'class-validator';
+import { Type } from '@nestjs/class-transformer';
+import {
+  ArrayMinSize,
+  IsArray,
+  IsInt,
+  IsNotEmpty,
+  IsUUID,
+  Max,
+  Min,
+} from 'class-validator';
 
-export class AddCardUserDto {
+class ItemsCardsDto {
   @IsUUID()
   @IsNotEmpty({ message: 'informe o id da carta' })
-  id: string;
+  cardId: string;
+
+  @IsInt()
+  @Min(1)
+  @Max(3)
+  @IsNotEmpty({ message: 'informe a quantidade de cartas' })
+  amount: number;
+}
+
+export class AddCardUserDto {
+  @IsArray()
+  @ArrayMinSize(1)
+  @Type(() => ItemsCardsDto)
+  itemsCards: ItemsCardsDto[];
 }

@@ -1,6 +1,6 @@
-import { Column, Entity, ManyToOne } from 'typeorm';
+import { Column, Entity, OneToMany } from 'typeorm';
 import { Card } from './card.entity';
-import { User } from '../../users/entities/user.entity';
+import { MonsterUser } from '../../users/entities/monster-user.entity';
 
 @Entity('monsters')
 export class Monster extends Card {
@@ -15,4 +15,9 @@ export class Monster extends Card {
 
   @Column({ nullable: false, default: false })
   specialAbility: boolean;
+
+  @OneToMany(() => MonsterUser, (monsterUser) => monsterUser.monster, {
+    eager: true,
+  })
+  monstersUser: MonsterUser[];
 }

@@ -53,12 +53,20 @@ export class UsersController {
     };
   }
 
+  @Patch('/add-card')
+  async addCard(
+    @GetUser() user: User,
+    @Body(ValidationPipe) addCardUserDto: AddCardUserDto,
+  ) {
+    return await this.usersService.addCardUser(addCardUserDto, user.id);
+  }
+
   @Patch('/add-card-deck')
   async addCardDeck(
     @GetUser() user: User,
     @Body(ValidationPipe) addCardDeckUserDto: AddCardDeckUserDto,
   ) {
-    return await this.usersService.addCardDeckUser(addCardDeckUserDto, user);
+    // return await this.usersService.addCardDeckUser(addCardDeckUserDto, user);
   }
 
   @Patch(':id')
@@ -74,15 +82,6 @@ export class UsersController {
     } else {
       return this.usersService.updateUser(updateUserDto, id);
     }
-  }
-
-  @Patch('/add-card/:id')
-  async addCard(
-    @GetUser() user: User,
-    @Param(ValidationPipe) addCardUserDto: AddCardUserDto,
-  ) {
-    console.log(addCardUserDto);
-    return await this.usersService.addCardUser(addCardUserDto, user);
   }
 
   @Delete(':id')

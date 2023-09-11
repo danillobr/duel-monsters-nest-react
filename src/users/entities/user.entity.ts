@@ -16,6 +16,9 @@ import { Spell } from '../../cards/entities/spell.entity';
 import { Trap } from '../../cards/entities/trap.entity';
 import { Monster } from '../../cards/entities/monster.entity';
 import { Deck } from '../../decks/entities/deck.entity';
+import { SpellUser } from './spell-user.entity';
+import { TrapUser } from './trap-user.entity';
+import { MonsterUser } from './monster-user.entity';
 
 @Entity('users')
 @Unique(['email'])
@@ -53,17 +56,33 @@ export class User extends BaseEntity {
   @UpdateDateColumn()
   updatedAt: Date;
 
-  @ManyToMany(() => Spell, { eager: true })
-  @JoinTable()
-  spells: Spell[];
+  // @ManyToMany(() => Spell, { eager: true })
+  // @JoinTable()
+  // spells: Spell[];
 
-  @ManyToMany(() => Trap, { eager: true })
-  @JoinTable()
-  traps: Trap[];
+  // @ManyToMany(() => Trap, { eager: true })
+  // @JoinTable()
+  // traps: Trap[];
 
-  @ManyToMany(() => Monster, { eager: true })
-  @JoinTable()
-  monsters: Monster[];
+  // @ManyToMany(() => Monster, { eager: true })
+  // @JoinTable()
+  // monsters: Monster[];
+
+  @OneToMany(() => SpellUser, (spellUser) => spellUser.user, {
+    eager: true,
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
+    cascade: true,
+  })
+  spellsUser: SpellUser[];
+
+  @OneToMany(() => TrapUser, (trapUser) => trapUser.user, { eager: true })
+  trapsUser: TrapUser[];
+
+  @OneToMany(() => MonsterUser, (monsterUser) => monsterUser.user, {
+    eager: true,
+  })
+  monstersUser: MonsterUser[];
 
   @OneToMany(() => Deck, (deck) => deck.user, { eager: true })
   decks: Deck[];

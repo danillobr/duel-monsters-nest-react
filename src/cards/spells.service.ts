@@ -4,6 +4,7 @@ import { Card } from './entities/card.entity';
 import { SpellsRepository } from './repositories/spells.repository';
 import { CreateSpellDto } from './dto/create-spell.dto';
 import { Spell } from './entities/spell.entity';
+import { In } from 'typeorm';
 
 @Injectable()
 export class SpellsService {
@@ -21,6 +22,10 @@ export class SpellsService {
     const card = await this.spellsRepository.findById(id);
     if (!card) throw new NotFoundException('Carta não encontrada');
     return card;
+  }
+
+  async findBy(ids: string[]): Promise<Spell[]> {
+    return await this.spellsRepository.findBy({ id: In(ids) });
   }
 
   async findCardByName(name: string): Promise<Spell> {

@@ -15,8 +15,9 @@ import { TrapsService } from '../cards/traps.service';
 import { MonstersService } from '../cards/monsters.service';
 import { AddCardUserDto } from './dtos/add-card-user.dto';
 import { AddCardDeckUserDto } from './dtos/add-card-deck-user.dto';
-import { DecksService } from '../decks/decks.service';
-import { Deck } from 'src/decks/entities/deck.entity';
+import { Deck } from '../decks/entities/deck.entity';
+import { In } from 'typeorm';
+import { SpellUser } from './entities/spell-user.entity';
 
 @Injectable()
 export class UsersService {
@@ -25,7 +26,6 @@ export class UsersService {
     private spellsService: SpellsService,
     private trapsService: TrapsService,
     private monstersService: MonstersService,
-    private decksService: DecksService, // private jwtService: JwtService,
   ) {}
 
   async createAdminUser(createUserDto: CreateUserDto): Promise<User> {
@@ -44,9 +44,7 @@ export class UsersService {
       where: { id: userId },
       select: ['email', 'name', 'role', 'id'],
     });
-
     if (!user) throw new NotFoundException('Usuário não encontrado');
-
     return user;
   }
 
@@ -83,22 +81,69 @@ export class UsersService {
     return users;
   }
 
-  async addCardUser(addCardUserDto: AddCardUserDto, user: User): Promise<User> {
-    const { id } = addCardUserDto;
-    try {
-      const card = await this.spellsService.findCardById(id);
-      user.spells.push(card);
-    } catch (NotFoundException) {
-      try {
-        const card = await this.trapsService.findCardById(id);
-        user.traps.push(card);
-      } catch (NotFoundException) {
-        const card = await this.monstersService.findCardById(id);
-        user.monsters.push(card);
+  async findUser(userId: string): Promise<User> {
+    return await this.usersRepository
+      .createQueryBuilder('user')
+      .leftJoinAndSelect('user.spellsUser', 'spellsUser')
+      .leftJoinAndSelect('spellsUser.spell', 'spell')
+      .where('user.id = :userId', { userId })
+      .getOne();
+  }
+
+  async addCardUser(
+    addCardUserDto: AddCardUserDto,
+    userId: string,
+  ): Promise<User> {
+    const cardsIds = addCardUserDto.itemsCards.map(
+      (itemCard) => itemCard.cardId,
+    );
+
+    const user = await this.findUser(userId);
+    const spellsUser = user.spellsUser;
+    const spells = await this.spellsService.findBy(cardsIds);
+
+    const cardsUser = addCardUserDto.itemsCards.map((itemCard) => {
+      const spell = spells.find((card) => card.id === itemCard.cardId);
+
+      const existCardInUser = spellsUser.find(
+        (cards) => cards.spell.id === spell.id,
+      );
+
+      if (existCardInUser) {
+        existCardInUser.amount += itemCard.amount;
+        return existCardInUser;
+      } else {
+        const cardUser = new SpellUser();
+        cardUser.spell = spell;
+        cardUser.amount = itemCard.amount;
+        return cardUser;
       }
+    });
+
+    for (const card of spellsUser) {
+      const existCard = cardsUser.find(
+        (cards) => cards.spell.id === card.spell.id,
+      );
+
+      if (!existCard) cardsUser.push(card);
     }
+
+    user.spellsUser = cardsUser;
+    // try {
+    //   const card = await this.spellsService.findCardById(id);
+    //   user.spellsUser.push();
+    // } catch (NotFoundException) {
+    //   try {
+    //     const card = await this.trapsService.findCardById(id);
+    //     user.traps.push(card);
+    //   } catch (NotFoundException) {
+    //     const card = await this.monstersService.findCardById(id);
+    //     user.monsters.push(card);
+    //   }
+    // }
+
     try {
-      await user.save();
+      user.save();
       return user;
     } catch (error) {
       throw new InternalServerErrorException(
@@ -107,57 +152,34 @@ export class UsersService {
     }
   }
 
-  findCardById(list: any, type: string, id: String) {
-    const card = list.find((item) => item.id === id);
-    return card ? { type, item: card } : null;
-  }
+  // private findCardById(list: any, type: string, id: String) {
+  //   const card = list.find((item) => item.id === id);
+  //   return card ? { type, item: card } : null;
+  // }
 
-  async addCardDeckUser(
-    addCardDeckUserDto: AddCardDeckUserDto,
-    user: User,
-  ): Promise<Deck> {
-    const { cardId, nameDeck } = addCardDeckUserDto;
-    const deck = user.decks.find((item) => item.name === nameDeck);
-    if (deck === null || deck === undefined)
-      throw new NotFoundException(`Você não possui o deck ${nameDeck}`);
-    const card =
-      this.findCardById(user.spells, 'spell', cardId) ||
-      this.findCardById(user.traps, 'trap', cardId) ||
-      this.findCardById(user.monsters, 'monster', cardId);
-    if (!card) throw new NotFoundException('Você não possui essa carta');
-    if (card.type === 'spell') deck.spells.push(card.item);
-    else if (card.type === 'trap') deck.traps.push(card.item);
-    else deck.monsters.push(card.item);
-
-    // try {
-    //   const card = await this.spellsService.findCardByIdAndUserId(
-    //     cardId,
-    //     user.id,
-    //   );
-    //   deck.spells.push(card);
-    // } catch (NotFoundException) {
-    //   try {
-    //     const card = await this.trapsService.findCardByIdAndUserId(
-    //       cardId,
-    //       user.id,
-    //     );
-    //     deck.traps.push(card);
-    //   } catch (NotFoundException) {
-    //     const card = await this.monstersService.findCardByIdAndUserId(
-    //       cardId,
-    //       user.id,
-    //     );
-    //     deck.monsters.push(card);
-    //   }
-    // }
-
-    try {
-      await deck.save();
-      return deck;
-    } catch (error) {
-      throw new InternalServerErrorException(
-        'Erro ao salvar os dados no banco de dados',
-      );
-    }
-  }
+  // async addCardDeckUser(
+  //   addCardDeckUserDto: AddCardDeckUserDto,
+  //   user: User,
+  // ): Promise<Deck> {
+  //   const { cardId, nameDeck } = addCardDeckUserDto;
+  //   const deck = user.decks.find((item) => item.name === nameDeck);
+  //   if (deck === null || deck === undefined)
+  //     throw new NotFoundException(`Você não possui o deck ${nameDeck}`);
+  //   const card =
+  //     this.findCardById(user.spells, 'spell', cardId) ||
+  //     this.findCardById(user.traps, 'trap', cardId) ||
+  //     this.findCardById(user.monsters, 'monster', cardId);
+  //   if (!card) throw new NotFoundException('Você não possui essa carta');
+  //   if (card.type === 'spell') deck.spells.push(card.item);
+  //   else if (card.type === 'trap') deck.traps.push(card.item);
+  //   else deck.monsters.push(card.item);
+  //   try {
+  //     await deck.save();
+  //     return deck;
+  //   } catch (error) {
+  //     throw new InternalServerErrorException(
+  //       'Erro ao salvar os dados no banco de dados',
+  //     );
+  //   }
+  // }
 }
