@@ -32,8 +32,8 @@ export class DecksController {
   }
 
   @Delete('/:id')
-  async remove(@Param('id') id: string, @GetUser() user: User) {
-    await this.decksService.remove(user.id, id);
+  async remove(@Param('id') id: string) {
+    await this.decksService.remove(id);
     return {
       message: 'Deck removido com sucesso',
     };

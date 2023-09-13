@@ -17,6 +17,11 @@ import { AddCardUserDto } from './dtos/add-card-user.dto';
 import { SpellUser } from './entities/spell-user.entity';
 import { TrapUser } from './entities/trap-user.entity';
 import { MonsterUser } from './entities/monster-user.entity';
+import { AddCardDeckUserDto } from './dtos/add-card-deck-user.dto';
+import { DecksService } from '../decks/decks.service';
+import { Monster } from '../cards/entities/monster.entity';
+import { Spell } from '../cards/entities/spell.entity';
+import { Trap } from '../cards/entities/trap.entity';
 
 @Injectable()
 export class UsersService {
@@ -25,6 +30,7 @@ export class UsersService {
     private spellsService: SpellsService,
     private trapsService: TrapsService,
     private monstersService: MonstersService,
+    private decksService: DecksService,
   ) {}
 
   async createAdminUser(createUserDto: CreateUserDto): Promise<User> {
@@ -80,8 +86,12 @@ export class UsersService {
     return users;
   }
 
-  async findUser(userId: string): Promise<User> {
-    return await this.usersRepository.findUser(userId);
+  async findUserWithAllCards(userId: string): Promise<User> {
+    return await this.usersRepository.findUserWithAllCards(userId);
+  }
+
+  async findUserWithAllCardsAndDecks(userId: string): Promise<User> {
+    return await this.usersRepository.findUserWithAllCardsAndDecks(userId);
   }
 
   async addSpellCardsUser(
@@ -91,11 +101,11 @@ export class UsersService {
     const cardsIds = addCardUserDto.itemsCards.map(
       (itemCard) => itemCard.cardId,
     );
-    const user = await this.findUser(userId);
+    const user = await this.findUserWithAllCards(userId);
     const spellsUser = user.spellsUser;
     const spells = await this.spellsService.findBy(cardsIds);
 
-    const cardsUser = addCardUserDto.itemsCards.map((itemCard) => {
+    addCardUserDto.itemsCards.map((itemCard) => {
       const spell = spells.find((card) => card.id === itemCard.cardId);
       const existCardInUser = spellsUser.find(
         (cards) => cards.spell.id === spell.id,
@@ -103,24 +113,13 @@ export class UsersService {
 
       if (existCardInUser) {
         existCardInUser.amount += itemCard.amount;
-        return existCardInUser;
       } else {
         const cardUser = new SpellUser();
         cardUser.spell = spell;
         cardUser.amount = itemCard.amount;
-        return cardUser;
+        spellsUser.push(cardUser);
       }
     });
-
-    for (const card of spellsUser) {
-      const existCard = cardsUser.find(
-        (cards) => cards.spell.id === card.spell.id,
-      );
-
-      if (!existCard) cardsUser.push(card);
-    }
-
-    user.spellsUser = cardsUser;
 
     try {
       await user.save();
@@ -146,11 +145,11 @@ export class UsersService {
     const cardsIds = addCardUserDto.itemsCards.map(
       (itemCard) => itemCard.cardId,
     );
-    const user = await this.findUser(userId);
+    const user = await this.findUserWithAllCards(userId);
     const trapsUser = user.trapsUser;
     const traps = await this.trapsService.findBy(cardsIds);
 
-    const cardsUser = addCardUserDto.itemsCards.map((itemCard) => {
+    addCardUserDto.itemsCards.map((itemCard) => {
       const trap = traps.find((card) => card.id === itemCard.cardId);
       const existCardInUser = trapsUser.find(
         (cards) => cards.trap.id === trap.id,
@@ -158,24 +157,13 @@ export class UsersService {
 
       if (existCardInUser) {
         existCardInUser.amount += itemCard.amount;
-        return existCardInUser;
       } else {
         const cardUser = new TrapUser();
         cardUser.trap = trap;
         cardUser.amount = itemCard.amount;
-        return cardUser;
+        trapsUser.push(cardUser);
       }
     });
-
-    for (const card of trapsUser) {
-      const existCard = cardsUser.find(
-        (cards) => cards.trap.id === card.trap.id,
-      );
-
-      if (!existCard) cardsUser.push(card);
-    }
-
-    user.trapsUser = cardsUser;
 
     try {
       await user.save();
@@ -201,11 +189,11 @@ export class UsersService {
     const cardsIds = addCardUserDto.itemsCards.map(
       (itemCard) => itemCard.cardId,
     );
-    const user = await this.findUser(userId);
+    const user = await this.findUserWithAllCards(userId);
     const monstersUser = user.monstersUser;
     const monsters = await this.monstersService.findBy(cardsIds);
 
-    const cardsUser = addCardUserDto.itemsCards.map((itemCard) => {
+    addCardUserDto.itemsCards.map((itemCard) => {
       const monster = monsters.find((card) => card.id === itemCard.cardId);
       const existCardInUser = monstersUser.find(
         (cards) => cards.monster.id === monster.id,
@@ -213,24 +201,62 @@ export class UsersService {
 
       if (existCardInUser) {
         existCardInUser.amount += itemCard.amount;
-        return existCardInUser;
       } else {
         const cardUser = new MonsterUser();
         cardUser.monster = monster;
         cardUser.amount = itemCard.amount;
-        return cardUser;
+        monstersUser.push(cardUser);
       }
     });
 
-    for (const card of monstersUser) {
-      const existCard = cardsUser.find(
-        (cards) => cards.monster.id === card.monster.id,
+    try {
+      await user.save();
+      delete user.password;
+      delete user.salt;
+      delete user.status;
+      delete user.confirmationToken;
+      delete user.recoverToken;
+      delete user.createdAt;
+      delete user.updatedAt;
+      return user;
+    } catch (error) {
+      throw new InternalServerErrorException(
+        'Erro ao salvar os dados no banco de dados',
       );
-
-      if (!existCard) cardsUser.push(card);
     }
+  }
 
-    user.monstersUser = cardsUser;
+  async addCardDeckUser(
+    addCardDeckUserDto: AddCardDeckUserDto,
+    userId: string,
+  ): Promise<User> {
+    const { cardId, nameDeck } = addCardDeckUserDto;
+    const user = await this.findUserWithAllCardsAndDecks(userId);
+    const monstersUser = user.monstersUser;
+    const trapsUser = user.trapsUser;
+    const spellsUser = user.spellsUser;
+    const deckUser = user.decks.find((deck) => deck.name === nameDeck);
+    let cardUser: Spell | Monster | Trap;
+
+    cardUser = monstersUser.find((card) => card.monster.id === cardId)?.monster;
+
+    if (cardUser) {
+      deckUser.monsters.push(cardUser);
+    } else {
+      cardUser = trapsUser.find((card) => card.trap.id === cardId)?.trap;
+      if (cardUser) {
+        deckUser.traps.push(cardUser);
+      } else {
+        cardUser = spellsUser.find((card) => card.spell.id === cardId)?.spell;
+        if (cardUser) {
+          deckUser.spells.push(cardUser);
+        } else {
+          throw new NotFoundException(
+            'Você não possui essa carta ou o ID está incorreto',
+          );
+        }
+      }
+    }
 
     try {
       await user.save();

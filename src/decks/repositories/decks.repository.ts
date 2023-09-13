@@ -31,9 +31,7 @@ export class DecksRepository extends Repository<Deck> {
     }
   }
 
-  async findByUserIdAndId(userId: string, deckId: string): Promise<Deck> {
-    return await this.findOne({
-      where: { id: deckId, user: { id: userId } },
-    });
+  async findById(deckId: string): Promise<Deck> {
+    return await this.findOne({ where: { id: deckId } });
   }
 }

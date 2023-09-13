@@ -12,6 +12,7 @@ import {
   PrimaryGeneratedColumn,
   Unique,
 } from 'typeorm';
+import { Card } from '../../cards/entities/card.entity';
 
 @Entity('decks')
 @Unique(['user', 'name'])
@@ -22,15 +23,30 @@ export class Deck extends BaseEntity {
   @Column({ nullable: false, type: 'varchar', length: 200 })
   name: string;
 
-  @ManyToMany(() => Spell, { eager: true })
+  @ManyToMany(() => Spell, {
+    eager: true,
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
+    cascade: true,
+  })
   @JoinTable()
   spells: Spell[];
 
-  @ManyToMany(() => Trap, { eager: true })
+  @ManyToMany(() => Trap, {
+    eager: true,
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
+    cascade: true,
+  })
   @JoinTable()
   traps: Trap[];
 
-  @ManyToMany(() => Monster, { eager: true })
+  @ManyToMany(() => Monster, {
+    eager: true,
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
+    cascade: true,
+  })
   @JoinTable()
   monsters: Monster[];
 

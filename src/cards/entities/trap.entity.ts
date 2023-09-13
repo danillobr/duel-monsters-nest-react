@@ -1,4 +1,4 @@
-import { ChildEntity, Column, Entity, OneToMany } from 'typeorm';
+import { Column, Entity, OneToMany } from 'typeorm';
 import { Card } from './card.entity';
 import { TrapSymbol } from '../enum/trap-symbol.enum';
 import { TrapUser } from '../../users/entities/trap-user.entity';

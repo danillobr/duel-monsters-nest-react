@@ -92,7 +92,12 @@ export class User extends BaseEntity {
   })
   monstersUser: MonsterUser[];
 
-  @OneToMany(() => Deck, (deck) => deck.user, { eager: true })
+  @OneToMany(() => Deck, (deck) => deck.user, {
+    eager: true,
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
+    cascade: true,
+  })
   decks: Deck[];
 
   async checkPassword(password: string): Promise<boolean> {

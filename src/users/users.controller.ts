@@ -82,7 +82,7 @@ export class UsersController {
     @GetUser() user: User,
     @Body(ValidationPipe) addCardDeckUserDto: AddCardDeckUserDto,
   ) {
-    // return await this.usersService.addCardDeckUser(addCardDeckUserDto, user);
+    return await this.usersService.addCardDeckUser(addCardDeckUserDto, user.id);
   }
 
   @Patch(':id')

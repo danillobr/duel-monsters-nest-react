@@ -13,12 +13,12 @@ export class DecksService {
     return await this.decksRepository.createDeck(name, user);
   }
 
-  async remove(userId: string, deckId: string) {
-    const deck = await this.decksRepository.findByUserIdAndId(userId, deckId);
+  async remove(deckId: string) {
+    const deck = await this.decksRepository.findById(deckId);
     if (!deck) throw new NotFoundException('Deck não encontrado');
     const result = await this.decksRepository.delete(deckId);
     if (result.affected === 0) {
-      throw new NotFoundException('Não foi encontrada o deck do ID informado');
+      throw new NotFoundException('Não foi possível delete o deck');
     }
   }
 }

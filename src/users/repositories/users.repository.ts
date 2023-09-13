@@ -50,7 +50,7 @@ export class UsersRepository extends Repository<User> {
     return { users, total };
   }
 
-  async findUser(userId: string): Promise<User> {
+  async findUserWithAllCards(userId: string): Promise<User> {
     return await this.createQueryBuilder('user')
       .leftJoinAndSelect('user.spellsUser', 'spellsUser')
       .leftJoinAndSelect('user.monstersUser', 'monstersUser')
@@ -60,6 +60,22 @@ export class UsersRepository extends Repository<User> {
       .leftJoinAndSelect('trapsUser.trap', 'trap')
       .where('user.id = :userId', { userId })
       // .select(['user.id', 'user.name', 'user.role', 'spellsUser'])
+      .getOne();
+  }
+
+  async findUserWithAllCardsAndDecks(userId: string): Promise<User> {
+    return await this.createQueryBuilder('user')
+      .leftJoinAndSelect('user.spellsUser', 'spellsUser')
+      .leftJoinAndSelect('spellsUser.spell', 'spell')
+      .leftJoinAndSelect('user.monstersUser', 'monstersUser')
+      .leftJoinAndSelect('monstersUser.monster', 'monster')
+      .leftJoinAndSelect('user.trapsUser', 'trapsUser')
+      .leftJoinAndSelect('trapsUser.trap', 'trap')
+      .leftJoinAndSelect('user.decks', 'decks')
+      .leftJoinAndSelect('decks.spells', 'spells')
+      .leftJoinAndSelect('decks.traps', 'traps')
+      .leftJoinAndSelect('decks.monsters', 'monsters')
+      .where('user.id = :userId', { userId })
       .getOne();
   }
 
