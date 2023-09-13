@@ -66,15 +66,16 @@ export class UsersRepository extends Repository<User> {
   async findUserWithAllCardsAndDecks(userId: string): Promise<User> {
     return await this.createQueryBuilder('user')
       .leftJoinAndSelect('user.spellsUser', 'spellsUser')
-      .leftJoinAndSelect('spellsUser.spell', 'spell')
+      .leftJoinAndSelect('spellsUser.spell', 'spellUser')
       .leftJoinAndSelect('user.monstersUser', 'monstersUser')
       .leftJoinAndSelect('monstersUser.monster', 'monster')
       .leftJoinAndSelect('user.trapsUser', 'trapsUser')
       .leftJoinAndSelect('trapsUser.trap', 'trap')
       .leftJoinAndSelect('user.decks', 'decks')
-      .leftJoinAndSelect('decks.spells', 'spells')
-      .leftJoinAndSelect('decks.traps', 'traps')
-      .leftJoinAndSelect('decks.monsters', 'monsters')
+      .leftJoinAndSelect('decks.spellsDeck', 'spellsDeck')
+      .leftJoinAndSelect('spellsDeck.spell', 'spellDeck')
+      // .leftJoinAndSelect('decks.traps', 'traps')
+      // .leftJoinAndSelect('decks.monsters', 'monsters')
       .where('user.id = :userId', { userId })
       .getOne();
   }

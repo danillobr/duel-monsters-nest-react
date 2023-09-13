@@ -9,10 +9,12 @@ import {
   JoinTable,
   ManyToMany,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   Unique,
 } from 'typeorm';
 import { Card } from '../../cards/entities/card.entity';
+import { SpellDeck } from './spell-deck.entity';
 
 @Entity('decks')
 @Unique(['user', 'name'])
@@ -23,32 +25,40 @@ export class Deck extends BaseEntity {
   @Column({ nullable: false, type: 'varchar', length: 200 })
   name: string;
 
-  @ManyToMany(() => Spell, {
-    eager: true,
-    onDelete: 'CASCADE',
-    onUpdate: 'CASCADE',
-    cascade: true,
-  })
-  @JoinTable()
-  spells: Spell[];
+  // @ManyToMany(() => Spell, {
+  //   eager: true,
+  //   onDelete: 'CASCADE',
+  //   onUpdate: 'CASCADE',
+  //   cascade: true,
+  // })
+  // @JoinTable()
+  // spells: Spell[];
 
-  @ManyToMany(() => Trap, {
-    eager: true,
-    onDelete: 'CASCADE',
-    onUpdate: 'CASCADE',
-    cascade: true,
-  })
-  @JoinTable()
-  traps: Trap[];
+  // @ManyToMany(() => Trap, {
+  //   eager: true,
+  //   onDelete: 'CASCADE',
+  //   onUpdate: 'CASCADE',
+  //   cascade: true,
+  // })
+  // @JoinTable()
+  // traps: Trap[];
 
-  @ManyToMany(() => Monster, {
+  // @ManyToMany(() => Monster, {
+  //   eager: true,
+  //   onDelete: 'CASCADE',
+  //   onUpdate: 'CASCADE',
+  //   cascade: true,
+  // })
+  // @JoinTable()
+  // monsters: Monster[];
+
+  @OneToMany(() => SpellDeck, (spellDeck) => spellDeck.deck, {
     eager: true,
     onDelete: 'CASCADE',
     onUpdate: 'CASCADE',
     cascade: true,
   })
-  @JoinTable()
-  monsters: Monster[];
+  spellsDeck: SpellDeck[];
 
   @ManyToOne(() => User, (user) => user.decks)
   user: User;

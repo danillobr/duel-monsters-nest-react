@@ -22,6 +22,7 @@ import { DecksService } from '../decks/decks.service';
 import { Monster } from '../cards/entities/monster.entity';
 import { Spell } from '../cards/entities/spell.entity';
 import { Trap } from '../cards/entities/trap.entity';
+import { SpellDeck } from '../decks/entities/spell-deck.entity';
 
 @Injectable()
 export class UsersService {
@@ -230,33 +231,48 @@ export class UsersService {
     addCardDeckUserDto: AddCardDeckUserDto,
     userId: string,
   ): Promise<User> {
-    const { cardId, nameDeck } = addCardDeckUserDto;
+    const { cardId, nameDeck, amount } = addCardDeckUserDto;
     const user = await this.findUserWithAllCardsAndDecks(userId);
     const monstersUser = user.monstersUser;
     const trapsUser = user.trapsUser;
     const spellsUser = user.spellsUser;
     const deckUser = user.decks.find((deck) => deck.name === nameDeck);
+    const spellsDeck = deckUser.spellsDeck;
     let cardUser: Spell | Monster | Trap;
+    let existCardInDeck: SpellDeck;
 
-    cardUser = monstersUser.find((card) => card.monster.id === cardId)?.monster;
+    cardUser = spellsUser.find((card) => card.spell.id === cardId)?.spell;
 
     if (cardUser) {
-      deckUser.monsters.push(cardUser);
-    } else {
-      cardUser = trapsUser.find((card) => card.trap.id === cardId)?.trap;
-      if (cardUser) {
-        deckUser.traps.push(cardUser);
+      existCardInDeck = spellsDeck.find((spells) => spells.spell.id === cardId);
+      if (existCardInDeck) {
+        if()
       } else {
-        cardUser = spellsUser.find((card) => card.spell.id === cardId)?.spell;
-        if (cardUser) {
-          deckUser.spells.push(cardUser);
-        } else {
-          throw new NotFoundException(
-            'Você não possui essa carta ou o ID está incorreto',
-          );
-        }
+        const cardDeck = new SpellDeck();
+        cardDeck.spell = cardUser;
+        cardDeck.amount = 2;
+        spellsDeck.push(cardDeck);
       }
     }
+    // if (cardUser) {
+    //   // deckUser.monsters.push(cardUser);
+    //   console.log('Era monstro');
+    // } else {
+    //   cardUser = trapsUser.find((card) => card.trap.id === cardId)?.trap;
+    //   if (cardUser) {
+    //     // deckUser.traps.push(cardUser);
+    //     console.log('Era armadilha');
+    //   } else {
+    //     cardUser = spellsUser.find((card) => card.spell.id === cardId)?.spell;
+    //     if (cardUser) {
+    //       deckUser.spellsDeck   .push(cardUser);
+    //     } else {
+    //       throw new NotFoundException(
+    //         'Você não possui essa carta ou o ID está incorreto',
+    //       );
+    //     }
+    //   }
+    // }
 
     try {
       await user.save();
