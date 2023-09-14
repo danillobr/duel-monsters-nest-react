@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Injectable,
   InternalServerErrorException,
   NotFoundException,
@@ -19,10 +20,10 @@ import { TrapUser } from './entities/trap-user.entity';
 import { MonsterUser } from './entities/monster-user.entity';
 import { AddCardDeckUserDto } from './dtos/add-card-deck-user.dto';
 import { DecksService } from '../decks/decks.service';
-import { Monster } from '../cards/entities/monster.entity';
-import { Spell } from '../cards/entities/spell.entity';
-import { Trap } from '../cards/entities/trap.entity';
 import { SpellDeck } from '../decks/entities/spell-deck.entity';
+import { MonsterDeck } from 'src/decks/entities/monster-deck.entity';
+import { TrapDeck } from 'src/decks/entities/trap-deck.entity';
+import { InsufficientAmountException } from './errors/Insufficient-amount.exception';
 
 @Injectable()
 export class UsersService {
@@ -31,7 +32,6 @@ export class UsersService {
     private spellsService: SpellsService,
     private trapsService: TrapsService,
     private monstersService: MonstersService,
-    private decksService: DecksService,
   ) {}
 
   async createAdminUser(createUserDto: CreateUserDto): Promise<User> {
@@ -227,6 +227,72 @@ export class UsersService {
     }
   }
 
+  async addCardInSpellDeck(
+    spellsDeck: SpellDeck[],
+    cardDeck: SpellDeck,
+    cardUser: SpellUser,
+    amount: number,
+  ): Promise<boolean> {
+    if (cardDeck) {
+      if (cardDeck.amount + amount <= 3 && cardUser.amount >= amount) {
+        cardDeck.amount += amount;
+        cardUser.amount -= amount;
+      } else {
+        return true;
+      }
+    } else if (cardUser.amount >= amount) {
+      const cardDeck = new SpellDeck();
+      cardDeck.spell = cardUser.spell;
+      cardDeck.amount = amount;
+      cardUser.amount -= amount;
+      spellsDeck.push(cardDeck);
+    }
+  }
+
+  private async addCardInTrapDeck(
+    trapsDeck: TrapDeck[],
+    cardDeck: TrapDeck,
+    cardUser: TrapUser,
+    amount: number,
+  ): Promise<boolean> {
+    if (cardDeck) {
+      if (cardDeck.amount + amount <= 3 && cardUser.amount >= amount) {
+        cardDeck.amount += amount;
+        cardUser.amount -= amount;
+      } else {
+        return true;
+      }
+    } else if (cardUser.amount >= amount) {
+      const cardDeck = new TrapDeck();
+      cardDeck.trap = cardUser.trap;
+      cardDeck.amount = amount;
+      cardUser.amount -= amount;
+      trapsDeck.push(cardDeck);
+    }
+  }
+
+  private async addCardInMonsterDeck(
+    monstersDeck: MonsterDeck[],
+    cardDeck: MonsterDeck,
+    cardUser: MonsterUser,
+    amount: number,
+  ): Promise<boolean> {
+    if (cardDeck) {
+      if (cardDeck.amount + amount <= 3 && cardUser.amount >= amount) {
+        cardDeck.amount += amount;
+        cardUser.amount -= amount;
+      } else {
+        return true;
+      }
+    } else if (cardUser.amount >= amount) {
+      const cardDeck = new MonsterDeck();
+      cardDeck.monster = cardUser.monster;
+      cardDeck.amount = amount;
+      cardUser.amount -= amount;
+      monstersDeck.push(cardDeck);
+    }
+  }
+
   async addCardDeckUser(
     addCardDeckUserDto: AddCardDeckUserDto,
     userId: string,
@@ -238,41 +304,47 @@ export class UsersService {
     const spellsUser = user.spellsUser;
     const deckUser = user.decks.find((deck) => deck.name === nameDeck);
     const spellsDeck = deckUser.spellsDeck;
-    let cardUser: Spell | Monster | Trap;
-    let existCardInDeck: SpellDeck;
+    const trapsDeck = deckUser.trapsDeck;
+    const monstersDeck = deckUser.monstersDeck;
+    let cardUser: SpellUser | MonsterUser | TrapUser;
+    let cardDeck: SpellDeck | MonsterDeck | TrapDeck;
+    let InsufficientAmount: Boolean;
 
-    cardUser = spellsUser.find((card) => card.spell.id === cardId)?.spell;
+    cardUser = spellsUser.find((card) => card.spell.id === cardId);
+    cardDeck = spellsDeck.find((spells) => spells.spell.id === cardId);
 
     if (cardUser) {
-      existCardInDeck = spellsDeck.find((spells) => spells.spell.id === cardId);
-      if (existCardInDeck) {
-        if()
+      InsufficientAmount = await this.addCardInSpellDeck(
+        spellsDeck,
+        cardDeck,
+        cardUser,
+        amount,
+      );
+    } else {
+      cardUser = trapsUser.find((card) => card.trap.id === cardId);
+      cardDeck = trapsDeck.find((spells) => spells.trap.id === cardId);
+      if (cardUser) {
+        InsufficientAmount = await this.addCardInTrapDeck(
+          trapsDeck,
+          cardDeck,
+          cardUser,
+          amount,
+        );
       } else {
-        const cardDeck = new SpellDeck();
-        cardDeck.spell = cardUser;
-        cardDeck.amount = 2;
-        spellsDeck.push(cardDeck);
+        cardUser = monstersUser.find((card) => card.monster.id === cardId);
+        cardDeck = monstersDeck.find((spells) => spells.monster.id === cardId);
+        if (cardUser) {
+          InsufficientAmount = await this.addCardInMonsterDeck(
+            monstersDeck,
+            cardDeck,
+            cardUser,
+            amount,
+          );
+        }
       }
     }
-    // if (cardUser) {
-    //   // deckUser.monsters.push(cardUser);
-    //   console.log('Era monstro');
-    // } else {
-    //   cardUser = trapsUser.find((card) => card.trap.id === cardId)?.trap;
-    //   if (cardUser) {
-    //     // deckUser.traps.push(cardUser);
-    //     console.log('Era armadilha');
-    //   } else {
-    //     cardUser = spellsUser.find((card) => card.spell.id === cardId)?.spell;
-    //     if (cardUser) {
-    //       deckUser.spellsDeck   .push(cardUser);
-    //     } else {
-    //       throw new NotFoundException(
-    //         'Você não possui essa carta ou o ID está incorreto',
-    //       );
-    //     }
-    //   }
-    // }
+
+    if (InsufficientAmount) throw new InsufficientAmountException();
 
     try {
       await user.save();

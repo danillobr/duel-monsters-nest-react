@@ -74,8 +74,10 @@ export class UsersRepository extends Repository<User> {
       .leftJoinAndSelect('user.decks', 'decks')
       .leftJoinAndSelect('decks.spellsDeck', 'spellsDeck')
       .leftJoinAndSelect('spellsDeck.spell', 'spellDeck')
-      // .leftJoinAndSelect('decks.traps', 'traps')
-      // .leftJoinAndSelect('decks.monsters', 'monsters')
+      .leftJoinAndSelect('decks.trapsDeck', 'trapsDeck')
+      .leftJoinAndSelect('trapsDeck.trap', 'trapDeck')
+      .leftJoinAndSelect('decks.monstersDeck', 'monstersDeck')
+      .leftJoinAndSelect('monstersDeck.monster', 'monsterDeck')
       .where('user.id = :userId', { userId })
       .getOne();
   }
