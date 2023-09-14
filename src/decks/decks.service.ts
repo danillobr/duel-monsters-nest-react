@@ -21,4 +21,16 @@ export class DecksService {
       throw new NotFoundException('Não foi possível delete o deck');
     }
   }
+
+  async deleteSpellDeck(spellDeckId: string) {
+    this.decksRepository.deleteSpellDeck(spellDeckId);
+  }
+
+  async deleteTrapDeck(trapDeckId: string) {
+    this.decksRepository.deleteTrapDeck(trapDeckId);
+  }
+
+  async deleteMonsterDeck(monsterDeckId: string) {
+    this.decksRepository.deleteMonsterDeck(monsterDeckId);
+  }
 }

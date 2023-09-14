@@ -34,4 +34,28 @@ export class DecksRepository extends Repository<Deck> {
   async findById(deckId: string): Promise<Deck> {
     return await this.findOne({ where: { id: deckId } });
   }
+
+  async deleteSpellDeck(spellDeckId: string) {
+    await this.createQueryBuilder()
+      .delete()
+      .from('spells_decks')
+      .where('id = :spellDeckId', { spellDeckId })
+      .execute();
+  }
+
+  async deleteTrapDeck(trapDeckId: string) {
+    await this.createQueryBuilder()
+      .delete()
+      .from('traps_decks')
+      .where('id = :trapDeckId', { trapDeckId })
+      .execute();
+  }
+
+  async deleteMonsterDeck(monsterDeckId: string) {
+    await this.createQueryBuilder()
+      .delete()
+      .from('monsters_decks')
+      .where('id = :monsterDeckId', { monsterDeckId })
+      .execute();
+  }
 }

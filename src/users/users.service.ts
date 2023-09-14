@@ -1,5 +1,4 @@
 import {
-  BadRequestException,
   Injectable,
   InternalServerErrorException,
   NotFoundException,
@@ -21,9 +20,10 @@ import { MonsterUser } from './entities/monster-user.entity';
 import { AddCardDeckUserDto } from './dtos/add-card-deck-user.dto';
 import { DecksService } from '../decks/decks.service';
 import { SpellDeck } from '../decks/entities/spell-deck.entity';
-import { MonsterDeck } from 'src/decks/entities/monster-deck.entity';
-import { TrapDeck } from 'src/decks/entities/trap-deck.entity';
+import { MonsterDeck } from '../decks/entities/monster-deck.entity';
+import { TrapDeck } from '../decks/entities/trap-deck.entity';
 import { InsufficientAmountException } from './errors/Insufficient-amount.exception';
+import { RemoveCardDeckUserDto } from './dtos/remove-card-deck-user.dto';
 
 @Injectable()
 export class UsersService {
@@ -32,6 +32,7 @@ export class UsersService {
     private spellsService: SpellsService,
     private trapsService: TrapsService,
     private monstersService: MonstersService,
+    private decksService: DecksService,
   ) {}
 
   async createAdminUser(createUserDto: CreateUserDto): Promise<User> {
@@ -227,7 +228,7 @@ export class UsersService {
     }
   }
 
-  async addCardInSpellDeck(
+  private async addCardInSpellDeck(
     spellsDeck: SpellDeck[],
     cardDeck: SpellDeck,
     cardUser: SpellUser,
@@ -322,7 +323,7 @@ export class UsersService {
       );
     } else {
       cardUser = trapsUser.find((card) => card.trap.id === cardId);
-      cardDeck = trapsDeck.find((spells) => spells.trap.id === cardId);
+      cardDeck = trapsDeck.find((traps) => traps.trap.id === cardId);
       if (cardUser) {
         InsufficientAmount = await this.addCardInTrapDeck(
           trapsDeck,
@@ -332,7 +333,9 @@ export class UsersService {
         );
       } else {
         cardUser = monstersUser.find((card) => card.monster.id === cardId);
-        cardDeck = monstersDeck.find((spells) => spells.monster.id === cardId);
+        cardDeck = monstersDeck.find(
+          (monsters) => monsters.monster.id === cardId,
+        );
         if (cardUser) {
           InsufficientAmount = await this.addCardInMonsterDeck(
             monstersDeck,
@@ -345,6 +348,116 @@ export class UsersService {
     }
 
     if (InsufficientAmount) throw new InsufficientAmountException();
+
+    try {
+      await user.save();
+      delete user.password;
+      delete user.salt;
+      delete user.status;
+      delete user.confirmationToken;
+      delete user.recoverToken;
+      delete user.createdAt;
+      delete user.updatedAt;
+      return user;
+    } catch (error) {
+      throw new InternalServerErrorException(
+        'Erro ao salvar os dados no banco de dados',
+      );
+    }
+  }
+
+  private async removeCardInSpellDeck(
+    spellsDeck: SpellDeck[],
+    cardDeck: SpellDeck,
+    cardUser: SpellUser,
+    amount: number,
+  ): Promise<void> {
+    if (cardDeck) {
+      cardDeck.amount -= amount;
+      cardUser.amount += amount;
+      if (cardDeck.amount === 0) {
+        const index = spellsDeck.findIndex((item) => item.id === cardDeck.id);
+        this.decksService.deleteSpellDeck(cardDeck.id);
+        spellsDeck.splice(index, 1);
+      }
+    }
+  }
+
+  private async removeCardInTrapDeck(
+    trapsDeck: TrapDeck[],
+    cardDeck: TrapDeck,
+    cardUser: TrapUser,
+    amount: number,
+  ): Promise<void> {
+    if (cardDeck) {
+      cardDeck.amount -= amount;
+      cardUser.amount += amount;
+      if (cardDeck.amount === 0) {
+        const index = trapsDeck.findIndex((item) => item.id === cardDeck.id);
+        this.decksService.deleteTrapDeck(cardDeck.id);
+        trapsDeck.splice(index, 1);
+      }
+    }
+  }
+
+  private async removeCardInMonsterDeck(
+    monstersDeck: MonsterDeck[],
+    cardDeck: MonsterDeck,
+    cardUser: MonsterUser,
+    amount: number,
+  ): Promise<void> {
+    if (cardDeck) {
+      cardDeck.amount -= amount;
+      cardUser.amount += amount;
+      if (cardDeck.amount === 0) {
+        const index = monstersDeck.findIndex((item) => item.id === cardDeck.id);
+        this.decksService.deleteMonsterDeck(cardDeck.id);
+        monstersDeck.splice(index, 1);
+      }
+    }
+  }
+
+  async removeCardDeckUser(
+    removeCardDeckUserDto: RemoveCardDeckUserDto,
+    userId: string,
+  ): Promise<User> {
+    const { cardId, nameDeck, amount } = removeCardDeckUserDto;
+    const user = await this.findUserWithAllCardsAndDecks(userId);
+    const monstersUser = user.monstersUser;
+    const trapsUser = user.trapsUser;
+    const spellsUser = user.spellsUser;
+    const deckUser = user.decks.find((deck) => deck.name === nameDeck);
+    const spellsDeck = deckUser.spellsDeck;
+    const trapsDeck = deckUser.trapsDeck;
+    const monstersDeck = deckUser.monstersDeck;
+    let cardUser: SpellUser | MonsterUser | TrapUser;
+    let cardDeck: SpellDeck | MonsterDeck | TrapDeck;
+
+    cardUser = spellsUser.find((card) => card.spell.id === cardId);
+    cardDeck = spellsDeck.find((spells) => spells.spell.id === cardId);
+
+    if (cardUser) {
+      await this.removeCardInSpellDeck(spellsDeck, cardDeck, cardUser, amount);
+    } else {
+      cardUser = trapsUser.find((card) => card.trap.id === cardId);
+      cardDeck = trapsDeck.find((traps) => traps.trap.id === cardId);
+      if (cardUser) {
+        await this.removeCardInTrapDeck(trapsDeck, cardDeck, cardUser, amount);
+      } else {
+        cardUser = monstersUser.find((card) => card.monster.id === cardId);
+        cardDeck = monstersDeck.find(
+          (monsters) => monsters.monster.id === cardId,
+        );
+        if (cardUser) {
+          await this.removeCardInMonsterDeck(
+            monstersDeck,
+            cardDeck,
+            cardUser,
+            amount,
+          );
+        }
+      }
+    }
 
     try {
       await user.save();
