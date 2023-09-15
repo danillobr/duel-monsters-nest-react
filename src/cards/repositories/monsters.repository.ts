@@ -49,4 +49,12 @@ export class MonstersRepository extends Repository<Monster> {
   async findById(id: string): Promise<Monster> {
     return await this.findOne({ where: { id } });
   }
+
+  async deleteMonsterUser(monsterUserId: string) {
+    await this.createQueryBuilder()
+      .delete()
+      .from('monsters_users')
+      .where('id = :monsterUserId', { monsterUserId })
+      .execute();
+  }
 }

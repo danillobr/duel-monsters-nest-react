@@ -12,6 +12,7 @@ import { MonstersService } from '../cards/monsters.service';
 import { MonstersRepository } from '../cards/repositories/monsters.repository';
 import { DecksService } from '../decks/decks.service';
 import { DecksRepository } from '../decks/repositories/decks.repository';
+import { CustomError } from 'src/Errors/custom-errors.error';
 
 @Module({
   imports: [
@@ -29,6 +30,7 @@ import { DecksRepository } from '../decks/repositories/decks.repository';
     MonstersRepository,
     DecksService,
     DecksRepository,
+    CustomError,
   ],
   controllers: [UsersController],
 })

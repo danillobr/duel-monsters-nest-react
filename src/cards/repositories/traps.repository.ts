@@ -45,4 +45,12 @@ export class TrapsRepository extends Repository<Trap> {
   async findById(id: string): Promise<Trap> {
     return await this.findOne({ where: { id } });
   }
+
+  async deleteTrapUser(trapUserId: string) {
+    await this.createQueryBuilder()
+      .delete()
+      .from('traps_users')
+      .where('id = :trapUserId', { trapUserId })
+      .execute();
+  }
 }

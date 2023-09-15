@@ -26,6 +26,7 @@ import { AddCardUserDto } from './dtos/add-card-user.dto';
 import { AddCardDeckUserDto } from './dtos/add-card-deck-user.dto';
 import { idText } from 'typescript';
 import { RemoveCardDeckUserDto } from './dtos/remove-card-deck-user.dto';
+import { RemoveCardUserDto } from './dtos/remove-card-user.dto';
 
 @Controller('users')
 @UseGuards(AuthGuard(), RolesGuard)
@@ -76,6 +77,14 @@ export class UsersController {
     @Body(ValidationPipe) addCardUserDto: AddCardUserDto,
   ) {
     return await this.usersService.addMonsterCardsUser(addCardUserDto, user.id);
+  }
+
+  @Patch('/remove-card')
+  async removeCard(
+    @GetUser() user: User,
+    @Body(ValidationPipe) removeCardUserDto: RemoveCardUserDto,
+  ) {
+    return await this.usersService.removeCardUser(removeCardUserDto, user.id);
   }
 
   @Patch('/add-card-deck')

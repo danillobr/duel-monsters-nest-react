@@ -16,7 +16,6 @@ class ItemsCardsDto {
 
   @IsInt()
   @Min(1)
-  @Max(3)
   @IsNotEmpty({ message: 'informe a quantidade de cartas' })
   amount: number;
 }

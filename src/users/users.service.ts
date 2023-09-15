@@ -22,8 +22,10 @@ import { DecksService } from '../decks/decks.service';
 import { SpellDeck } from '../decks/entities/spell-deck.entity';
 import { MonsterDeck } from '../decks/entities/monster-deck.entity';
 import { TrapDeck } from '../decks/entities/trap-deck.entity';
-import { InsufficientAmountException } from './errors/Insufficient-amount.exception';
 import { RemoveCardDeckUserDto } from './dtos/remove-card-deck-user.dto';
+import { RemoveCardUserDto } from './dtos/remove-card-user.dto';
+import { Deck } from 'src/decks/entities/deck.entity';
+import { CustomError } from 'src/Errors/custom-errors.error';
 
 @Injectable()
 export class UsersService {
@@ -233,13 +235,16 @@ export class UsersService {
     cardDeck: SpellDeck,
     cardUser: SpellUser,
     amount: number,
-  ): Promise<boolean> {
+  ): Promise<void> {
     if (cardDeck) {
       if (cardDeck.amount + amount <= 3 && cardUser.amount >= amount) {
         cardDeck.amount += amount;
         cardUser.amount -= amount;
       } else {
-        return true;
+        throw new CustomError(
+          'Limite máximo de 3 cartas por deck atingido,' +
+            ' ou não tem cartas suficientes na sua lista de cartas',
+        );
       }
     } else if (cardUser.amount >= amount) {
       const cardDeck = new SpellDeck();
@@ -255,13 +260,16 @@ export class UsersService {
     cardDeck: TrapDeck,
     cardUser: TrapUser,
     amount: number,
-  ): Promise<boolean> {
+  ): Promise<void> {
     if (cardDeck) {
       if (cardDeck.amount + amount <= 3 && cardUser.amount >= amount) {
         cardDeck.amount += amount;
         cardUser.amount -= amount;
       } else {
-        return true;
+        throw new CustomError(
+          'Limite máximo de 3 cartas por deck atingido,' +
+            ' ou não tem cartas suficientes na sua lista de cartas',
+        );
       }
     } else if (cardUser.amount >= amount) {
       const cardDeck = new TrapDeck();
@@ -277,13 +285,16 @@ export class UsersService {
     cardDeck: MonsterDeck,
     cardUser: MonsterUser,
     amount: number,
-  ): Promise<boolean> {
+  ): Promise<void> {
     if (cardDeck) {
       if (cardDeck.amount + amount <= 3 && cardUser.amount >= amount) {
         cardDeck.amount += amount;
         cardUser.amount -= amount;
       } else {
-        return true;
+        throw new CustomError(
+          'Limite máximo de 3 cartas por deck atingido,' +
+            ' ou não tem cartas suficiente na sua lista de cartas',
+        );
       }
     } else if (cardUser.amount >= amount) {
       const cardDeck = new MonsterDeck();
@@ -309,45 +320,36 @@ export class UsersService {
     const monstersDeck = deckUser.monstersDeck;
     let cardUser: SpellUser | MonsterUser | TrapUser;
     let cardDeck: SpellDeck | MonsterDeck | TrapDeck;
-    let InsufficientAmount: Boolean;
 
     cardUser = spellsUser.find((card) => card.spell.id === cardId);
     cardDeck = spellsDeck.find((spells) => spells.spell.id === cardId);
 
     if (cardUser) {
-      InsufficientAmount = await this.addCardInSpellDeck(
-        spellsDeck,
-        cardDeck,
-        cardUser,
-        amount,
-      );
+      await this.addCardInSpellDeck(spellsDeck, cardDeck, cardUser, amount);
     } else {
       cardUser = trapsUser.find((card) => card.trap.id === cardId);
       cardDeck = trapsDeck.find((traps) => traps.trap.id === cardId);
       if (cardUser) {
-        InsufficientAmount = await this.addCardInTrapDeck(
-          trapsDeck,
-          cardDeck,
-          cardUser,
-          amount,
-        );
+        await this.addCardInTrapDeck(trapsDeck, cardDeck, cardUser, amount);
       } else {
         cardUser = monstersUser.find((card) => card.monster.id === cardId);
         cardDeck = monstersDeck.find(
           (monsters) => monsters.monster.id === cardId,
         );
         if (cardUser) {
-          InsufficientAmount = await this.addCardInMonsterDeck(
+          await this.addCardInMonsterDeck(
             monstersDeck,
             cardDeck,
             cardUser,
             amount,
           );
+        } else {
+          throw new NotFoundException(
+            'Você não possui essa carta na sua lista de cartas',
+          );
         }
       }
     }
-
-    if (InsufficientAmount) throw new InsufficientAmountException();
 
     try {
       await user.save();
@@ -372,14 +374,19 @@ export class UsersService {
     cardUser: SpellUser,
     amount: number,
   ): Promise<void> {
-    if (cardDeck) {
-      cardDeck.amount -= amount;
-      cardUser.amount += amount;
-      if (cardDeck.amount === 0) {
-        const index = spellsDeck.findIndex((item) => item.id === cardDeck.id);
-        this.decksService.deleteSpellDeck(cardDeck.id);
-        spellsDeck.splice(index, 1);
-      }
+    if (cardDeck.amount - amount < 0) {
+      throw new CustomError(
+        `Não é possível remover ${amount} cartas,` +
+          ` pois só existem ${cardDeck.amount} cartas ${cardDeck.spell.name}` +
+          ` no deck`,
+      );
+    }
+    cardDeck.amount -= amount;
+    cardUser.amount += amount;
+    if (cardDeck.amount === 0) {
+      const index = spellsDeck.findIndex((item) => item.id === cardDeck.id);
+      this.decksService.deleteSpellDeck(cardDeck.id);
+      spellsDeck.splice(index, 1);
     }
   }
 
@@ -389,14 +396,19 @@ export class UsersService {
     cardUser: TrapUser,
     amount: number,
   ): Promise<void> {
-    if (cardDeck) {
-      cardDeck.amount -= amount;
-      cardUser.amount += amount;
-      if (cardDeck.amount === 0) {
-        const index = trapsDeck.findIndex((item) => item.id === cardDeck.id);
-        this.decksService.deleteTrapDeck(cardDeck.id);
-        trapsDeck.splice(index, 1);
-      }
+    if (cardDeck.amount - amount < 0) {
+      throw new CustomError(
+        `Não é possível remover ${amount} cartas,` +
+          ` pois só existem ${cardDeck.amount} cartas ${cardDeck.trap.name}` +
+          ` no deck`,
+      );
+    }
+    cardDeck.amount -= amount;
+    cardUser.amount += amount;
+    if (cardDeck.amount === 0) {
+      const index = trapsDeck.findIndex((item) => item.id === cardDeck.id);
+      this.decksService.deleteTrapDeck(cardDeck.id);
+      trapsDeck.splice(index, 1);
     }
   }
 
@@ -406,14 +418,19 @@ export class UsersService {
     cardUser: MonsterUser,
     amount: number,
   ): Promise<void> {
-    if (cardDeck) {
-      cardDeck.amount -= amount;
-      cardUser.amount += amount;
-      if (cardDeck.amount === 0) {
-        const index = monstersDeck.findIndex((item) => item.id === cardDeck.id);
-        this.decksService.deleteMonsterDeck(cardDeck.id);
-        monstersDeck.splice(index, 1);
-      }
+    if (cardDeck.amount - amount < 0) {
+      throw new CustomError(
+        `Não é possível remover ${amount} cartas,` +
+          ` pois só existem ${cardDeck.amount} cartas ${cardDeck.monster.name}` +
+          ` no deck`,
+      );
+    }
+    cardDeck.amount -= amount;
+    cardUser.amount += amount;
+    if (cardDeck.amount === 0) {
+      const index = monstersDeck.findIndex((item) => item.id === cardDeck.id);
+      this.decksService.deleteMonsterDeck(cardDeck.id);
+      monstersDeck.splice(index, 1);
     }
   }
 
@@ -455,7 +472,114 @@ export class UsersService {
             cardUser,
             amount,
           );
-        }
+        } else
+          throw new NotFoundException(
+            `Carta não encontrada no deck ${nameDeck}`,
+          );
+      }
+    }
+
+    try {
+      await user.save();
+      delete user.password;
+      delete user.salt;
+      delete user.status;
+      delete user.confirmationToken;
+      delete user.recoverToken;
+      delete user.createdAt;
+      delete user.updatedAt;
+      return user;
+    } catch (error) {
+      throw new InternalServerErrorException(
+        'Erro ao salvar os dados no banco de dados',
+      );
+    }
+  }
+
+  private async removeCardInSpellUser(
+    deckUser: Deck,
+    spellsUser: SpellUser[],
+    cardUser: SpellUser,
+    amount: number,
+  ): Promise<void> {
+    if (cardUser.amount - amount < 0) {
+      throw new CustomError('Não é possível remover essa quantidade de cartas');
+    } else if (cardUser.amount - amount === 0 && !deckUser) {
+      const index = spellsUser.findIndex((item) => item.id === cardUser.id);
+      this.spellsService.deleteSpellUser(cardUser.id);
+      spellsUser.splice(index, 1);
+    } else cardUser.amount -= amount;
+  }
+
+  private async removeCardInTrapUser(
+    deckUser: Deck,
+    trapsUser: TrapUser[],
+    cardUser: TrapUser,
+    amount: number,
+  ): Promise<void> {
+    if (cardUser.amount - amount < 0) {
+      throw new CustomError('Não é possível remover essa quantidade de cartas');
+    } else if (cardUser.amount - amount === 0 && !deckUser) {
+      const index = trapsUser.findIndex((item) => item.id === cardUser.id);
+      this.trapsService.deleteTrapUser(cardUser.id);
+      trapsUser.splice(index, 1);
+    } else cardUser.amount -= amount;
+  }
+
+  private async removeCardInMonsterUser(
+    deckUser: Deck,
+    monstersUser: MonsterUser[],
+    cardUser: MonsterUser,
+    amount: number,
+  ): Promise<void> {
+    if (cardUser.amount - amount < 0) {
+      throw new CustomError('Não é possível remover essa quantidade de cartas');
+    } else if (cardUser.amount - amount === 0 && !deckUser) {
+      const index = monstersUser.findIndex((item) => item.id === cardUser.id);
+      this.trapsService.deleteTrapUser(cardUser.id);
+      monstersUser.splice(index, 1);
+    } else cardUser.amount -= amount;
+  }
+
+  async removeCardUser(
+    removeCardUserDto: RemoveCardUserDto,
+    userId: string,
+  ): Promise<User> {
+    const { cardId, amount } = removeCardUserDto;
+    const user = await this.findUserWithAllCardsAndDecks(userId);
+    const monstersUser = user.monstersUser;
+    const trapsUser = user.trapsUser;
+    const spellsUser = user.spellsUser;
+    let cardUser: SpellUser | MonsterUser | TrapUser;
+    let deckUser: Deck;
+
+    cardUser = spellsUser.find((card) => card.spell.id === cardId);
+    deckUser = user.decks.find((deck) =>
+      deck.spellsDeck.find((spells) => spells.spell.id === cardId),
+    );
+
+    if (cardUser) {
+      await this.removeCardInSpellUser(deckUser, spellsUser, cardUser, amount);
+    } else {
+      cardUser = trapsUser.find((card) => card.trap.id === cardId);
+      deckUser = user.decks.find((deck) =>
+        deck.trapsDeck.find((traps) => traps.trap.id === cardId),
+      );
+      if (cardUser) {
+        await this.removeCardInTrapUser(deckUser, trapsUser, cardUser, amount);
+      } else {
+        cardUser = monstersUser.find((card) => card.monster.id === cardId);
+        deckUser = user.decks.find((deck) =>
+          deck.monstersDeck.find((traps) => traps.monster.id === cardId),
+        );
+        if (cardUser) {
+          await this.removeCardInMonsterUser(
+            deckUser,
+            monstersUser,
+            cardUser,
+            amount,
+          );
+        } else throw new NotFoundException('Carta não encontrada');
       }
     }
 

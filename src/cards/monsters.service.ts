@@ -44,4 +44,8 @@ export class MonstersService {
       throw new NotFoundException('Não foi encontrada a carta do ID informado');
     }
   }
+
+  async deleteMonsterUser(monsterUserId: string) {
+    this.monstersRepository.deleteMonsterUser(monsterUserId);
+  }
 }
