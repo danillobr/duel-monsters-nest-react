@@ -4,66 +4,73 @@ import {
   NotFoundException,
   UnprocessableEntityException,
 } from '@nestjs/common';
-import { UserRole } from './enum/user-roles.enum';
-import { User } from './entities/user.entity';
-import { CreateUserDto } from './dtos/create-user.dto';
-import { UsersRepository } from './repositories/users.repository';
-import { UpdateUserDto } from './dtos/update-user.dto';
-import { FindUsersQueryDto } from './dtos/find-users-query.dto';
-import { SpellsService } from '../cards/spells.service';
-import { TrapsService } from '../cards/traps.service';
-import { MonstersService } from '../cards/monsters.service';
-import { AddCardUserDto } from './dtos/add-card-user.dto';
-import { AddCardDeckUserDto } from './dtos/add-card-deck-user.dto';
+
+import { SpellsService } from './spells.service';
+import { TrapsService } from './traps.service';
+import { MonstersService } from './monsters.service';
+
 import { DecksService } from '../decks/decks.service';
 import { SpellDeck } from '../decks/entities/spell-deck.entity';
 import { MonsterDeck } from '../decks/entities/monster-deck.entity';
 import { TrapDeck } from '../decks/entities/trap-deck.entity';
-import { RemoveCardDeckUserDto } from './dtos/remove-card-deck-user.dto';
-import { RemoveCardUserDto } from './dtos/remove-card-user.dto';
+
 import { Deck } from '../decks/entities/deck.entity';
 import { CustomError } from '../Errors/custom-errors.error';
+import { UsersCardsRepository } from './repositories/users-cards.repository';
+import { UserCards } from './entities/user-cards.entity';
+import { AddCardUserDto } from '../users/dtos/add-card-user.dto';
+import { UserSpell } from './entities/user-spell.entity';
+import { UserTrap } from './entities/user-trap.entity';
+import { UserMonster } from './entities/user-monster.entity';
 
 @Injectable()
-export class UsersService {
+export class UsersCardsService {
   constructor(
-    private readonly usersRepository: UsersRepository,
+    private readonly usersCardsRepository: UsersCardsRepository,
     private spellsService: SpellsService,
     private trapsService: TrapsService,
     private monstersService: MonstersService,
-    private decksService: DecksService,
   ) {}
 
-  async createAdminUser(createUserDto: CreateUserDto): Promise<User> {
-    if (createUserDto.password != createUserDto.passwordConfirmation) {
-      throw new UnprocessableEntityException('As senhas não conferem');
-    } else {
-      return await this.usersRepository.createUser(
-        createUserDto,
-        UserRole.ADMIN,
+  async findUserCards(userCardsId: string): Promise<UserCards> {
+    return await this.usersCardsRepository.findUserCards(userCardsId);
+  }
+
+  // async findUserWithAllCardsAndDecks(userId: string): Promise<User> {
+  //   return await this.usersRepository.findUserWithAllCardsAndDecks(userId);
+  // }
+
+  async addSpellsCardsInUserCards(
+    addCardUserDto: AddCardUserDto,
+    userCardsId: string,
+  ): Promise<UserCards> {
+    const cardsIds = addCardUserDto.itemsCards.map(
+      (itemCard) => itemCard.cardId,
+    );
+    const userCards = await this.findUserCards(userCardsId);
+    console.log('aqui: ', userCards);
+    const userSpells = userCards.userSpells;
+    const spells = await this.spellsService.findBy(cardsIds);
+
+    addCardUserDto.itemsCards.map((itemCard) => {
+      const spell = spells.find((card) => card.id === itemCard.cardId);
+      const existCardInUser = userSpells.find(
+        (cards) => cards.spell.id === spell.id,
       );
-    }
-  }
 
-  async findUserById(userId: string): Promise<User> {
-    const user = await this.usersRepository.findOne({
-      where: { id: userId },
-      select: ['email', 'name', 'role', 'id'],
+      if (existCardInUser) {
+        existCardInUser.amount += itemCard.amount;
+      } else {
+        const userSpell = new UserSpell();
+        userSpell.spell = spell;
+        userSpell.amount = itemCard.amount;
+        userSpells.push(userSpell);
+      }
     });
-    if (!user) throw new NotFoundException('Usuário não encontrado');
-    return user;
-  }
 
-  async updateUser(updateUserDto: UpdateUserDto, id: string): Promise<User> {
-    const user = await this.findUserById(id);
-    const { name, email, role, status } = updateUserDto;
-    user.name = name ? name : user.name;
-    user.email = email ? email : user.email;
-    user.role = role ? role : user.role;
-    user.status = status === undefined ? user.status : status;
     try {
-      await user.save();
-      return user;
+      await userCards.save();
+      return userCards;
     } catch (error) {
       throw new InternalServerErrorException(
         'Erro ao salvar os dados no banco de dados',
@@ -71,25 +78,204 @@ export class UsersService {
     }
   }
 
-  async deleteUser(userId: string) {
-    const result = await this.usersRepository.delete({ id: userId });
-    if (result.affected === 0) {
-      throw new NotFoundException(
-        'Não foi encontrado um usuário com o ID informado',
+  async addTrapsCardsInUserCards(
+    addCardUserDto: AddCardUserDto,
+    userCardsId: string,
+  ): Promise<UserCards> {
+    const cardsIds = addCardUserDto.itemsCards.map(
+      (itemCard) => itemCard.cardId,
+    );
+    const userCards = await this.findUserCards(userCardsId);
+    const userTraps = userCards.userTraps;
+    const traps = await this.trapsService.findBy(cardsIds);
+
+    addCardUserDto.itemsCards.map((itemCard) => {
+      const trap = traps.find((card) => card.id === itemCard.cardId);
+      const existCardInUser = userTraps.find(
+        (cards) => cards.trap.id === trap.id,
+      );
+
+      if (existCardInUser) {
+        existCardInUser.amount += itemCard.amount;
+      } else {
+        const userTrap = new UserTrap();
+        userTrap.trap = trap;
+        userTrap.amount = itemCard.amount;
+        userTraps.push(userTrap);
+      }
+    });
+
+    try {
+      await userCards.save();
+      return userCards;
+    } catch (error) {
+      throw new InternalServerErrorException(
+        'Erro ao salvar os dados no banco de dados',
       );
     }
   }
 
-  async findUsers(
-    queryDto: FindUsersQueryDto,
-  ): Promise<{ users: User[]; total: number }> {
-    const users = await this.usersRepository.findUsers(queryDto);
-    return users;
+  async addMonstersCardsInUserCards(
+    addCardUserDto: AddCardUserDto,
+    userCardsId: string,
+  ): Promise<UserCards> {
+    const cardsIds = addCardUserDto.itemsCards.map(
+      (itemCard) => itemCard.cardId,
+    );
+    const userCards = await this.findUserCards(userCardsId);
+    const userMonsters = userCards.userMonsters;
+    const monsters = await this.monstersService.findBy(cardsIds);
+
+    addCardUserDto.itemsCards.map((itemCard) => {
+      const monster = monsters.find((card) => card.id === itemCard.cardId);
+      const existCardInUser = userMonsters.find(
+        (cards) => cards.monster.id === monster.id,
+      );
+
+      if (existCardInUser) {
+        existCardInUser.amount += itemCard.amount;
+      } else {
+        const userMonster = new UserMonster();
+        userMonster.monster = monster;
+        userMonster.amount = itemCard.amount;
+        userMonsters.push(userMonster);
+      }
+    });
+
+    try {
+      await userCards.save();
+      return userCards;
+    } catch (error) {
+      throw new InternalServerErrorException(
+        'Erro ao salvar os dados no banco de dados',
+      );
+    }
   }
 
-  // async findUserWithAllCardsAndDecks(userId: string): Promise<User> {
-  //   return await this.usersRepository.findUserWithAllCardsAndDecks(userId);
+  // private async removeCardInSpellUser(
+  //   deckUser: Deck,
+  //   spellsUser: SpellUser[],
+  //   cardUser: SpellUser,
+  //   amount: number,
+  // ): Promise<void> {
+  //   if (cardUser.amount - amount < 0) {
+  //     throw new CustomError('Não é possível remover essa quantidade de cartas');
+  //   } else if (cardUser.amount - amount === 0 && !deckUser) {
+  //     const index = spellsUser.findIndex((item) => item.id === cardUser.id);
+  //     this.spellsService.deleteSpellUser(cardUser.id);
+  //     spellsUser.splice(index, 1);
+  //   } else cardUser.amount -= amount;
   // }
+
+  // private async removeCardInTrapUser(
+  //   deckUser: Deck,
+  //   trapsUser: TrapUser[],
+  //   cardUser: TrapUser,
+  //   amount: number,
+  // ): Promise<void> {
+  //   if (cardUser.amount - amount < 0) {
+  //     throw new CustomError('Não é possível remover essa quantidade de cartas');
+  //   } else if (cardUser.amount - amount === 0 && !deckUser) {
+  //     const index = trapsUser.findIndex((item) => item.id === cardUser.id);
+  //     this.trapsService.deleteTrapUser(cardUser.id);
+  //     trapsUser.splice(index, 1);
+  //   } else cardUser.amount -= amount;
+  // }
+
+  // private async removeCardInMonsterUser(
+  //   deckUser: Deck,
+  //   monstersUser: MonsterUser[],
+  //   cardUser: MonsterUser,
+  //   amount: number,
+  // ): Promise<void> {
+  //   if (cardUser.amount - amount < 0) {
+  //     throw new CustomError('Não é possível remover essa quantidade de cartas');
+  //   } else if (cardUser.amount - amount === 0 && !deckUser) {
+  //     const index = monstersUser.findIndex((item) => item.id === cardUser.id);
+  //     this.trapsService.deleteTrapUser(cardUser.id);
+  //     monstersUser.splice(index, 1);
+  //   } else cardUser.amount -= amount;
+  // }
+
+  // async removeCardUser(
+  //   removeCardUserDto: RemoveCardUserDto,
+  //   userId: string,
+  // ): Promise<User> {
+  //   const { cardId, amount } = removeCardUserDto;
+  //   const user = await this.findUserWithAllCardsAndDecks(userId);
+  //   const monstersUser = user.monstersUser;
+  //   const trapsUser = user.trapsUser;
+  //   const spellsUser = user.spellsUser;
+  //   let cardUser: SpellUser | MonsterUser | TrapUser;
+  //   let deckUser: Deck;
+
+  //   cardUser = spellsUser.find((card) => card.spell.id === cardId);
+  //   deckUser = user.decks.find((deck) =>
+  //     deck.spellsDeck.find((spells) => spells.spell.id === cardId),
+  //   );
+
+  //   if (cardUser) {
+  //     await this.removeCardInSpellUser(deckUser, spellsUser, cardUser, amount);
+  //   } else {
+  //     cardUser = trapsUser.find((card) => card.trap.id === cardId);
+  //     deckUser = user.decks.find((deck) =>
+  //       deck.trapsDeck.find((traps) => traps.trap.id === cardId),
+  //     );
+  //     if (cardUser) {
+  //       await this.removeCardInTrapUser(deckUser, trapsUser, cardUser, amount);
+  //     } else {
+  //       cardUser = monstersUser.find((card) => card.monster.id === cardId);
+  //       deckUser = user.decks.find((deck) =>
+  //         deck.monstersDeck.find((traps) => traps.monster.id === cardId),
+  //       );
+  //       if (cardUser) {
+  //         await this.removeCardInMonsterUser(
+  //           deckUser,
+  //           monstersUser,
+  //           cardUser,
+  //           amount,
+  //         );
+  //       } else throw new NotFoundException('Carta não encontrada');
+  //     }
+  //   }
+
+  //   try {
+  //     await user.save();
+  //     delete user.password;
+  //     delete user.salt;
+  //     delete user.status;
+  //     delete user.confirmationToken;
+  //     delete user.recoverToken;
+  //     delete user.createdAt;
+  //     delete user.updatedAt;
+  //     return user;
+  //   } catch (error) {
+  //     throw new InternalServerErrorException(
+  //       'Erro ao salvar os dados no banco de dados',
+  //     );
+  //   }
+  // }
+
+  //
+  //
+  //
+  //
+  //
+  //
+  //
+  //
+  //
+  //
+  //
+  //
+  //
+  //
+  //
+  //
+  //
+  //
+  //
+  //
 
   // private async addCardInSpellDeck(
   //   spellsDeck: SpellDeck[],
@@ -337,110 +523,6 @@ export class UsersService {
   //         throw new NotFoundException(
   //           `Carta não encontrada no deck ${nameDeck}`,
   //         );
-  //     }
-  //   }
-
-  //   try {
-  //     await user.save();
-  //     delete user.password;
-  //     delete user.salt;
-  //     delete user.status;
-  //     delete user.confirmationToken;
-  //     delete user.recoverToken;
-  //     delete user.createdAt;
-  //     delete user.updatedAt;
-  //     return user;
-  //   } catch (error) {
-  //     throw new InternalServerErrorException(
-  //       'Erro ao salvar os dados no banco de dados',
-  //     );
-  //   }
-  // }
-
-  // private async removeCardInSpellUser(
-  //   deckUser: Deck,
-  //   spellsUser: SpellUser[],
-  //   cardUser: SpellUser,
-  //   amount: number,
-  // ): Promise<void> {
-  //   if (cardUser.amount - amount < 0) {
-  //     throw new CustomError('Não é possível remover essa quantidade de cartas');
-  //   } else if (cardUser.amount - amount === 0 && !deckUser) {
-  //     const index = spellsUser.findIndex((item) => item.id === cardUser.id);
-  //     this.spellsService.deleteSpellUser(cardUser.id);
-  //     spellsUser.splice(index, 1);
-  //   } else cardUser.amount -= amount;
-  // }
-
-  // private async removeCardInTrapUser(
-  //   deckUser: Deck,
-  //   trapsUser: TrapUser[],
-  //   cardUser: TrapUser,
-  //   amount: number,
-  // ): Promise<void> {
-  //   if (cardUser.amount - amount < 0) {
-  //     throw new CustomError('Não é possível remover essa quantidade de cartas');
-  //   } else if (cardUser.amount - amount === 0 && !deckUser) {
-  //     const index = trapsUser.findIndex((item) => item.id === cardUser.id);
-  //     this.trapsService.deleteTrapUser(cardUser.id);
-  //     trapsUser.splice(index, 1);
-  //   } else cardUser.amount -= amount;
-  // }
-
-  // private async removeCardInMonsterUser(
-  //   deckUser: Deck,
-  //   monstersUser: MonsterUser[],
-  //   cardUser: MonsterUser,
-  //   amount: number,
-  // ): Promise<void> {
-  //   if (cardUser.amount - amount < 0) {
-  //     throw new CustomError('Não é possível remover essa quantidade de cartas');
-  //   } else if (cardUser.amount - amount === 0 && !deckUser) {
-  //     const index = monstersUser.findIndex((item) => item.id === cardUser.id);
-  //     this.trapsService.deleteTrapUser(cardUser.id);
-  //     monstersUser.splice(index, 1);
-  //   } else cardUser.amount -= amount;
-  // }
-
-  // async removeCardUser(
-  //   removeCardUserDto: RemoveCardUserDto,
-  //   userId: string,
-  // ): Promise<User> {
-  //   const { cardId, amount } = removeCardUserDto;
-  //   const user = await this.findUserWithAllCardsAndDecks(userId);
-  //   const monstersUser = user.monstersUser;
-  //   const trapsUser = user.trapsUser;
-  //   const spellsUser = user.spellsUser;
-  //   let cardUser: SpellUser | MonsterUser | TrapUser;
-  //   let deckUser: Deck;
-
-  //   cardUser = spellsUser.find((card) => card.spell.id === cardId);
-  //   deckUser = user.decks.find((deck) =>
-  //     deck.spellsDeck.find((spells) => spells.spell.id === cardId),
-  //   );
-
-  //   if (cardUser) {
-  //     await this.removeCardInSpellUser(deckUser, spellsUser, cardUser, amount);
-  //   } else {
-  //     cardUser = trapsUser.find((card) => card.trap.id === cardId);
-  //     deckUser = user.decks.find((deck) =>
-  //       deck.trapsDeck.find((traps) => traps.trap.id === cardId),
-  //     );
-  //     if (cardUser) {
-  //       await this.removeCardInTrapUser(deckUser, trapsUser, cardUser, amount);
-  //     } else {
-  //       cardUser = monstersUser.find((card) => card.monster.id === cardId);
-  //       deckUser = user.decks.find((deck) =>
-  //         deck.monstersDeck.find((traps) => traps.monster.id === cardId),
-  //       );
-  //       if (cardUser) {
-  //         await this.removeCardInMonsterUser(
-  //           deckUser,
-  //           monstersUser,
-  //           cardUser,
-  //           amount,
-  //         );
-  //       } else throw new NotFoundException('Carta não encontrada');
   //     }
   //   }
 

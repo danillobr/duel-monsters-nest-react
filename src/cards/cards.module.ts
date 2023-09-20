@@ -8,6 +8,8 @@ import { TrapsService } from './traps.service';
 import { TrapsRepository } from './repositories/traps.repository';
 import { SpellsRepository } from './repositories/spells.repository';
 import { SpellsService } from './spells.service';
+import { UsersCardsService } from './users-cards.service';
+import { UsersCardsRepository } from './repositories/users-cards.repository';
 
 @Module({
   imports: [
@@ -21,15 +23,17 @@ import { SpellsService } from './spells.service';
     MonstersRepository,
     SpellsRepository,
     TrapsRepository,
+    UsersCardsService,
+    UsersCardsRepository,
   ],
   controllers: [CardsController],
   exports: [
-    SpellsService,
-    TrapsService,
-    MonstersService,
-    SpellsRepository,
-    TrapsRepository,
-    MonstersRepository,
+    // SpellsService,
+    // TrapsService,
+    // MonstersService,
+    // SpellsRepository,
+    // TrapsRepository,
+    // MonstersRepository,
   ],
 })
 export class CardsModule {}

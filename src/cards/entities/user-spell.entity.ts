@@ -5,24 +5,24 @@ import {
   Column,
   ManyToOne,
 } from 'typeorm';
-import { User } from './user.entity';
-import { Spell } from '../../cards/entities/spell.entity';
+import { Spell } from './spell.entity';
+import { UserCards } from './user-cards.entity';
 
-@Entity('spells_users')
-export class SpellUser extends BaseEntity {
+@Entity('users_spells')
+export class UserSpell extends BaseEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
   @Column({ nullable: false, type: 'int' })
   amount: number;
 
-  @ManyToOne(() => User, (user) => user.spellsUser, {
+  @ManyToOne(() => UserCards, (userCards) => userCards.userSpells, {
     onDelete: 'CASCADE',
     onUpdate: 'CASCADE',
   })
-  user: User;
+  userCards: UserCards;
 
-  @ManyToOne(() => Spell, (spell) => spell.spellsUser, {
+  @ManyToOne(() => Spell, (spell) => spell.userSpells, {
     onDelete: 'CASCADE',
     onUpdate: 'CASCADE',
   })

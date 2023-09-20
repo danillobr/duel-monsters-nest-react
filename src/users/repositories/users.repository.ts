@@ -11,6 +11,7 @@ import {
 } from '@nestjs/common';
 import { CredentialsDto } from '../../auth/dtos/credentials.dto';
 import { FindUsersQueryDto } from '../dtos/find-users-query.dto';
+import { UserCards } from 'src/cards/entities/user-cards.entity';
 
 @Injectable()
 export class UsersRepository extends Repository<User> {
@@ -50,37 +51,24 @@ export class UsersRepository extends Repository<User> {
     return { users, total };
   }
 
-  async findUserWithAllCards(userId: string): Promise<User> {
-    return await this.createQueryBuilder('user')
-      .leftJoinAndSelect('user.spellsUser', 'spellsUser')
-      .leftJoinAndSelect('user.monstersUser', 'monstersUser')
-      .leftJoinAndSelect('user.trapsUser', 'trapsUser')
-      .leftJoinAndSelect('spellsUser.spell', 'spell')
-      .leftJoinAndSelect('monstersUser.monster', 'monster')
-      .leftJoinAndSelect('trapsUser.trap', 'trap')
-      .where('user.id = :userId', { userId })
-      // .select(['user.id', 'user.name', 'user.role', 'spellsUser'])
-      .getOne();
-  }
-
-  async findUserWithAllCardsAndDecks(userId: string): Promise<User> {
-    return await this.createQueryBuilder('user')
-      .leftJoinAndSelect('user.spellsUser', 'spellsUser')
-      .leftJoinAndSelect('spellsUser.spell', 'spellUser')
-      .leftJoinAndSelect('user.monstersUser', 'monstersUser')
-      .leftJoinAndSelect('monstersUser.monster', 'monster')
-      .leftJoinAndSelect('user.trapsUser', 'trapsUser')
-      .leftJoinAndSelect('trapsUser.trap', 'trap')
-      .leftJoinAndSelect('user.decks', 'decks')
-      .leftJoinAndSelect('decks.spellsDeck', 'spellsDeck')
-      .leftJoinAndSelect('spellsDeck.spell', 'spellDeck')
-      .leftJoinAndSelect('decks.trapsDeck', 'trapsDeck')
-      .leftJoinAndSelect('trapsDeck.trap', 'trapDeck')
-      .leftJoinAndSelect('decks.monstersDeck', 'monstersDeck')
-      .leftJoinAndSelect('monstersDeck.monster', 'monsterDeck')
-      .where('user.id = :userId', { userId })
-      .getOne();
-  }
+  // async findUserWithAllCardsAndDecks(userId: string): Promise<User> {
+  //   return await this.createQueryBuilder('user')
+  //     .leftJoinAndSelect('user.spellsUser', 'spellsUser')
+  //     .leftJoinAndSelect('spellsUser.spell', 'spellUser')
+  //     .leftJoinAndSelect('user.monstersUser', 'monstersUser')
+  //     .leftJoinAndSelect('monstersUser.monster', 'monster')
+  //     .leftJoinAndSelect('user.trapsUser', 'trapsUser')
+  //     .leftJoinAndSelect('trapsUser.trap', 'trap')
+  //     .leftJoinAndSelect('user.decks', 'decks')
+  //     .leftJoinAndSelect('decks.spellsDeck', 'spellsDeck')
+  //     .leftJoinAndSelect('spellsDeck.spell', 'spellDeck')
+  //     .leftJoinAndSelect('decks.trapsDeck', 'trapsDeck')
+  //     .leftJoinAndSelect('trapsDeck.trap', 'trapDeck')
+  //     .leftJoinAndSelect('decks.monstersDeck', 'monstersDeck')
+  //     .leftJoinAndSelect('monstersDeck.monster', 'monsterDeck')
+  //     .where('user.id = :userId', { userId })
+  //     .getOne();
+  // }
 
   async createUser(
     createUserDto: CreateUserDto,
@@ -88,6 +76,7 @@ export class UsersRepository extends Repository<User> {
   ): Promise<User> {
     const { email, name, password } = createUserDto;
     const user = this.create();
+    const userCards = new UserCards();
     user.email = email;
     user.name = name;
     user.role = role;
@@ -95,6 +84,7 @@ export class UsersRepository extends Repository<User> {
     user.confirmationToken = crypto.randomBytes(32).toString('hex');
     user.salt = await bcrypt.genSalt();
     user.password = await this.hashPassword(password, user.salt);
+    user.cards = userCards;
     try {
       await user.save();
       delete user.password;

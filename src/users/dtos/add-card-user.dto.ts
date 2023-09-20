@@ -5,7 +5,6 @@ import {
   IsInt,
   IsNotEmpty,
   IsUUID,
-  Max,
   Min,
 } from 'class-validator';
 

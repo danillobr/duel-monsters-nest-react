@@ -55,56 +55,56 @@ export class UsersController {
     };
   }
 
-  @Patch('/add-spell-cards')
-  async addSpellCard(
-    @GetUser() user: User,
-    @Body(ValidationPipe) addCardUserDto: AddCardUserDto,
-  ) {
-    return await this.usersService.addSpellCardsUser(addCardUserDto, user.id);
-  }
+  // @Patch('/add-spell-cards')
+  // async addSpellCard(
+  //   @GetUser() user: User,
+  //   @Body(ValidationPipe) addCardUserDto: AddCardUserDto,
+  // ) {
+  //   return await this.usersService.addSpellCardsUser(addCardUserDto, user.id);
+  // }
 
-  @Patch('/add-trap-cards')
-  async addTrapCard(
-    @GetUser() user: User,
-    @Body(ValidationPipe) addCardUserDto: AddCardUserDto,
-  ) {
-    return await this.usersService.addTrapCardsUser(addCardUserDto, user.id);
-  }
+  // @Patch('/add-trap-cards')
+  // async addTrapCard(
+  //   @GetUser() user: User,
+  //   @Body(ValidationPipe) addCardUserDto: AddCardUserDto,
+  // ) {
+  //   return await this.usersService.addTrapCardsUser(addCardUserDto, user.id);
+  // }
 
-  @Patch('/add-monster-cards')
-  async addCard(
-    @GetUser() user: User,
-    @Body(ValidationPipe) addCardUserDto: AddCardUserDto,
-  ) {
-    return await this.usersService.addMonsterCardsUser(addCardUserDto, user.id);
-  }
+  // @Patch('/add-monster-cards')
+  // async addCard(
+  //   @GetUser() user: User,
+  //   @Body(ValidationPipe) addCardUserDto: AddCardUserDto,
+  // ) {
+  //   return await this.usersService.addMonsterCardsUser(addCardUserDto, user.id);
+  // }
 
-  @Patch('/remove-card')
-  async removeCard(
-    @GetUser() user: User,
-    @Body(ValidationPipe) removeCardUserDto: RemoveCardUserDto,
-  ) {
-    return await this.usersService.removeCardUser(removeCardUserDto, user.id);
-  }
+  // @Patch('/remove-card')
+  // async removeCard(
+  //   @GetUser() user: User,
+  //   @Body(ValidationPipe) removeCardUserDto: RemoveCardUserDto,
+  // ) {
+  //   return await this.usersService.removeCardUser(removeCardUserDto, user.id);
+  // }
 
-  @Patch('/add-card-deck')
-  async addCardDeck(
-    @GetUser() user: User,
-    @Body(ValidationPipe) addCardDeckUserDto: AddCardDeckUserDto,
-  ) {
-    return await this.usersService.addCardDeckUser(addCardDeckUserDto, user.id);
-  }
+  // @Patch('/add-card-deck')
+  // async addCardDeck(
+  //   @GetUser() user: User,
+  //   @Body(ValidationPipe) addCardDeckUserDto: AddCardDeckUserDto,
+  // ) {
+  //   return await this.usersService.addCardDeckUser(addCardDeckUserDto, user.id);
+  // }
 
-  @Patch('/remove-card-deck')
-  async removeCardDeck(
-    @GetUser() user: User,
-    @Body(ValidationPipe) removeCardDeckUserDto: RemoveCardDeckUserDto,
-  ) {
-    return await this.usersService.removeCardDeckUser(
-      removeCardDeckUserDto,
-      user.id,
-    );
-  }
+  // @Patch('/remove-card-deck')
+  // async removeCardDeck(
+  //   @GetUser() user: User,
+  //   @Body(ValidationPipe) removeCardDeckUserDto: RemoveCardDeckUserDto,
+  // ) {
+  //   return await this.usersService.removeCardDeckUser(
+  //     removeCardDeckUserDto,
+  //     user.id,
+  //   );
+  // }
 
   @Patch(':id')
   async updateUser(

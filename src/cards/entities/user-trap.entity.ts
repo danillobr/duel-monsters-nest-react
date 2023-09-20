@@ -5,24 +5,24 @@ import {
   Column,
   ManyToOne,
 } from 'typeorm';
-import { User } from './user.entity';
-import { Trap } from '../../cards/entities/trap.entity';
+import { Trap } from './trap.entity';
+import { UserCards } from './user-cards.entity';
 
-@Entity('traps_users')
-export class TrapUser extends BaseEntity {
+@Entity('users_traps')
+export class UserTrap extends BaseEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
   @Column({ nullable: false, type: 'int' })
   amount: number;
 
-  @ManyToOne(() => User, (user) => user.trapsUser, {
+  @ManyToOne(() => UserCards, (userCards) => userCards.userTraps, {
     onDelete: 'CASCADE',
     onUpdate: 'CASCADE',
   })
-  user: User;
+  userCards: UserCards;
 
-  @ManyToOne(() => Trap, (trap) => trap.trapsUser, {
+  @ManyToOne(() => Trap, (trap) => trap.userTraps, {
     onDelete: 'CASCADE',
     onUpdate: 'CASCADE',
   })

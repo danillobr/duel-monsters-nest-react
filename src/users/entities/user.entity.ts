@@ -7,18 +7,15 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   OneToMany,
-  ManyToMany,
-  JoinTable,
+  OneToOne,
+  JoinColumn,
+  BeforeInsert,
+  AfterInsert,
 } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { UserRole } from '../enum/user-roles.enum';
-import { Spell } from '../../cards/entities/spell.entity';
-import { Trap } from '../../cards/entities/trap.entity';
-import { Monster } from '../../cards/entities/monster.entity';
 import { Deck } from '../../decks/entities/deck.entity';
-import { SpellUser } from './spell-user.entity';
-import { TrapUser } from './trap-user.entity';
-import { MonsterUser } from './monster-user.entity';
+import { UserCards } from '../../cards/entities/user-cards.entity';
 
 @Entity('users')
 @Unique(['email'])
@@ -56,41 +53,38 @@ export class User extends BaseEntity {
   @UpdateDateColumn()
   updatedAt: Date;
 
-  // @ManyToMany(() => Spell, { eager: true })
-  // @JoinTable()
-  // spells: Spell[];
+  // @OneToMany(() => SpellUser, (spellUser) => spellUser.user, {
+  //   eager: true,
+  //   onDelete: 'CASCADE',
+  //   onUpdate: 'CASCADE',
+  //   cascade: true,
+  // })
+  // spellsUser: SpellUser[];
 
-  // @ManyToMany(() => Trap, { eager: true })
-  // @JoinTable()
-  // traps: Trap[];
+  // @OneToMany(() => TrapUser, (trapUser) => trapUser.user, {
+  //   eager: true,
+  //   onDelete: 'CASCADE',
+  //   onUpdate: 'CASCADE',
+  //   cascade: true,
+  // })
+  // trapsUser: TrapUser[];
 
-  // @ManyToMany(() => Monster, { eager: true })
-  // @JoinTable()
-  // monsters: Monster[];
+  // @OneToMany(() => MonsterUser, (monsterUser) => monsterUser.user, {
+  //   eager: true,
+  //   onDelete: 'CASCADE',
+  //   onUpdate: 'CASCADE',
+  //   cascade: true,
+  // })
+  // monstersUser: MonsterUser[];
 
-  @OneToMany(() => SpellUser, (spellUser) => spellUser.user, {
+  @OneToOne(() => UserCards, {
     eager: true,
     onDelete: 'CASCADE',
     onUpdate: 'CASCADE',
     cascade: true,
   })
-  spellsUser: SpellUser[];
-
-  @OneToMany(() => TrapUser, (trapUser) => trapUser.user, {
-    eager: true,
-    onDelete: 'CASCADE',
-    onUpdate: 'CASCADE',
-    cascade: true,
-  })
-  trapsUser: TrapUser[];
-
-  @OneToMany(() => MonsterUser, (monsterUser) => monsterUser.user, {
-    eager: true,
-    onDelete: 'CASCADE',
-    onUpdate: 'CASCADE',
-    cascade: true,
-  })
-  monstersUser: MonsterUser[];
+  @JoinColumn()
+  cards: UserCards;
 
   @OneToMany(() => Deck, (deck) => deck.user, {
     eager: true,

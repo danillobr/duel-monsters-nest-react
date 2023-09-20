@@ -1,7 +1,7 @@
 import { Column, Entity, OneToMany } from 'typeorm';
 import { Card } from './card.entity';
-import { MonsterUser } from '../../users/entities/monster-user.entity';
 import { MonsterDeck } from '../../decks/entities/monster-deck.entity';
+import { UserMonster } from './user-monster.entity';
 
 @Entity('monsters')
 export class Monster extends Card {
@@ -17,13 +17,13 @@ export class Monster extends Card {
   @Column({ nullable: false, default: false })
   specialAbility: boolean;
 
-  @OneToMany(() => MonsterUser, (monsterUser) => monsterUser.monster, {
+  @OneToMany(() => UserMonster, (userMonster) => userMonster.monster, {
     eager: true,
     onDelete: 'CASCADE',
     onUpdate: 'CASCADE',
     cascade: true,
   })
-  monstersUser: MonsterUser[];
+  userMonsters: UserMonster[];
 
   @OneToMany(() => MonsterDeck, (monsterDeck) => monsterDeck.monster, {
     eager: true,

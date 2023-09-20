@@ -3,26 +3,53 @@ import * as bcrypt from 'bcrypt';
 import { Seeder, SeederFactoryManager } from 'typeorm-extension';
 import { DataSource } from 'typeorm';
 import { User } from '../../users/entities/user.entity';
+import { UserCards } from '../../cards/entities/user-cards.entity';
 
 export class AdminSeeder implements Seeder {
   public async run(
     dataSource: DataSource,
     factoryManager: SeederFactoryManager,
   ): Promise<any> {
-    const repository = dataSource.getRepository(User);
-
+    const userRepository = dataSource.getRepository(User);
+    const userCardsRepository = dataSource.getRepository(UserCards);
     const id = uuidV4();
+    const cardsId = uuidV4();
     const salt = await bcrypt.genSalt();
     const password = await bcrypt.hash('Admin321!', salt);
-
-    const userExist = await repository.findOneBy({ email: 'admin@gmail.com' });
+    const email = 'admin@gmail.com';
+    const role = 'ADMIN';
+    const name = 'admin';
+    const status = true;
+    const userExist = await userRepository.findOneBy({
+      email: 'admin@gmail.com',
+    });
 
     if (!userExist) {
-      await repository.query(
-        `INSERT INTO USERS(id, name, email, password, salt, role, status)
-              values('${id}', 'admin', 'admin@gmail.com', '${password}', '${salt}', 'ADMIN', 'true')
+      await userCardsRepository.query(
+        `INSERT INTO USERS_CARDS(id)
+              values('${cardsId}')
           `,
       );
+      // await userRepository.query(
+      //   `INSERT INTO USERS(id, name, email, password, salt, role, status)
+      //         values('${id}', 'admin', 'admin@gmail.com', '${password}', '${salt}', 'ADMIN', 'true')
+      //     `,
+      // );
+      await userRepository
+        .createQueryBuilder()
+        .insert()
+        .into(User)
+        .values({
+          cards: cardsId,
+          id,
+          name,
+          email,
+          password,
+          salt,
+          role,
+          status,
+        })
+        .execute();
     }
   }
 }

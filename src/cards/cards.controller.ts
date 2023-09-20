@@ -6,6 +6,7 @@ import {
   Delete,
   ValidationPipe,
   UseGuards,
+  Patch,
 } from '@nestjs/common';
 import { MonstersService } from './monsters.service';
 import { CreateMonsterDto } from './dto/create-monster.dto';
@@ -18,14 +19,19 @@ import { Role } from '../auth/decorations/role.decorator';
 import { UserRole } from '../users/enum/user-roles.enum';
 import { AuthGuard } from '@nestjs/passport';
 import { RolesGuard } from '../auth/roles.guard';
+import { GetUser } from '../auth/decorations/get-user.decorator';
+import { User } from '../users/entities/user.entity';
+import { AddCardUserDto } from '../users/dtos/add-card-user.dto';
+import { UsersCardsService } from './users-cards.service';
 
 @Controller('cards')
 @UseGuards(AuthGuard(), RolesGuard)
 export class CardsController {
   constructor(
-    private readonly monstersService: MonstersService,
-    private readonly trapsService: TrapsService,
-    private readonly spellsService: SpellsService,
+    private monstersService: MonstersService,
+    private trapsService: TrapsService,
+    private spellsService: SpellsService,
+    private usersCardsService: UsersCardsService,
   ) {}
 
   @Post('monsters')
@@ -62,6 +68,39 @@ export class CardsController {
       card,
       message: 'Carta magica criada com sucesso',
     };
+  }
+
+  @Patch('/add-spells-cards-user')
+  async addSpellCard(
+    @GetUser() user: User,
+    @Body(ValidationPipe) addCardUserDto: AddCardUserDto,
+  ) {
+    return await this.usersCardsService.addSpellsCardsInUserCards(
+      addCardUserDto,
+      user.cards.id,
+    );
+  }
+
+  @Patch('/add-traps-cards-user')
+  async addTrapCard(
+    @GetUser() user: User,
+    @Body(ValidationPipe) addCardUserDto: AddCardUserDto,
+  ) {
+    return await this.usersCardsService.addTrapsCardsInUserCards(
+      addCardUserDto,
+      user.cards.id,
+    );
+  }
+
+  @Patch('/add-monsters-cards-user')
+  async addCard(
+    @GetUser() user: User,
+    @Body(ValidationPipe) addCardUserDto: AddCardUserDto,
+  ) {
+    return await this.usersCardsService.addMonstersCardsInUserCards(
+      addCardUserDto,
+      user.cards.id,
+    );
   }
 
   @Role(UserRole.ADMIN)
