@@ -11,7 +11,7 @@ import {
 } from '@nestjs/common';
 import { CredentialsDto } from '../../auth/dtos/credentials.dto';
 import { FindUsersQueryDto } from '../dtos/find-users-query.dto';
-import { UserCards } from 'src/cards/entities/user-cards.entity';
+import { UserCards } from '../../cards/entities/user-cards.entity';
 
 @Injectable()
 export class UsersRepository extends Repository<User> {
@@ -50,25 +50,6 @@ export class UsersRepository extends Repository<User> {
 
     return { users, total };
   }
-
-  // async findUserWithAllCardsAndDecks(userId: string): Promise<User> {
-  //   return await this.createQueryBuilder('user')
-  //     .leftJoinAndSelect('user.spellsUser', 'spellsUser')
-  //     .leftJoinAndSelect('spellsUser.spell', 'spellUser')
-  //     .leftJoinAndSelect('user.monstersUser', 'monstersUser')
-  //     .leftJoinAndSelect('monstersUser.monster', 'monster')
-  //     .leftJoinAndSelect('user.trapsUser', 'trapsUser')
-  //     .leftJoinAndSelect('trapsUser.trap', 'trap')
-  //     .leftJoinAndSelect('user.decks', 'decks')
-  //     .leftJoinAndSelect('decks.spellsDeck', 'spellsDeck')
-  //     .leftJoinAndSelect('spellsDeck.spell', 'spellDeck')
-  //     .leftJoinAndSelect('decks.trapsDeck', 'trapsDeck')
-  //     .leftJoinAndSelect('trapsDeck.trap', 'trapDeck')
-  //     .leftJoinAndSelect('decks.monstersDeck', 'monstersDeck')
-  //     .leftJoinAndSelect('monstersDeck.monster', 'monsterDeck')
-  //     .where('user.id = :userId', { userId })
-  //     .getOne();
-  // }
 
   async createUser(
     createUserDto: CreateUserDto,

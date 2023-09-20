@@ -10,29 +10,10 @@ import { CreateUserDto } from './dtos/create-user.dto';
 import { UsersRepository } from './repositories/users.repository';
 import { UpdateUserDto } from './dtos/update-user.dto';
 import { FindUsersQueryDto } from './dtos/find-users-query.dto';
-import { SpellsService } from '../cards/spells.service';
-import { TrapsService } from '../cards/traps.service';
-import { MonstersService } from '../cards/monsters.service';
-import { AddCardUserDto } from './dtos/add-card-user.dto';
-import { AddCardDeckUserDto } from './dtos/add-card-deck-user.dto';
-import { DecksService } from '../decks/decks.service';
-import { SpellDeck } from '../decks/entities/spell-deck.entity';
-import { MonsterDeck } from '../decks/entities/monster-deck.entity';
-import { TrapDeck } from '../decks/entities/trap-deck.entity';
-import { RemoveCardDeckUserDto } from './dtos/remove-card-deck-user.dto';
-import { RemoveCardUserDto } from './dtos/remove-card-user.dto';
-import { Deck } from '../decks/entities/deck.entity';
-import { CustomError } from '../Errors/custom-errors.error';
 
 @Injectable()
 export class UsersService {
-  constructor(
-    private readonly usersRepository: UsersRepository,
-    private spellsService: SpellsService,
-    private trapsService: TrapsService,
-    private monstersService: MonstersService,
-    private decksService: DecksService,
-  ) {}
+  constructor(private readonly usersRepository: UsersRepository) {}
 
   async createAdminUser(createUserDto: CreateUserDto): Promise<User> {
     if (createUserDto.password != createUserDto.passwordConfirmation) {

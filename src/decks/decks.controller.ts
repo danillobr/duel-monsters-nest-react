@@ -5,6 +5,8 @@ import {
   Param,
   Delete,
   UseGuards,
+  Patch,
+  ValidationPipe,
 } from '@nestjs/common';
 import { DecksService } from './decks.service';
 import { CreateDeckDto } from './dto/create-deck.dto';
@@ -13,6 +15,7 @@ import { RolesGuard } from '../auth/roles.guard';
 import { GetUser } from '../auth/decorations/get-user.decorator';
 import { User } from '../users/entities/user.entity';
 import { ReturnDeckDto } from './dto/return-deck.dto';
+import { AddCardInDeckDto } from '../users/dtos/add-card-deck.dto';
 
 @Controller('decks')
 @UseGuards(AuthGuard(), RolesGuard)
@@ -29,6 +32,14 @@ export class DecksController {
       deck,
       message: 'Deck criado com sucesso',
     };
+  }
+
+  @Patch('/add-card-deck')
+  async addCardInDeck(
+    @GetUser() user: User,
+    @Body(ValidationPipe) addCardDeckUserDto: AddCardInDeckDto,
+  ) {
+    return await this.decksService.addCardInDeck(addCardDeckUserDto, user);
   }
 
   @Delete('/:id')

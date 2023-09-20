@@ -27,13 +27,6 @@ import { UsersCardsRepository } from './repositories/users-cards.repository';
     UsersCardsRepository,
   ],
   controllers: [CardsController],
-  exports: [
-    // SpellsService,
-    // TrapsService,
-    // MonstersService,
-    // SpellsRepository,
-    // TrapsRepository,
-    // MonstersRepository,
-  ],
+  exports: [UsersCardsService, UsersCardsRepository],
 })
 export class CardsModule {}

@@ -1,6 +1,6 @@
 import { IsInt, IsNotEmpty, IsString, IsUUID, Max, Min } from 'class-validator';
 
-export class RemoveCardDeckUserDto {
+export class RemoveCardInDeckDto {
   @IsUUID()
   @IsNotEmpty({ message: 'informe o id da carta' })
   cardId: string;

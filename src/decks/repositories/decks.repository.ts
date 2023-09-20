@@ -35,6 +35,20 @@ export class DecksRepository extends Repository<Deck> {
     return await this.findOne({ where: { id: deckId } });
   }
 
+  async findDecksByUserId(userId: string): Promise<Deck[]> {
+    return await this.find({
+      where: { user: { id: userId } },
+      relations: [
+        'spellsDeck',
+        'trapsDeck',
+        'monstersDeck',
+        'spellsDeck.spell',
+        'trapsDeck.trap',
+        'monstersDeck.monster',
+      ],
+    });
+  }
+
   async deleteSpellDeck(spellDeckId: string) {
     await this.createQueryBuilder()
       .delete()

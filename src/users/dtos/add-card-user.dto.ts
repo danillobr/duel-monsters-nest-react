@@ -19,7 +19,7 @@ class ItemsCardsDto {
   amount: number;
 }
 
-export class AddCardUserDto {
+export class AddCardInUserDto {
   @IsArray()
   @ArrayMinSize(1)
   @Type(() => ItemsCardsDto)

@@ -21,8 +21,8 @@ import { AuthGuard } from '@nestjs/passport';
 import { RolesGuard } from '../auth/roles.guard';
 import { GetUser } from '../auth/decorations/get-user.decorator';
 import { User } from '../users/entities/user.entity';
-import { AddCardUserDto } from '../users/dtos/add-card-user.dto';
 import { UsersCardsService } from './users-cards.service';
+import { AddCardInUserDto } from '../users/dtos/add-card-user.dto';
 
 @Controller('cards')
 @UseGuards(AuthGuard(), RolesGuard)
@@ -73,7 +73,7 @@ export class CardsController {
   @Patch('/add-spells-cards-user')
   async addSpellCard(
     @GetUser() user: User,
-    @Body(ValidationPipe) addCardUserDto: AddCardUserDto,
+    @Body(ValidationPipe) addCardUserDto: AddCardInUserDto,
   ) {
     return await this.usersCardsService.addSpellsCardsInUserCards(
       addCardUserDto,
@@ -84,7 +84,7 @@ export class CardsController {
   @Patch('/add-traps-cards-user')
   async addTrapCard(
     @GetUser() user: User,
-    @Body(ValidationPipe) addCardUserDto: AddCardUserDto,
+    @Body(ValidationPipe) addCardUserDto: AddCardInUserDto,
   ) {
     return await this.usersCardsService.addTrapsCardsInUserCards(
       addCardUserDto,
@@ -95,7 +95,7 @@ export class CardsController {
   @Patch('/add-monsters-cards-user')
   async addCard(
     @GetUser() user: User,
-    @Body(ValidationPipe) addCardUserDto: AddCardUserDto,
+    @Body(ValidationPipe) addCardUserDto: AddCardInUserDto,
   ) {
     return await this.usersCardsService.addMonstersCardsInUserCards(
       addCardUserDto,

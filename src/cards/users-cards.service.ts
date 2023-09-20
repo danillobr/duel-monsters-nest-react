@@ -8,20 +8,12 @@ import {
 import { SpellsService } from './spells.service';
 import { TrapsService } from './traps.service';
 import { MonstersService } from './monsters.service';
-
-import { DecksService } from '../decks/decks.service';
-import { SpellDeck } from '../decks/entities/spell-deck.entity';
-import { MonsterDeck } from '../decks/entities/monster-deck.entity';
-import { TrapDeck } from '../decks/entities/trap-deck.entity';
-
-import { Deck } from '../decks/entities/deck.entity';
-import { CustomError } from '../Errors/custom-errors.error';
 import { UsersCardsRepository } from './repositories/users-cards.repository';
 import { UserCards } from './entities/user-cards.entity';
-import { AddCardUserDto } from '../users/dtos/add-card-user.dto';
 import { UserSpell } from './entities/user-spell.entity';
 import { UserTrap } from './entities/user-trap.entity';
 import { UserMonster } from './entities/user-monster.entity';
+import { AddCardInUserDto } from '../users/dtos/add-card-user.dto';
 
 @Injectable()
 export class UsersCardsService {
@@ -41,7 +33,7 @@ export class UsersCardsService {
   // }
 
   async addSpellsCardsInUserCards(
-    addCardUserDto: AddCardUserDto,
+    addCardUserDto: AddCardInUserDto,
     userCardsId: string,
   ): Promise<UserCards> {
     const cardsIds = addCardUserDto.itemsCards.map(
@@ -79,7 +71,7 @@ export class UsersCardsService {
   }
 
   async addTrapsCardsInUserCards(
-    addCardUserDto: AddCardUserDto,
+    addCardUserDto: AddCardInUserDto,
     userCardsId: string,
   ): Promise<UserCards> {
     const cardsIds = addCardUserDto.itemsCards.map(
@@ -116,7 +108,7 @@ export class UsersCardsService {
   }
 
   async addMonstersCardsInUserCards(
-    addCardUserDto: AddCardUserDto,
+    addCardUserDto: AddCardInUserDto,
     userCardsId: string,
   ): Promise<UserCards> {
     const cardsIds = addCardUserDto.itemsCards.map(

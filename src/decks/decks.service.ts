@@ -1,12 +1,28 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateDeckDto } from './dto/create-deck.dto';
 import { DecksRepository } from './repositories/decks.repository';
 import { Deck } from './entities/deck.entity';
 import { User } from '../users/entities/user.entity';
+import { SpellDeck } from './entities/spell-deck.entity';
+import { UserSpell } from '../cards/entities/user-spell.entity';
+import { CustomError } from '../Errors/custom-errors.error';
+import { TrapDeck } from './entities/trap-deck.entity';
+import { MonsterDeck } from './entities/monster-deck.entity';
+import { UserMonster } from '../cards/entities/user-monster.entity';
+import { UserTrap } from '../cards/entities/user-trap.entity';
+import { AddCardInDeckDto } from '../users/dtos/add-card-deck.dto';
+import { UsersCardsRepository } from '../cards/repositories/users-cards.repository';
 
 @Injectable()
 export class DecksService {
-  constructor(private readonly decksRepository: DecksRepository) {}
+  constructor(
+    private readonly decksRepository: DecksRepository,
+    private usersCardsRepository: UsersCardsRepository,
+  ) {}
 
   async create(createDeckDto: CreateDeckDto, user: User): Promise<Deck> {
     const { name } = createDeckDto;
@@ -32,5 +48,144 @@ export class DecksService {
 
   async deleteMonsterDeck(monsterDeckId: string) {
     this.decksRepository.deleteMonsterDeck(monsterDeckId);
+  }
+
+  async findDecksByUserId(userId: string): Promise<Deck[]> {
+    return await this.decksRepository.findDecksByUserId(userId);
+  }
+
+  private async addCardInSpellDeck(
+    spellsDeck: SpellDeck[],
+    deckCard: SpellDeck,
+    userCard: UserSpell,
+    amount: number,
+  ): Promise<void> {
+    if (deckCard) {
+      if (deckCard.amount + amount <= 3 && userCard.amount >= amount) {
+        deckCard.amount += amount;
+        userCard.amount -= amount;
+      } else {
+        throw new CustomError(
+          'Limite máximo de 3 cartas por deck atingido,' +
+            ' ou não tem cartas suficientes na sua lista de cartas',
+        );
+      }
+    } else if (userCard.amount >= amount) {
+      const cardDeck = new SpellDeck();
+      cardDeck.spell = userCard.spell;
+      cardDeck.amount = amount;
+      userCard.amount -= amount;
+      spellsDeck.push(cardDeck);
+    }
+  }
+
+  private async addCardInTrapDeck(
+    trapsDeck: TrapDeck[],
+    deckCard: TrapDeck,
+    userCard: UserTrap,
+    amount: number,
+  ): Promise<void> {
+    if (deckCard) {
+      if (deckCard.amount + amount <= 3 && userCard.amount >= amount) {
+        deckCard.amount += amount;
+        userCard.amount -= amount;
+      } else {
+        throw new CustomError(
+          'Limite máximo de 3 cartas por deck atingido,' +
+            ' ou não tem cartas suficientes na sua lista de cartas',
+        );
+      }
+    } else if (userCard.amount >= amount) {
+      const cardDeck = new TrapDeck();
+      cardDeck.trap = userCard.trap;
+      cardDeck.amount = amount;
+      userCard.amount -= amount;
+      trapsDeck.push(cardDeck);
+    }
+  }
+
+  private async addCardInMonsterDeck(
+    monstersDeck: MonsterDeck[],
+    deckCard: MonsterDeck,
+    userCard: UserMonster,
+    amount: number,
+  ): Promise<void> {
+    if (deckCard) {
+      if (deckCard.amount + amount <= 3 && userCard.amount >= amount) {
+        deckCard.amount += amount;
+        userCard.amount -= amount;
+      } else {
+        throw new CustomError(
+          'Limite máximo de 3 cartas por deck atingido,' +
+            ' ou não tem cartas suficiente na sua lista de cartas',
+        );
+      }
+    } else if (userCard.amount >= amount) {
+      const cardDeck = new MonsterDeck();
+      cardDeck.monster = userCard.monster;
+      cardDeck.amount = amount;
+      userCard.amount -= amount;
+      monstersDeck.push(cardDeck);
+    }
+  }
+
+  async addCardInDeck(
+    addCardDeckUserDto: AddCardInDeckDto,
+    user: User,
+  ): Promise<Deck> {
+    const { cardId, nameDeck, amount } = addCardDeckUserDto;
+    const userCards = await this.usersCardsRepository.findUserCards(
+      user.cards.id,
+    );
+    const userDecks = await this.findDecksByUserId(user.id);
+    const userDeck = userDecks.find((deck) => deck.name === nameDeck);
+    const monstersUser = userCards.userMonsters;
+    const trapsUser = userCards.userTraps;
+    const spellsUser = userCards.userSpells;
+    const spellsDeck = userDeck.spellsDeck;
+    const trapsDeck = userDeck.trapsDeck;
+    const monstersDeck = userDeck.monstersDeck;
+    let userCard: UserSpell | UserMonster | UserTrap;
+    let deckCard: SpellDeck | MonsterDeck | TrapDeck;
+
+    userCard = spellsUser.find((card) => card.spell.id === cardId);
+    deckCard = spellsDeck.find((spells) => spells.spell.id === cardId);
+
+    if (userCard) {
+      await this.addCardInSpellDeck(spellsDeck, deckCard, userCard, amount);
+    } else {
+      userCard = trapsUser.find((card) => card.trap.id === cardId);
+      deckCard = trapsDeck.find((traps) => traps.trap.id === cardId);
+      if (userCard) {
+        await this.addCardInTrapDeck(trapsDeck, deckCard, userCard, amount);
+      } else {
+        userCard = monstersUser.find((card) => card.monster.id === cardId);
+        deckCard = monstersDeck.find(
+          (monsters) => monsters.monster.id === cardId,
+        );
+        if (userCard) {
+          await this.addCardInMonsterDeck(
+            monstersDeck,
+            deckCard,
+            userCard,
+            amount,
+          );
+        } else {
+          throw new NotFoundException(
+            'Você não possui essa carta na sua lista de cartas',
+          );
+        }
+      }
+    }
+
+    try {
+      await userDeck.save();
+      await userCards.save();
+      return userDeck;
+    } catch (error) {
+      throw new InternalServerErrorException(
+        'Erro ao salvar os dados no banco de dados',
+      );
+    }
   }
 }

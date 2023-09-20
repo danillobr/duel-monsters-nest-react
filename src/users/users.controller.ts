@@ -22,11 +22,6 @@ import { GetUser } from '../auth/decorations/get-user.decorator';
 import { UpdateUserDto } from './dtos/update-user.dto';
 import { User } from './entities/user.entity';
 import { FindUsersQueryDto } from './dtos/find-users-query.dto';
-import { AddCardUserDto } from './dtos/add-card-user.dto';
-import { AddCardDeckUserDto } from './dtos/add-card-deck-user.dto';
-import { idText } from 'typescript';
-import { RemoveCardDeckUserDto } from './dtos/remove-card-deck-user.dto';
-import { RemoveCardUserDto } from './dtos/remove-card-user.dto';
 
 @Controller('users')
 @UseGuards(AuthGuard(), RolesGuard)
@@ -54,30 +49,6 @@ export class UsersController {
       message: 'Usuário encontrado',
     };
   }
-
-  // @Patch('/add-spell-cards')
-  // async addSpellCard(
-  //   @GetUser() user: User,
-  //   @Body(ValidationPipe) addCardUserDto: AddCardUserDto,
-  // ) {
-  //   return await this.usersService.addSpellCardsUser(addCardUserDto, user.id);
-  // }
-
-  // @Patch('/add-trap-cards')
-  // async addTrapCard(
-  //   @GetUser() user: User,
-  //   @Body(ValidationPipe) addCardUserDto: AddCardUserDto,
-  // ) {
-  //   return await this.usersService.addTrapCardsUser(addCardUserDto, user.id);
-  // }
-
-  // @Patch('/add-monster-cards')
-  // async addCard(
-  //   @GetUser() user: User,
-  //   @Body(ValidationPipe) addCardUserDto: AddCardUserDto,
-  // ) {
-  //   return await this.usersService.addMonsterCardsUser(addCardUserDto, user.id);
-  // }
 
   // @Patch('/remove-card')
   // async removeCard(
