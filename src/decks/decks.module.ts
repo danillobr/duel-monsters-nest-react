@@ -13,5 +13,6 @@ import { UsersCardsRepository } from '../cards/repositories/users-cards.reposito
   ],
   controllers: [DecksController],
   providers: [DecksService, DecksRepository, UsersCardsRepository],
+  exports: [DecksRepository],
 })
 export class DecksModule {}

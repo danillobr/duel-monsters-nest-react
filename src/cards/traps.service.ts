@@ -44,8 +44,4 @@ export class TrapsService {
       throw new NotFoundException('Não foi encontrada a carta do ID informado');
     }
   }
-
-  async deleteTrapUser(trapUserId: string) {
-    this.trapsRepository.deleteTrapUser(trapUserId);
-  }
 }

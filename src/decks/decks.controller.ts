@@ -16,7 +16,7 @@ import { GetUser } from '../auth/decorations/get-user.decorator';
 import { User } from '../users/entities/user.entity';
 import { ReturnDeckDto } from './dto/return-deck.dto';
 import { AddCardInDeckDto } from '../users/dtos/add-card-deck.dto';
-import { RemoveCardInDeckDto } from 'src/users/dtos/remove-card-deck-user.dto';
+import { RemoveCardInDeckDto } from '../users/dtos/remove-card-deck-user.dto';
 
 @Controller('decks')
 @UseGuards(AuthGuard(), RolesGuard)

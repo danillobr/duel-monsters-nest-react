@@ -19,4 +19,28 @@ export class UsersCardsRepository extends Repository<UserCards> {
       .where('userCards.id = :userCardsId', { userCardsId })
       .getOne();
   }
+
+  async deleteUserSpell(userSpellId: string) {
+    await this.createQueryBuilder()
+      .delete()
+      .from('users_spells')
+      .where('id = :userSpellId', { userSpellId })
+      .execute();
+  }
+
+  async deleteUserTrap(userTrapId: string) {
+    await this.createQueryBuilder()
+      .delete()
+      .from('users_traps')
+      .where('id = :userTrapId', { userTrapId })
+      .execute();
+  }
+
+  async deleteUserMonster(userMonsterId: string) {
+    await this.createQueryBuilder()
+      .delete()
+      .from('users_monsters')
+      .where('id = :userMonsterId', { userMonsterId })
+      .execute();
+  }
 }

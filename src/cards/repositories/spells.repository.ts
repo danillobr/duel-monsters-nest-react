@@ -49,12 +49,4 @@ export class SpellsRepository extends Repository<Spell> {
   async findById(id: string): Promise<Spell> {
     return await this.findOne({ where: { id } });
   }
-
-  async deleteSpellUser(spellUserId: string) {
-    await this.createQueryBuilder()
-      .delete()
-      .from('spells_users')
-      .where('id = :spellUserId', { spellUserId })
-      .execute();
-  }
 }

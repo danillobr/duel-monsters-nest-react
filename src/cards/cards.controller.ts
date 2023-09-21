@@ -23,6 +23,7 @@ import { GetUser } from '../auth/decorations/get-user.decorator';
 import { User } from '../users/entities/user.entity';
 import { UsersCardsService } from './users-cards.service';
 import { AddCardInUserDto } from '../users/dtos/add-card-user.dto';
+import { RemoveCardInUserDto } from '../users/dtos/remove-card-user.dto';
 
 @Controller('cards')
 @UseGuards(AuthGuard(), RolesGuard)
@@ -100,6 +101,17 @@ export class CardsController {
     return await this.usersCardsService.addMonstersCardsInUserCards(
       addCardUserDto,
       user.cards.id,
+    );
+  }
+
+  @Patch('/remove-card-user')
+  async removeCardInUserCards(
+    @GetUser() user: User,
+    @Body(ValidationPipe) removeCardUserDto: RemoveCardInUserDto,
+  ) {
+    return await this.usersCardsService.removeCardInUserCards(
+      removeCardUserDto,
+      user,
     );
   }
 

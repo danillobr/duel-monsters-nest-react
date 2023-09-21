@@ -50,14 +50,6 @@ export class UsersController {
     };
   }
 
-  // @Patch('/remove-card')
-  // async removeCard(
-  //   @GetUser() user: User,
-  //   @Body(ValidationPipe) removeCardUserDto: RemoveCardUserDto,
-  // ) {
-  //   return await this.usersService.removeCardUser(removeCardUserDto, user.id);
-  // }
-
   @Patch(':id')
   async updateUser(
     @Body(ValidationPipe) updateUserDto: UpdateUserDto,
