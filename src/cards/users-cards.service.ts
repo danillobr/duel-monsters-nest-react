@@ -25,7 +25,9 @@ export class UsersCardsService {
   ) {}
 
   async findUserCards(userCardsId: string): Promise<UserCards> {
-    return await this.usersCardsRepository.findUserCards(userCardsId);
+    return await this.usersCardsRepository.findUserCardsByUserCardsId(
+      userCardsId,
+    );
   }
 
   // async findUserWithAllCardsAndDecks(userId: string): Promise<User> {

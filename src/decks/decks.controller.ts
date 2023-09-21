@@ -16,6 +16,7 @@ import { GetUser } from '../auth/decorations/get-user.decorator';
 import { User } from '../users/entities/user.entity';
 import { ReturnDeckDto } from './dto/return-deck.dto';
 import { AddCardInDeckDto } from '../users/dtos/add-card-deck.dto';
+import { RemoveCardInDeckDto } from 'src/users/dtos/remove-card-deck-user.dto';
 
 @Controller('decks')
 @UseGuards(AuthGuard(), RolesGuard)
@@ -40,6 +41,17 @@ export class DecksController {
     @Body(ValidationPipe) addCardDeckUserDto: AddCardInDeckDto,
   ) {
     return await this.decksService.addCardInDeck(addCardDeckUserDto, user);
+  }
+
+  @Patch('/remove-card-deck')
+  async removeCardDeck(
+    @GetUser() user: User,
+    @Body(ValidationPipe) removeCardDeckUserDto: RemoveCardInDeckDto,
+  ) {
+    return await this.decksService.removeCardInDeck(
+      removeCardDeckUserDto,
+      user,
+    );
   }
 
   @Delete('/:id')

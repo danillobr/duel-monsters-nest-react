@@ -58,25 +58,6 @@ export class UsersController {
   //   return await this.usersService.removeCardUser(removeCardUserDto, user.id);
   // }
 
-  // @Patch('/add-card-deck')
-  // async addCardDeck(
-  //   @GetUser() user: User,
-  //   @Body(ValidationPipe) addCardDeckUserDto: AddCardDeckUserDto,
-  // ) {
-  //   return await this.usersService.addCardDeckUser(addCardDeckUserDto, user.id);
-  // }
-
-  // @Patch('/remove-card-deck')
-  // async removeCardDeck(
-  //   @GetUser() user: User,
-  //   @Body(ValidationPipe) removeCardDeckUserDto: RemoveCardDeckUserDto,
-  // ) {
-  //   return await this.usersService.removeCardDeckUser(
-  //     removeCardDeckUserDto,
-  //     user.id,
-  //   );
-  // }
-
   @Patch(':id')
   async updateUser(
     @Body(ValidationPipe) updateUserDto: UpdateUserDto,

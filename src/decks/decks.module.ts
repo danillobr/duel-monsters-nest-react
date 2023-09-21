@@ -4,7 +4,6 @@ import { DecksController } from './decks.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { PassportModule } from '@nestjs/passport';
 import { DecksRepository } from './repositories/decks.repository';
-import { UsersCardsService } from '../cards/users-cards.service';
 import { UsersCardsRepository } from '../cards/repositories/users-cards.repository';
 
 @Module({

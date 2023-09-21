@@ -16,6 +16,7 @@ import { UserMonster } from '../cards/entities/user-monster.entity';
 import { UserTrap } from '../cards/entities/user-trap.entity';
 import { AddCardInDeckDto } from '../users/dtos/add-card-deck.dto';
 import { UsersCardsRepository } from '../cards/repositories/users-cards.repository';
+import { RemoveCardInDeckDto } from 'src/users/dtos/remove-card-deck-user.dto';
 
 @Injectable()
 export class DecksService {
@@ -38,19 +39,19 @@ export class DecksService {
     }
   }
 
-  async deleteSpellDeck(spellDeckId: string) {
+  private async deleteSpellDeck(spellDeckId: string) {
     this.decksRepository.deleteSpellDeck(spellDeckId);
   }
 
-  async deleteTrapDeck(trapDeckId: string) {
+  private async deleteTrapDeck(trapDeckId: string) {
     this.decksRepository.deleteTrapDeck(trapDeckId);
   }
 
-  async deleteMonsterDeck(monsterDeckId: string) {
+  private async deleteMonsterDeck(monsterDeckId: string) {
     this.decksRepository.deleteMonsterDeck(monsterDeckId);
   }
 
-  async findDecksByUserId(userId: string): Promise<Deck[]> {
+  private async findDecksByUserId(userId: string): Promise<Deck[]> {
     return await this.decksRepository.findDecksByUserId(userId);
   }
 
@@ -134,9 +135,8 @@ export class DecksService {
     user: User,
   ): Promise<Deck> {
     const { cardId, nameDeck, amount } = addCardDeckUserDto;
-    const userCards = await this.usersCardsRepository.findUserCards(
-      user.cards.id,
-    );
+    const userCards =
+      await this.usersCardsRepository.findUserCardsByUserCardsId(user.cards.id);
     const userDecks = await this.findDecksByUserId(user.id);
     const userDeck = userDecks.find((deck) => deck.name === nameDeck);
     const monstersUser = userCards.userMonsters;
@@ -175,6 +175,137 @@ export class DecksService {
             'Você não possui essa carta na sua lista de cartas',
           );
         }
+      }
+    }
+
+    try {
+      await userDeck.save();
+      await userCards.save();
+      return userDeck;
+    } catch (error) {
+      throw new InternalServerErrorException(
+        'Erro ao salvar os dados no banco de dados',
+      );
+    }
+  }
+
+  private async removeCardInSpellDeck(
+    spellsDeck: SpellDeck[],
+    deckCard: SpellDeck,
+    userCard: UserSpell,
+    amount: number,
+  ): Promise<void> {
+    if (deckCard.amount - amount < 0) {
+      throw new CustomError(
+        `Não é possível remover ${amount} cartas,` +
+          ` pois só existem ${userCard.amount} cartas ${userCard.spell.name}` +
+          ` no deck`,
+      );
+    }
+    deckCard.amount -= amount;
+    userCard.amount += amount;
+    if (deckCard.amount === 0) {
+      const index = spellsDeck.findIndex((item) => item.id === deckCard.id);
+      this.deleteSpellDeck(deckCard.id);
+      spellsDeck.splice(index, 1);
+    }
+  }
+
+  private async removeCardInTrapDeck(
+    trapsDeck: TrapDeck[],
+    deckCard: TrapDeck,
+    userCard: UserTrap,
+    amount: number,
+  ): Promise<void> {
+    if (deckCard.amount - amount < 0) {
+      throw new CustomError(
+        `Não é possível remover ${amount} cartas,` +
+          ` pois só existem ${deckCard.amount} cartas ${deckCard.trap.name}` +
+          ` no deck`,
+      );
+    }
+    deckCard.amount -= amount;
+    userCard.amount += amount;
+    if (deckCard.amount === 0) {
+      const index = trapsDeck.findIndex((item) => item.id === deckCard.id);
+      this.deleteTrapDeck(deckCard.id);
+      trapsDeck.splice(index, 1);
+    }
+  }
+
+  private async removeCardInMonsterDeck(
+    monstersDeck: MonsterDeck[],
+    deckCard: MonsterDeck,
+    userCard: UserMonster,
+    amount: number,
+  ): Promise<void> {
+    if (deckCard.amount - amount < 0) {
+      throw new CustomError(
+        `Não é possível remover ${amount} cartas,` +
+          ` pois só existem ${deckCard.amount} cartas ${deckCard.monster.name}` +
+          ` no deck`,
+      );
+    }
+    deckCard.amount -= amount;
+    userCard.amount += amount;
+    if (deckCard.amount === 0) {
+      const index = monstersDeck.findIndex((item) => item.id === deckCard.id);
+      this.deleteMonsterDeck(deckCard.id);
+      monstersDeck.splice(index, 1);
+    }
+  }
+
+  async removeCardInDeck(
+    removeCardDeckUserDto: RemoveCardInDeckDto,
+    user: User,
+  ): Promise<Deck> {
+    const { cardId, nameDeck, amount } = removeCardDeckUserDto;
+    const userCards =
+      await this.usersCardsRepository.findUserCardsByUserCardsId(user.cards.id);
+    const monstersUser = userCards.userMonsters;
+    const trapsUser = userCards.userTraps;
+    const spellsUser = userCards.userSpells;
+    const userDecks = await this.findDecksByUserId(user.id);
+    const userDeck = userDecks.find((deck) => deck.name === nameDeck);
+
+    if (!userDeck) {
+      throw new NotFoundException(
+        `Você não possui um deck chamado ${nameDeck} `,
+      );
+    }
+
+    const spellsDeck = userDeck.spellsDeck;
+    const trapsDeck = userDeck.trapsDeck;
+    const monstersDeck = userDeck.monstersDeck;
+    let userCard: UserSpell | UserMonster | UserTrap;
+    let deckCard: SpellDeck | MonsterDeck | TrapDeck;
+
+    userCard = spellsUser.find((card) => card.spell.id === cardId);
+    deckCard = spellsDeck.find((spells) => spells.spell.id === cardId);
+
+    if (deckCard) {
+      await this.removeCardInSpellDeck(spellsDeck, deckCard, userCard, amount);
+    } else {
+      userCard = trapsUser.find((card) => card.trap.id === cardId);
+      deckCard = trapsDeck.find((traps) => traps.trap.id === cardId);
+      if (deckCard) {
+        await this.removeCardInTrapDeck(trapsDeck, deckCard, userCard, amount);
+      } else {
+        userCard = monstersUser.find((card) => card.monster.id === cardId);
+        deckCard = monstersDeck.find(
+          (monsters) => monsters.monster.id === cardId,
+        );
+        if (deckCard) {
+          await this.removeCardInMonsterDeck(
+            monstersDeck,
+            deckCard,
+            userCard,
+            amount,
+          );
+        } else
+          throw new NotFoundException(
+            `Carta não encontrada no deck ${nameDeck}`,
+          );
       }
     }
 

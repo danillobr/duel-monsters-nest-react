@@ -8,7 +8,7 @@ export class UsersCardsRepository extends Repository<UserCards> {
     super(UserCards, dataSource.createEntityManager());
   }
 
-  async findUserCards(userCardsId: string): Promise<UserCards> {
+  async findUserCardsByUserCardsId(userCardsId: string): Promise<UserCards> {
     return await this.createQueryBuilder('userCards')
       .leftJoinAndSelect('userCards.userSpells', 'userSpells')
       .leftJoinAndSelect('userCards.userMonsters', 'userMonsters')
