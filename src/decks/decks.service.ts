@@ -14,9 +14,9 @@ import { TrapDeck } from './entities/trap-deck.entity';
 import { MonsterDeck } from './entities/monster-deck.entity';
 import { UserMonster } from '../cards/entities/user-monster.entity';
 import { UserTrap } from '../cards/entities/user-trap.entity';
-import { AddCardInDeckDto } from '../users/dtos/add-card-deck.dto';
+import { AddCardInDeckDto } from './dto/add-card-deck.dto';
 import { UsersCardsRepository } from '../cards/repositories/users-cards.repository';
-import { RemoveCardInDeckDto } from '../users/dtos/remove-card-deck-user.dto';
+import { RemoveCardInDeckDto } from './dto/remove-card-deck-user.dto';
 
 @Injectable()
 export class DecksService {

@@ -15,9 +15,11 @@ import { RolesGuard } from '../auth/roles.guard';
 import { GetUser } from '../auth/decorations/get-user.decorator';
 import { User } from '../users/entities/user.entity';
 import { ReturnDeckDto } from './dto/return-deck.dto';
-import { AddCardInDeckDto } from '../users/dtos/add-card-deck.dto';
-import { RemoveCardInDeckDto } from '../users/dtos/remove-card-deck-user.dto';
+import { AddCardInDeckDto } from './dto/add-card-deck.dto';
+import { RemoveCardInDeckDto } from './dto/remove-card-deck-user.dto';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('decks')
 @Controller('decks')
 @UseGuards(AuthGuard(), RolesGuard)
 export class DecksController {

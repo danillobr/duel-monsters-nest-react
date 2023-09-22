@@ -22,7 +22,9 @@ import { GetUser } from '../auth/decorations/get-user.decorator';
 import { UpdateUserDto } from './dtos/update-user.dto';
 import { User } from './entities/user.entity';
 import { FindUsersQueryDto } from './dtos/find-users-query.dto';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('users')
 @Controller('users')
 @UseGuards(AuthGuard(), RolesGuard)
 export class UsersController {
