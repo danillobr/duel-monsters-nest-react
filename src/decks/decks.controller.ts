@@ -17,8 +17,9 @@ import { User } from '../users/entities/user.entity';
 import { ReturnDeckDto } from './dto/return-deck.dto';
 import { AddCardInDeckDto } from './dto/add-card-deck.dto';
 import { RemoveCardInDeckDto } from './dto/remove-card-deck-user.dto';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
+@ApiBearerAuth()
 @ApiTags('decks')
 @Controller('decks')
 @UseGuards(AuthGuard(), RolesGuard)

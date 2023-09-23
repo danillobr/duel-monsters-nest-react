@@ -1,6 +1,11 @@
+import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty, IsString, MaxLength } from 'class-validator';
 
 export class CreateCardDto {
+  @ApiProperty({
+    description: 'Informe o nome da carta',
+    example: 'Qualquer carta',
+  })
   @IsString()
   @IsNotEmpty({
     message: 'Informe o nome da carta',
@@ -11,6 +16,10 @@ export class CreateCardDto {
   })
   name: string;
 
+  @ApiProperty({
+    description: 'Descrição completa do que a carta faz.',
+    example: 'Qualquer carta',
+  })
   @IsString()
   @IsNotEmpty({
     message: 'Informe a descrição da carta',
@@ -20,6 +29,10 @@ export class CreateCardDto {
   })
   description: string;
 
+  @ApiProperty({
+    description: 'Imagem da carta (essa parte ainda não está feita)',
+    example: 'Imagem.png',
+  })
   @IsNotEmpty({
     message: 'Imagem',
   })

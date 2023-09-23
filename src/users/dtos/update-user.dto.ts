@@ -30,15 +30,16 @@ export class UpdateUserDto {
   @ApiProperty({
     description: 'Tipo de usuário.',
     required: false,
-    example: 'ADMIN ou USER',
+    example: 'USER',
+    enum: UserRole,
   })
   @IsOptional()
   role?: UserRole;
 
   @ApiProperty({
-    description: 'Status',
+    description: 'Status do usuário',
     required: false,
-    example: 'true ou false',
+    example: true,
   })
   @IsOptional()
   status?: boolean;

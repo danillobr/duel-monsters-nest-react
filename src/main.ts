@@ -35,6 +35,7 @@ async function bootstrap() {
     .addTag('auth')
     .addTag('decks')
     .addTag('cards')
+    .addBearerAuth()
     .build();
 
   const document = SwaggerModule.createDocument(app, config);

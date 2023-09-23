@@ -17,7 +17,7 @@ import { User } from '../users/entities/user.entity';
 import { GetUser } from './decorations/get-user.decorator';
 import { ChangePasswordDto } from './dtos/change-password.dto';
 import { UserRole } from '../users/enum/user-roles.enum';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -71,6 +71,7 @@ export class AuthController {
     };
   }
 
+  @ApiBearerAuth()
   @Patch(':id/change-password')
   @UseGuards(AuthGuard())
   async changePassword(
@@ -89,6 +90,7 @@ export class AuthController {
     };
   }
 
+  @ApiBearerAuth()
   @Get('/me')
   @UseGuards(AuthGuard())
   getMe(@GetUser() user: User): User {

@@ -24,8 +24,9 @@ import { User } from '../users/entities/user.entity';
 import { UsersCardsService } from './users-cards.service';
 import { AddCardInUserDto } from './dto/add-card-user.dto';
 import { RemoveCardInUserDto } from './dto/remove-card-user.dto';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
+@ApiBearerAuth()
 @ApiTags('cards')
 @Controller('cards')
 @UseGuards(AuthGuard(), RolesGuard)
