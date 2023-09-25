@@ -24,10 +24,26 @@ import { User } from '../users/entities/user.entity';
 import { UsersCardsService } from './users-cards.service';
 import { AddCardInUserDto } from './dtos/add-card-user.dto';
 import { RemoveCardInUserDto } from './dtos/remove-card-user.dto';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiConflictResponse,
+  ApiCreatedResponse,
+  ApiNotFoundResponse,
+  ApiOkResponse,
+  ApiTags,
+  ApiUnauthorizedResponse,
+} from '@nestjs/swagger';
+import { UserSpell } from './entities/user-spell.entity';
+import { UserTrap } from './entities/user-trap.entity';
+import { UserMonster } from './entities/user-monster.entity';
+import { RemoveCardInUserResponse } from './dtos/return-remove-card-user.dto';
+import { Monster } from './entities/monster.entity';
+import { Spell } from './entities/spell.entity';
+import { Trap } from './entities/trap.entity';
 
 @ApiBearerAuth()
 @ApiTags('cards')
+@ApiUnauthorizedResponse({ description: 'Unauthorized' })
 @Controller('cards')
 @UseGuards(AuthGuard(), RolesGuard)
 export class CardsController {
@@ -38,6 +54,10 @@ export class CardsController {
     private usersCardsService: UsersCardsService,
   ) {}
 
+  @ApiCreatedResponse({ description: 'Carta de monstro criada com sucesso.' })
+  @ApiConflictResponse({
+    description: 'Uma carta com esse nome já foi cadastrada.',
+  })
   @Post('monsters')
   @Role(UserRole.ADMIN)
   async createMonster(
@@ -46,10 +66,14 @@ export class CardsController {
     const card = await this.monstersService.create(createMonsterDto);
     return {
       card,
-      message: 'Carta de monstro criada com sucesso',
+      message: 'Carta de monstro criada com sucesso.',
     };
   }
 
+  @ApiCreatedResponse({ description: 'Carta armadilha criada com sucesso.' })
+  @ApiConflictResponse({
+    description: 'Uma carta com esse nome já foi cadastrada.',
+  })
   @Post('traps')
   @Role(UserRole.ADMIN)
   async createTrap(
@@ -62,6 +86,10 @@ export class CardsController {
     };
   }
 
+  @ApiCreatedResponse({ description: 'Carta mágica criada com sucesso.' })
+  @ApiConflictResponse({
+    description: 'Uma carta com esse nome já foi cadastrada.',
+  })
   @Post('spells')
   @Role(UserRole.ADMIN)
   async createSpell(
@@ -74,6 +102,11 @@ export class CardsController {
     };
   }
 
+  @ApiOkResponse({
+    description:
+      'Retorna um objeto do tipo UserSpell que é a carta que foi adicionada.',
+    type: [UserSpell],
+  })
   @Patch('/add-spells-cards-user')
   async addSpellCard(
     @GetUser() user: User,
@@ -85,6 +118,11 @@ export class CardsController {
     );
   }
 
+  @ApiOkResponse({
+    description:
+      'Retorna um objeto do tipo UserTrap que é a carta que foi adicionada.',
+    type: [UserTrap],
+  })
   @Patch('/add-traps-cards-user')
   async addTrapCard(
     @GetUser() user: User,
@@ -96,6 +134,11 @@ export class CardsController {
     );
   }
 
+  @ApiOkResponse({
+    description:
+      'Retorna um objeto do tipo UserMonster que é a carta que foi adicionada.',
+    type: [UserMonster],
+  })
   @Patch('/add-monsters-cards-user')
   async addCard(
     @GetUser() user: User,
@@ -107,6 +150,11 @@ export class CardsController {
     );
   }
 
+  @ApiOkResponse({
+    description:
+      'Retorna a carta que foi removida em forma de objeto do tipo UserMonster, UserSpell ou UserTrap.',
+    type: RemoveCardInUserResponse,
+  })
   @Patch('/remove-card-user')
   async removeCardInUserCards(
     @GetUser() user: User,
@@ -118,6 +166,14 @@ export class CardsController {
     );
   }
 
+  @ApiOkResponse({
+    description:
+      'Retorna um objeto do tipo Monster referente a carta removida.',
+    type: Monster,
+  })
+  @ApiNotFoundResponse({
+    description: 'Não foi encontrada a carta do ID informado',
+  })
   @Role(UserRole.ADMIN)
   @Delete('/monsters/:id')
   async removeMonster(@Param('id') id: string) {
@@ -127,6 +183,13 @@ export class CardsController {
     };
   }
 
+  @ApiOkResponse({
+    description: 'Retorna um objeto do tipo Trap referente a carta removida.',
+    type: Trap,
+  })
+  @ApiNotFoundResponse({
+    description: 'Não foi encontrada a carta do ID informado',
+  })
   @Role(UserRole.ADMIN)
   @Delete('/traps/:id')
   async removeTrap(@Param('id') id: string) {
@@ -136,6 +199,13 @@ export class CardsController {
     };
   }
 
+  @ApiOkResponse({
+    description: 'Retorna um objeto do tipo Spell referente a carta removida.',
+    type: Spell,
+  })
+  @ApiNotFoundResponse({
+    description: 'Não foi encontrada a carta do ID informado',
+  })
   @Role(UserRole.ADMIN)
   @Delete('/spells/:id')
   async removeSpell(@Param('id') id: string) {

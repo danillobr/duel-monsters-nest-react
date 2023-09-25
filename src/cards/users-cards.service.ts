@@ -39,7 +39,7 @@ export class UsersCardsService {
   async addSpellsCardsInUserCards(
     addCardUserDto: AddCardInUserDto,
     userCardsId: string,
-  ): Promise<UserCards> {
+  ): Promise<UserSpell[]> {
     const cardsIds = addCardUserDto.itemsCards.map(
       (itemCard) => itemCard.cardId,
     );
@@ -47,7 +47,7 @@ export class UsersCardsService {
     const userSpells = userCards.userSpells;
     const spells = await this.spellsService.findBy(cardsIds);
 
-    addCardUserDto.itemsCards.map((itemCard) => {
+    const returnUserSpells = addCardUserDto.itemsCards.map((itemCard) => {
       const spell = spells.find((card) => card.id === itemCard.cardId);
       const existCardInUser = userSpells.find(
         (cards) => cards.spell.id === spell.id,
@@ -55,17 +55,19 @@ export class UsersCardsService {
 
       if (existCardInUser) {
         existCardInUser.amount += itemCard.amount;
+        return existCardInUser;
       } else {
         const userSpell = new UserSpell();
         userSpell.spell = spell;
         userSpell.amount = itemCard.amount;
         userSpells.push(userSpell);
+        return userSpell;
       }
     });
 
     try {
       await userCards.save();
-      return userCards;
+      return returnUserSpells;
     } catch (error) {
       throw new InternalServerErrorException(
         'Erro ao salvar os dados no banco de dados',
@@ -76,7 +78,7 @@ export class UsersCardsService {
   async addTrapsCardsInUserCards(
     addCardUserDto: AddCardInUserDto,
     userCardsId: string,
-  ): Promise<UserCards> {
+  ): Promise<UserTrap[]> {
     const cardsIds = addCardUserDto.itemsCards.map(
       (itemCard) => itemCard.cardId,
     );
@@ -84,7 +86,7 @@ export class UsersCardsService {
     const userTraps = userCards.userTraps;
     const traps = await this.trapsService.findBy(cardsIds);
 
-    addCardUserDto.itemsCards.map((itemCard) => {
+    const returnUserTraps = addCardUserDto.itemsCards.map((itemCard) => {
       const trap = traps.find((card) => card.id === itemCard.cardId);
       const existCardInUser = userTraps.find(
         (cards) => cards.trap.id === trap.id,
@@ -92,17 +94,19 @@ export class UsersCardsService {
 
       if (existCardInUser) {
         existCardInUser.amount += itemCard.amount;
+        return existCardInUser;
       } else {
         const userTrap = new UserTrap();
         userTrap.trap = trap;
         userTrap.amount = itemCard.amount;
         userTraps.push(userTrap);
+        return userTrap;
       }
     });
 
     try {
       await userCards.save();
-      return userCards;
+      return returnUserTraps;
     } catch (error) {
       throw new InternalServerErrorException(
         'Erro ao salvar os dados no banco de dados',
@@ -113,7 +117,7 @@ export class UsersCardsService {
   async addMonstersCardsInUserCards(
     addCardUserDto: AddCardInUserDto,
     userCardsId: string,
-  ): Promise<UserCards> {
+  ): Promise<UserMonster[]> {
     const cardsIds = addCardUserDto.itemsCards.map(
       (itemCard) => itemCard.cardId,
     );
@@ -121,7 +125,7 @@ export class UsersCardsService {
     const userMonsters = userCards.userMonsters;
     const monsters = await this.monstersService.findBy(cardsIds);
 
-    addCardUserDto.itemsCards.map((itemCard) => {
+    const returnUserMonsters = addCardUserDto.itemsCards.map((itemCard) => {
       const monster = monsters.find((card) => card.id === itemCard.cardId);
       const existCardInUser = userMonsters.find(
         (cards) => cards.monster.id === monster.id,
@@ -129,17 +133,19 @@ export class UsersCardsService {
 
       if (existCardInUser) {
         existCardInUser.amount += itemCard.amount;
+        return existCardInUser;
       } else {
         const userMonster = new UserMonster();
         userMonster.monster = monster;
         userMonster.amount = itemCard.amount;
         userMonsters.push(userMonster);
+        return userMonster;
       }
     });
 
     try {
       await userCards.save();
-      return userCards;
+      return returnUserMonsters;
     } catch (error) {
       throw new InternalServerErrorException(
         'Erro ao salvar os dados no banco de dados',

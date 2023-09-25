@@ -11,7 +11,7 @@ import {
 export class CredentialsDto {
   @ApiProperty({
     description: 'Email utilizado para fazer login',
-    example: 'email@gmail.com',
+    example: 'admin@gmail.com',
   })
   @IsNotEmpty({
     message: 'Informe um endereço de email',
@@ -30,7 +30,7 @@ export class CredentialsDto {
   @ApiProperty({
     description:
       'Senha utilizada no login, deve conter pelo menos uma letra maiúscula, uma letra minúscula, um número ou um símbolo',
-    example: 'Senha321!',
+    example: 'Admin321!',
   })
   @IsString()
   @IsNotEmpty({
