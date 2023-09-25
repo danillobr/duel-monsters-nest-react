@@ -6,7 +6,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { Card } from '../entities/card.entity';
-import { CreateMonsterDto } from '../dto/create-monster.dto';
+import { CreateMonsterDto } from '../dtos/create-monster.dto';
 import { Monster } from '../entities/monster.entity';
 
 @Injectable()

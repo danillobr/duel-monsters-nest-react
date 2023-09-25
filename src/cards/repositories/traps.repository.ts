@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 import { Card } from '../entities/card.entity';
 import { Trap } from '../entities/trap.entity';
-import { CreateTrapDto } from '../dto/create-trap.dto';
+import { CreateTrapDto } from '../dtos/create-trap.dto';
 
 @Injectable()
 export class TrapsRepository extends Repository<Trap> {

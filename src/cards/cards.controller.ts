@@ -9,12 +9,12 @@ import {
   Patch,
 } from '@nestjs/common';
 import { MonstersService } from './monsters.service';
-import { CreateMonsterDto } from './dto/create-monster.dto';
-import { ReturnCardDto } from './dto/return-card.dto';
-import { CreateTrapDto } from './dto/create-trap.dto';
+import { CreateMonsterDto } from './dtos/create-monster.dto';
+import { ReturnCardDto } from './dtos/return-card.dto';
+import { CreateTrapDto } from './dtos/create-trap.dto';
 import { TrapsService } from './traps.service';
 import { SpellsService } from './spells.service';
-import { CreateSpellDto } from './dto/create-spell.dto';
+import { CreateSpellDto } from './dtos/create-spell.dto';
 import { Role } from '../auth/decorations/role.decorator';
 import { UserRole } from '../users/enum/user-roles.enum';
 import { AuthGuard } from '@nestjs/passport';
@@ -22,8 +22,8 @@ import { RolesGuard } from '../auth/roles.guard';
 import { GetUser } from '../auth/decorations/get-user.decorator';
 import { User } from '../users/entities/user.entity';
 import { UsersCardsService } from './users-cards.service';
-import { AddCardInUserDto } from './dto/add-card-user.dto';
-import { RemoveCardInUserDto } from './dto/remove-card-user.dto';
+import { AddCardInUserDto } from './dtos/add-card-user.dto';
+import { RemoveCardInUserDto } from './dtos/remove-card-user.dto';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
 @ApiBearerAuth()

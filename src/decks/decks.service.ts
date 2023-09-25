@@ -3,7 +3,7 @@ import {
   InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
-import { CreateDeckDto } from './dto/create-deck.dto';
+import { CreateDeckDto } from './dtos/create-deck.dto';
 import { DecksRepository } from './repositories/decks.repository';
 import { Deck } from './entities/deck.entity';
 import { User } from '../users/entities/user.entity';
@@ -14,9 +14,9 @@ import { TrapDeck } from './entities/trap-deck.entity';
 import { MonsterDeck } from './entities/monster-deck.entity';
 import { UserMonster } from '../cards/entities/user-monster.entity';
 import { UserTrap } from '../cards/entities/user-trap.entity';
-import { AddCardInDeckDto } from './dto/add-card-deck.dto';
+import { AddCardInDeckDto } from './dtos/add-card-deck.dto';
 import { UsersCardsRepository } from '../cards/repositories/users-cards.repository';
-import { RemoveCardInDeckDto } from './dto/remove-card-deck-user.dto';
+import { RemoveCardInDeckDto } from './dtos/remove-card-deck-user.dto';
 
 @Injectable()
 export class DecksService {

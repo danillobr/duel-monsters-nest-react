@@ -7,7 +7,7 @@ import {
 } from '@nestjs/common';
 import { Card } from '../entities/card.entity';
 import { Spell } from '../entities/spell.entity';
-import { CreateSpellDto } from '../dto/create-spell.dto';
+import { CreateSpellDto } from '../dtos/create-spell.dto';
 
 @Injectable()
 export class SpellsRepository extends Repository<Spell> {

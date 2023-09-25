@@ -9,14 +9,14 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 import { DecksService } from './decks.service';
-import { CreateDeckDto } from './dto/create-deck.dto';
+import { CreateDeckDto } from './dtos/create-deck.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { RolesGuard } from '../auth/roles.guard';
 import { GetUser } from '../auth/decorations/get-user.decorator';
 import { User } from '../users/entities/user.entity';
-import { ReturnDeckDto } from './dto/return-deck.dto';
-import { AddCardInDeckDto } from './dto/add-card-deck.dto';
-import { RemoveCardInDeckDto } from './dto/remove-card-deck-user.dto';
+import { ReturnDeckDto } from './dtos/return-deck.dto';
+import { AddCardInDeckDto } from './dtos/add-card-deck.dto';
+import { RemoveCardInDeckDto } from './dtos/remove-card-deck-user.dto';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
 @ApiBearerAuth()

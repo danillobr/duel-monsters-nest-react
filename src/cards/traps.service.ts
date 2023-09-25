@@ -1,8 +1,8 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { UpdateCardDto } from './dto/update-card.dto';
+import { UpdateCardDto } from './dtos/update-card.dto';
 import { Card } from './entities/card.entity';
 import { TrapsRepository } from './repositories/traps.repository';
-import { CreateTrapDto } from './dto/create-trap.dto';
+import { CreateTrapDto } from './dtos/create-trap.dto';
 import { Trap } from './entities/trap.entity';
 import { In } from 'typeorm';
 

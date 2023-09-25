@@ -1,8 +1,8 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { UpdateCardDto } from './dto/update-card.dto';
+import { UpdateCardDto } from './dtos/update-card.dto';
 import { Card } from './entities/card.entity';
 import { SpellsRepository } from './repositories/spells.repository';
-import { CreateSpellDto } from './dto/create-spell.dto';
+import { CreateSpellDto } from './dtos/create-spell.dto';
 import { Spell } from './entities/spell.entity';
 import { In } from 'typeorm';
 
