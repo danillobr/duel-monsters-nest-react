@@ -17,15 +17,38 @@ import { User } from '../users/entities/user.entity';
 import { ReturnDeckDto } from './dtos/return-deck.dto';
 import { AddCardInDeckDto } from './dtos/add-card-deck.dto';
 import { RemoveCardInDeckDto } from './dtos/remove-card-deck-user.dto';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBadRequestResponse,
+  ApiBearerAuth,
+  ApiConflictResponse,
+  ApiCreatedResponse,
+  ApiInternalServerErrorResponse,
+  ApiNotFoundResponse,
+  ApiOkResponse,
+  ApiTags,
+  ApiUnauthorizedResponse,
+} from '@nestjs/swagger';
+import { Deck } from './entities/deck.entity';
+import { ReturnCreateDeckDto } from './dtos/return-create-deck.dto';
 
 @ApiBearerAuth()
 @ApiTags('decks')
+@ApiUnauthorizedResponse({ description: 'Unauthorized' })
 @Controller('decks')
 @UseGuards(AuthGuard(), RolesGuard)
 export class DecksController {
   constructor(private readonly decksService: DecksService) {}
 
+  @ApiCreatedResponse({
+    description: 'Deck criado com sucesso.',
+    type: ReturnCreateDeckDto,
+  })
+  @ApiConflictResponse({
+    description: 'Já existe um deck com esse nome.',
+  })
+  @ApiInternalServerErrorResponse({
+    description: 'Erro ao salvar o deck no banco de dados.',
+  })
   @Post()
   async create(
     @Body() createDeckDto: CreateDeckDto,
@@ -34,10 +57,25 @@ export class DecksController {
     const deck = await this.decksService.create(createDeckDto, user);
     return {
       deck,
-      message: 'Deck criado com sucesso',
+      message: 'Deck criado com sucesso.',
     };
   }
 
+  @ApiOkResponse({
+    description: 'Retorna o deck que a carta foi adicionada.',
+    type: Deck,
+  })
+  @ApiBadRequestResponse({
+    description:
+      'Limite máximo de 3 cartas por deck atingido, ou usuário não tem cartas suficientes na sua lista de cartas',
+  })
+  @ApiNotFoundResponse({
+    description:
+      'Deck não encontrado ou usuário não possui essa carta na sua lista de cartas.',
+  })
+  @ApiInternalServerErrorResponse({
+    description: 'Erro ao adicionar a carta ao deck.',
+  })
   @Patch('/add-card-deck')
   async addCardInDeck(
     @GetUser() user: User,
@@ -46,6 +84,21 @@ export class DecksController {
     return await this.decksService.addCardInDeck(addCardDeckUserDto, user);
   }
 
+  @ApiOkResponse({
+    description: 'Retorna o deck que a carta foi removida.',
+    type: Deck,
+  })
+  @ApiBadRequestResponse({
+    description:
+      'A quantidade de cartas para remover do deck é maior do que a quantidade de cartas que o deck possui',
+  })
+  @ApiNotFoundResponse({
+    description:
+      'Deck não encontrado ou usuário não possui essa carta no deck.',
+  })
+  @ApiInternalServerErrorResponse({
+    description: 'Erro ao remover a carta do deck.',
+  })
   @Patch('/remove-card-deck')
   async removeCardDeck(
     @GetUser() user: User,
@@ -57,11 +110,17 @@ export class DecksController {
     );
   }
 
+  @ApiOkResponse({
+    description: 'Deck removido com sucesso.',
+  })
+  @ApiNotFoundResponse({
+    description: 'Não foi encontrada o deck do ID informado.',
+  })
   @Delete('/:id')
   async remove(@Param('id') id: string) {
     await this.decksService.remove(id);
     return {
-      message: 'Deck removido com sucesso',
+      message: 'Deck removido com sucesso.',
     };
   }
 }

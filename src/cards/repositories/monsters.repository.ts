@@ -32,11 +32,11 @@ export class MonstersRepository extends Repository<Monster> {
     } catch (error) {
       if (error.code.toString() === '23505') {
         throw new ConflictException(
-          'Uma carta com esse nome já foi cadastrada',
+          'Uma carta com esse nome já foi cadastrada.',
         );
       } else {
         throw new InternalServerErrorException(
-          'Erro ao salvar salvar carta no banco de dados',
+          'Erro ao salvar salvar carta no banco de dados.',
         );
       }
     }

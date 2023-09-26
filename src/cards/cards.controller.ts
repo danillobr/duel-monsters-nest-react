@@ -28,6 +28,7 @@ import {
   ApiBearerAuth,
   ApiConflictResponse,
   ApiCreatedResponse,
+  ApiInternalServerErrorResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
   ApiTags,
@@ -58,6 +59,9 @@ export class CardsController {
   @ApiConflictResponse({
     description: 'Uma carta com esse nome já foi cadastrada.',
   })
+  @ApiInternalServerErrorResponse({
+    description: 'Erro ao salvar salvar carta no banco de dados.',
+  })
   @Post('monsters')
   @Role(UserRole.ADMIN)
   async createMonster(
@@ -74,6 +78,9 @@ export class CardsController {
   @ApiConflictResponse({
     description: 'Uma carta com esse nome já foi cadastrada.',
   })
+  @ApiInternalServerErrorResponse({
+    description: 'Erro ao salvar salvar carta no banco de dados.',
+  })
   @Post('traps')
   @Role(UserRole.ADMIN)
   async createTrap(
@@ -89,6 +96,9 @@ export class CardsController {
   @ApiCreatedResponse({ description: 'Carta mágica criada com sucesso.' })
   @ApiConflictResponse({
     description: 'Uma carta com esse nome já foi cadastrada.',
+  })
+  @ApiInternalServerErrorResponse({
+    description: 'Erro ao salvar salvar carta no banco de dados.',
   })
   @Post('spells')
   @Role(UserRole.ADMIN)
@@ -107,6 +117,9 @@ export class CardsController {
       'Retorna um objeto do tipo UserSpell que é a carta que foi adicionada.',
     type: [UserSpell],
   })
+  @ApiInternalServerErrorResponse({
+    description: 'Erro ao salvar a(s) carta(s) no banco de dados.',
+  })
   @Patch('/add-spells-cards-user')
   async addSpellCard(
     @GetUser() user: User,
@@ -122,6 +135,9 @@ export class CardsController {
     description:
       'Retorna um objeto do tipo UserTrap que é a carta que foi adicionada.',
     type: [UserTrap],
+  })
+  @ApiInternalServerErrorResponse({
+    description: 'Erro ao salvar a(s) carta(s) no banco de dados.',
   })
   @Patch('/add-traps-cards-user')
   async addTrapCard(
@@ -139,6 +155,9 @@ export class CardsController {
       'Retorna um objeto do tipo UserMonster que é a carta que foi adicionada.',
     type: [UserMonster],
   })
+  @ApiInternalServerErrorResponse({
+    description: 'Erro ao salvar a(s) carta(s) no banco de dados.',
+  })
   @Patch('/add-monsters-cards-user')
   async addCard(
     @GetUser() user: User,
@@ -155,6 +174,10 @@ export class CardsController {
       'Retorna a carta que foi removida em forma de objeto do tipo UserMonster, UserSpell ou UserTrap.',
     type: RemoveCardInUserResponse,
   })
+  @ApiNotFoundResponse({ description: 'Carta não encontrada.' })
+  @ApiInternalServerErrorResponse({
+    description: 'Erro ao remover carta no banco de dados.',
+  })
   @Patch('/remove-card-user')
   async removeCardInUserCards(
     @GetUser() user: User,
@@ -167,9 +190,7 @@ export class CardsController {
   }
 
   @ApiOkResponse({
-    description:
-      'Retorna um objeto do tipo Monster referente a carta removida.',
-    type: Monster,
+    description: 'Carta removida com sucesso.',
   })
   @ApiNotFoundResponse({
     description: 'Não foi encontrada a carta do ID informado',
@@ -184,8 +205,7 @@ export class CardsController {
   }
 
   @ApiOkResponse({
-    description: 'Retorna um objeto do tipo Trap referente a carta removida.',
-    type: Trap,
+    description: 'Carta removida com sucesso.',
   })
   @ApiNotFoundResponse({
     description: 'Não foi encontrada a carta do ID informado',
@@ -200,18 +220,17 @@ export class CardsController {
   }
 
   @ApiOkResponse({
-    description: 'Retorna um objeto do tipo Spell referente a carta removida.',
-    type: Spell,
+    description: 'Carta removida com sucesso.',
   })
   @ApiNotFoundResponse({
-    description: 'Não foi encontrada a carta do ID informado',
+    description: 'Não foi encontrada a carta do ID informado.',
   })
   @Role(UserRole.ADMIN)
   @Delete('/spells/:id')
   async removeSpell(@Param('id') id: string) {
     await this.spellsService.remove(id);
     return {
-      message: 'Carta removida com sucesso',
+      message: 'Carta removida com sucesso.',
     };
   }
 }

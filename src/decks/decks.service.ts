@@ -139,6 +139,13 @@ export class DecksService {
       await this.usersCardsRepository.findUserCardsByUserCardsId(user.cards.id);
     const userDecks = await this.findDecksByUserId(user.id);
     const userDeck = userDecks.find((deck) => deck.name === nameDeck);
+
+    if (!userDeck) {
+      throw new NotFoundException(
+        `Você não possui um deck chamado ${nameDeck} `,
+      );
+    }
+
     const monstersUser = userCards.userMonsters;
     const trapsUser = userCards.userTraps;
     const spellsUser = userCards.userSpells;
@@ -172,7 +179,7 @@ export class DecksService {
           );
         } else {
           throw new NotFoundException(
-            'Você não possui essa carta na sua lista de cartas',
+            'Você não possui essa carta na sua lista de cartas.',
           );
         }
       }
@@ -184,7 +191,7 @@ export class DecksService {
       return userDeck;
     } catch (error) {
       throw new InternalServerErrorException(
-        'Erro ao salvar os dados no banco de dados',
+        'Erro ao adicionar a carta ao deck.',
       );
     }
   }

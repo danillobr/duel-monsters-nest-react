@@ -70,7 +70,7 @@ export class UsersCardsService {
       return returnUserSpells;
     } catch (error) {
       throw new InternalServerErrorException(
-        'Erro ao salvar os dados no banco de dados',
+        'Erro ao salvar a(s) carta(s) no banco de dados.',
       );
     }
   }
@@ -109,7 +109,7 @@ export class UsersCardsService {
       return returnUserTraps;
     } catch (error) {
       throw new InternalServerErrorException(
-        'Erro ao salvar os dados no banco de dados',
+        'Erro ao salvar a(s) carta(s) no banco de dados.',
       );
     }
   }
@@ -148,7 +148,7 @@ export class UsersCardsService {
       return returnUserMonsters;
     } catch (error) {
       throw new InternalServerErrorException(
-        'Erro ao salvar os dados no banco de dados',
+        'Erro ao salvar a(s) carta(s) no banco de dados.',
       );
     }
   }
@@ -237,7 +237,7 @@ export class UsersCardsService {
             userCard,
             amount,
           );
-        } else throw new NotFoundException('Carta não encontrada');
+        } else throw new NotFoundException('Carta não encontrada.');
       }
     }
 
@@ -246,7 +246,7 @@ export class UsersCardsService {
       return userCards;
     } catch (error) {
       throw new InternalServerErrorException(
-        'Erro ao salvar os dados no banco de dados',
+        'Erro ao remover carta no banco de dados.',
       );
     }
   }

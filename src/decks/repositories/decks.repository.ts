@@ -19,13 +19,17 @@ export class DecksRepository extends Repository<Deck> {
     deck.user = user;
     try {
       await deck.save();
+      delete deck.user;
+      deck.spellsDeck = [];
+      deck.trapsDeck = [];
+      deck.monstersDeck = [];
       return deck;
     } catch (error) {
       if (error.code.toString() === '23505') {
-        throw new ConflictException('Já existe um deck com esse nome');
+        throw new ConflictException('Já existe um deck com esse nome.');
       } else {
         throw new InternalServerErrorException(
-          'Erro ao salvar o deck no banco de dados',
+          'Erro ao salvar o deck no banco de dados.',
         );
       }
     }
