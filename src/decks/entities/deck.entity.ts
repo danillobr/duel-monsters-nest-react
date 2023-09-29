@@ -2,11 +2,13 @@ import { User } from '../../users/entities/user.entity';
 import {
   BaseEntity,
   Column,
+  CreateDateColumn,
   Entity,
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
   Unique,
+  UpdateDateColumn,
 } from 'typeorm';
 import { SpellDeck } from './spell-deck.entity';
 import { TrapDeck } from './trap-deck.entity';
@@ -24,6 +26,14 @@ export class Deck extends BaseEntity {
   @ApiProperty({ example: 'Metalfoes deck' })
   @Column({ nullable: false, type: 'varchar', length: 200 })
   name: string;
+
+  @ApiProperty({ example: new Date().toISOString() })
+  @CreateDateColumn()
+  createdAt: Date;
+
+  @ApiProperty({ example: new Date().toISOString() })
+  @UpdateDateColumn()
+  updatedAt: Date;
 
   @ApiProperty({ type: () => [SpellDeck] })
   @OneToMany(() => SpellDeck, (spellDeck) => spellDeck.deck, {

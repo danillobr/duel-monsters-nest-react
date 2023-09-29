@@ -4,6 +4,7 @@ import { Seeder, SeederFactoryManager } from 'typeorm-extension';
 import { DataSource } from 'typeorm';
 import { User } from '../../users/entities/user.entity';
 import { UserCards } from '../../cards/entities/user-cards.entity';
+import { UserRole } from '../../users/enum/user-roles.enum';
 
 export class AdminSeeder implements Seeder {
   public async run(
@@ -17,7 +18,7 @@ export class AdminSeeder implements Seeder {
     const salt = await bcrypt.genSalt();
     const password = await bcrypt.hash('Admin321!', salt);
     const email = 'admin@gmail.com';
-    const role = 'ADMIN';
+    const role = UserRole.ADMIN;
     const name = 'admin';
     const status = true;
     const userExist = await userRepository.findOneBy({

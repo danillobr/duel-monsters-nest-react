@@ -16,22 +16,33 @@ import * as bcrypt from 'bcrypt';
 import { UserRole } from '../enum/user-roles.enum';
 import { Deck } from '../../decks/entities/deck.entity';
 import { UserCards } from '../../cards/entities/user-cards.entity';
+import { v4 as uuidV4 } from 'uuid';
+import { ApiProperty } from '@nestjs/swagger';
+import * as crypto from 'crypto';
 
 @Entity('users')
 @Unique(['email'])
 export class User extends BaseEntity {
+  @ApiProperty({ example: uuidV4() })
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
+  @ApiProperty({ example: 'joao@gmail.com' })
   @Column({ nullable: false, type: 'varchar', length: 200 })
   email: string;
 
+  @ApiProperty({ example: 'João Vitor da Silva' })
   @Column({ nullable: false, type: 'varchar', length: 200 })
   name: string;
 
+  @ApiProperty({
+    example: 'USER',
+    enum: UserRole,
+  })
   @Column({ nullable: false, enum: UserRole })
-  role: string;
+  role: UserRole;
 
+  @ApiProperty({ example: true })
   @Column({ nullable: false, default: true })
   status: boolean;
 
@@ -52,30 +63,6 @@ export class User extends BaseEntity {
 
   @UpdateDateColumn()
   updatedAt: Date;
-
-  // @OneToMany(() => SpellUser, (spellUser) => spellUser.user, {
-  //   eager: true,
-  //   onDelete: 'CASCADE',
-  //   onUpdate: 'CASCADE',
-  //   cascade: true,
-  // })
-  // spellsUser: SpellUser[];
-
-  // @OneToMany(() => TrapUser, (trapUser) => trapUser.user, {
-  //   eager: true,
-  //   onDelete: 'CASCADE',
-  //   onUpdate: 'CASCADE',
-  //   cascade: true,
-  // })
-  // trapsUser: TrapUser[];
-
-  // @OneToMany(() => MonsterUser, (monsterUser) => monsterUser.user, {
-  //   eager: true,
-  //   onDelete: 'CASCADE',
-  //   onUpdate: 'CASCADE',
-  //   cascade: true,
-  // })
-  // monstersUser: MonsterUser[];
 
   @OneToOne(() => UserCards, {
     eager: true,

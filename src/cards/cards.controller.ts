@@ -38,13 +38,14 @@ import { UserSpell } from './entities/user-spell.entity';
 import { UserTrap } from './entities/user-trap.entity';
 import { UserMonster } from './entities/user-monster.entity';
 import { RemoveCardInUserResponse } from './dtos/return-remove-card-user.dto';
-import { Monster } from './entities/monster.entity';
-import { Spell } from './entities/spell.entity';
-import { Trap } from './entities/trap.entity';
+import { UnauthorizedResponseDto } from '../auth/dtos/unauthorized-response.dto';
 
 @ApiBearerAuth()
 @ApiTags('cards')
-@ApiUnauthorizedResponse({ description: 'Unauthorized' })
+@ApiUnauthorizedResponse({
+  type: UnauthorizedResponseDto,
+  description: 'Não autorizado',
+})
 @Controller('cards')
 @UseGuards(AuthGuard(), RolesGuard)
 export class CardsController {

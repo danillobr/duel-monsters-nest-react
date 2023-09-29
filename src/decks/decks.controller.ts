@@ -30,10 +30,14 @@ import {
 } from '@nestjs/swagger';
 import { Deck } from './entities/deck.entity';
 import { ReturnCreateDeckDto } from './dtos/return-create-deck.dto';
+import { UnauthorizedResponseDto } from '../auth/dtos/unauthorized-response.dto';
 
 @ApiBearerAuth()
 @ApiTags('decks')
-@ApiUnauthorizedResponse({ description: 'Unauthorized' })
+@ApiUnauthorizedResponse({
+  type: UnauthorizedResponseDto,
+  description: 'Não autorizado',
+})
 @Controller('decks')
 @UseGuards(AuthGuard(), RolesGuard)
 export class DecksController {
