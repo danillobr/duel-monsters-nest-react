@@ -58,9 +58,11 @@ export class User extends BaseEntity {
   @Column({ nullable: true, type: 'varchar', length: 64 })
   recoverToken: string;
 
+  @ApiProperty({ example: new Date().toISOString() })
   @CreateDateColumn()
   createdAt: Date;
 
+  @ApiProperty({ example: new Date().toISOString() })
   @UpdateDateColumn()
   updatedAt: Date;
 

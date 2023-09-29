@@ -22,16 +22,53 @@ import { GetUser } from '../auth/decorations/get-user.decorator';
 import { UpdateUserDto } from './dtos/update-user.dto';
 import { User } from './entities/user.entity';
 import { FindUsersQueryDto } from './dtos/find-users-query.dto';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBadRequestResponse,
+  ApiBearerAuth,
+  ApiConflictResponse,
+  ApiCreatedResponse,
+  ApiForbiddenResponse,
+  ApiInternalServerErrorResponse,
+  ApiNotFoundResponse,
+  ApiOkResponse,
+  ApiTags,
+  ApiUnauthorizedResponse,
+  ApiUnprocessableEntityResponse,
+} from '@nestjs/swagger';
+import { UnauthorizedResponseDto } from '../auth/dtos/unauthorized-response.dto';
+import { ReturnGetUserDto } from './dtos/return-get-user.dto';
 
-@ApiBearerAuth()
-@ApiTags('users')
 @Controller('users')
+@ApiBearerAuth()
+@ApiUnauthorizedResponse({
+  type: UnauthorizedResponseDto,
+  description: 'Não autorizado',
+})
+@ApiTags('users')
 @UseGuards(AuthGuard(), RolesGuard)
 export class UsersController {
   constructor(private usersService: UsersService) {}
 
   @Post()
+  @ApiCreatedResponse({
+    description: 'O cadastro foi realizado com sucesso.',
+    type: ReturnUserDto,
+  })
+  @ApiConflictResponse({
+    description:
+      'O endereço de email é único, não podendo ter dois ou mais usuários com o mesmo email.',
+  })
+  @ApiForbiddenResponse({
+    description: 'Usuário não altorizado a acessar essa funcionalidade',
+  })
+  @ApiBadRequestResponse({
+    description:
+      'A senha deve conter pelo menos uma letra maiúscula, uma letra minúscula, um número ou um símbulo',
+  })
+  @ApiUnprocessableEntityResponse({ description: 'As senhas não conferem' })
+  @ApiInternalServerErrorResponse({
+    description: 'Erro ao salvar o usuário no banco de dados.',
+  })
   @Role(UserRole.ADMIN)
   async createAdminUser(
     @Body(ValidationPipe) createUserDto: CreateUserDto,
@@ -44,8 +81,16 @@ export class UsersController {
   }
 
   @Get(':id')
+  @ApiOkResponse({
+    description: 'Usuário encontrado!',
+    type: ReturnGetUserDto,
+  })
+  @ApiForbiddenResponse({
+    description: 'Usuário não altorizado a acessar essa funcionalidade',
+  })
+  @ApiNotFoundResponse({ description: 'Usuário não encontrado!' })
   @Role(UserRole.ADMIN)
-  async findUserById(@Param('id') id): Promise<ReturnUserDto> {
+  async findUserById(@Param('id') id: string): Promise<ReturnUserDto> {
     const user = await this.usersService.findUserById(id);
     return {
       user,
@@ -54,32 +99,34 @@ export class UsersController {
   }
 
   @Patch(':id')
+  @ApiOkResponse({
+    description: 'Usuário encontrado!',
+    type: UpdateUserDto,
+  })
+  @ApiForbiddenResponse({
+    description: 'Usuário não altorizado a acessar essa funcionalidade',
+  })
+  @ApiNotFoundResponse({ description: 'Usuário não encontrado!' })
   async updateUser(
     @Body(ValidationPipe) updateUserDto: UpdateUserDto,
     @GetUser() user: User,
     @Param('id') id: string,
   ) {
-    if (user.role != UserRole.ADMIN && user.id.toString() != id) {
-      throw new ForbiddenException(
-        'Você não tem autorização para acessar esse recurso',
-      );
-    } else {
-      return this.usersService.updateUser(updateUserDto, id);
-    }
+    return this.usersService.updateUser(updateUserDto, user, id);
   }
 
   @Delete(':id')
+  @ApiOkResponse({
+    description: 'Usuário removido com sucesso!',
+  })
+  @ApiForbiddenResponse({
+    description: 'Você não tem autorização para acessar esse recurso!',
+  })
+  @ApiNotFoundResponse({
+    description: 'Não foi encontrado um usuário com o ID informado!',
+  })
   async deleteUser(@Param('id') id: string, @GetUser() user: User) {
-    if (user.role != UserRole.ADMIN && user.id.toString() != id) {
-      throw new ForbiddenException(
-        'Você não tem autorização para acessar esse recurso',
-      );
-    } else {
-      await this.usersService.deleteUser(id);
-      return {
-        message: 'Usuário removido com sucesso',
-      };
-    }
+    return await this.usersService.deleteUser(user, id);
   }
 
   @Get()

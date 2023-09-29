@@ -23,7 +23,7 @@ class DeckDto {
   MonstersDeck: MonsterDeck[];
 }
 
-export class ReturnCreateDeckDto {
+export class CreateDeckResponseDto {
   @ApiProperty({
     type: DeckDto,
   })

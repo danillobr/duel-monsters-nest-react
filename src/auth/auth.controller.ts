@@ -33,11 +33,12 @@ import {
 import { ReturnSignInDto } from './dtos/return-singn-in.dto';
 import { UnauthorizedResponseDto } from './dtos/unauthorized-response.dto';
 
-@ApiTags('auth')
 @Controller('auth')
+@ApiTags('auth')
 export class AuthController {
   constructor(private authService: AuthService) {}
 
+  @Post('/signup')
   @ApiCreatedResponse({
     description: 'O cadastro foi realizado com sucesso.',
   })
@@ -53,7 +54,6 @@ export class AuthController {
   @ApiInternalServerErrorResponse({
     description: 'Erro ao salvar o usuário no banco de dados.',
   })
-  @Post('/signup')
   async signUp(
     @Body(ValidationPipe) createUserDto: CreateUserDto,
   ): Promise<{ message: string }> {
@@ -63,6 +63,7 @@ export class AuthController {
     };
   }
 
+  @Post('/signin')
   @ApiCreatedResponse({
     description: 'Login do usuário e criação de token de autenticação feitos!',
     type: ReturnSignInDto,
@@ -70,18 +71,17 @@ export class AuthController {
   @ApiUnauthorizedResponse({
     description: 'As credencias de login estão incorretas',
   })
-  @Post('/signin')
   async signIn(
     @Body(ValidationPipe) credentiaslsDto: CredentialsDto,
   ): Promise<{ token: string }> {
     return await this.authService.signIn(credentiaslsDto);
   }
 
+  @Patch(':token')
   @ApiOkResponse({
     description: 'Email confirmado com sucesso!',
   })
   @ApiNotFoundResponse({ description: 'Token inválido!' })
-  @Patch(':token')
   async confirmEmail(@Param('token') token: string) {
     await this.authService.confirmEmail(token);
     return {

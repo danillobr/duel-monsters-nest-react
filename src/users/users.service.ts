@@ -1,4 +1,5 @@
 import {
+  ForbiddenException,
   Injectable,
   InternalServerErrorException,
   NotFoundException,
@@ -29,22 +30,48 @@ export class UsersService {
   async findUserById(userId: string): Promise<User> {
     const user = await this.usersRepository.findOne({
       where: { id: userId },
-      select: ['email', 'name', 'role', 'id'],
+      select: [
+        'email',
+        'name',
+        'role',
+        'id',
+        'status',
+        'createdAt',
+        'updatedAt',
+      ],
     });
     if (!user) throw new NotFoundException('Usuário não encontrado');
+
+    delete user.cards;
+    delete user.decks;
     return user;
   }
 
-  async updateUser(updateUserDto: UpdateUserDto, id: string): Promise<User> {
-    const user = await this.findUserById(id);
+  async updateUser(
+    updateUserDto: UpdateUserDto,
+    user: User,
+    id: string,
+  ): Promise<User> {
     const { name, email, role, status } = updateUserDto;
-    user.name = name ? name : user.name;
-    user.email = email ? email : user.email;
-    user.role = role ? role : user.role;
-    user.status = status === undefined ? user.status : status;
+
+    if (
+      (user.role != UserRole.ADMIN && user.id.toString() != id) ||
+      (user.role === UserRole.USER && updateUserDto.role === UserRole.ADMIN)
+    ) {
+      throw new ForbiddenException(
+        'Você não tem autorização para acessar esse recurso',
+      );
+    }
+
+    const existUser = await this.findUserById(id);
+
+    existUser.name = name ? name : existUser.name;
+    existUser.email = email ? email : existUser.email;
+    existUser.role = role ? role : existUser.role;
+    existUser.status = status === undefined ? existUser.status : status;
     try {
-      await user.save();
-      return user;
+      await existUser.save();
+      return existUser;
     } catch (error) {
       throw new InternalServerErrorException(
         'Erro ao salvar os dados no banco de dados',
@@ -52,13 +79,21 @@ export class UsersService {
     }
   }
 
-  async deleteUser(userId: string) {
+  async deleteUser(user: User, userId: string): Promise<{ message: string }> {
+    if (user.role != UserRole.ADMIN && user.id.toString() != userId) {
+      throw new ForbiddenException(
+        'Você não tem autorização para acessar esse recurso!',
+      );
+    }
+
     const result = await this.usersRepository.delete({ id: userId });
     if (result.affected === 0) {
       throw new NotFoundException(
-        'Não foi encontrado um usuário com o ID informado',
+        'Não foi encontrado um usuário com o ID informado!1',
       );
     }
+
+    return { message: 'Usuário removido com sucesso!' };
   }
 
   async findUsers(

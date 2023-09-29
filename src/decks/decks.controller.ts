@@ -29,23 +29,23 @@ import {
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import { Deck } from './entities/deck.entity';
-import { ReturnCreateDeckDto } from './dtos/return-create-deck.dto';
+import { CreateDeckResponseDto } from './dtos/create-deck-response.dto';
 import { UnauthorizedResponseDto } from '../auth/dtos/unauthorized-response.dto';
 
+@Controller('decks')
 @ApiBearerAuth()
 @ApiTags('decks')
 @ApiUnauthorizedResponse({
   type: UnauthorizedResponseDto,
   description: 'Não autorizado',
 })
-@Controller('decks')
 @UseGuards(AuthGuard(), RolesGuard)
 export class DecksController {
   constructor(private readonly decksService: DecksService) {}
 
   @ApiCreatedResponse({
     description: 'Deck criado com sucesso.',
-    type: ReturnCreateDeckDto,
+    type: CreateDeckResponseDto,
   })
   @ApiConflictResponse({
     description: 'Já existe um deck com esse nome.',
