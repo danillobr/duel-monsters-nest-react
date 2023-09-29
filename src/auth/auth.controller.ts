@@ -89,6 +89,7 @@ export class AuthController {
     };
   }
 
+  @Post('/send-recover-email')
   @ApiCreatedResponse({
     description:
       'Lhe foi enviado um enviado um email com instruções para resetar sua senha',
@@ -108,7 +109,6 @@ export class AuthController {
   @ApiNotFoundResponse({
     description: 'Não há usuário cadastrado com esse email.',
   })
-  @Post('/send-recover-email')
   async sendRecoverPasswordEmail(
     @Body('email') email: string,
   ): Promise<{ message: string }> {
@@ -118,11 +118,11 @@ export class AuthController {
     };
   }
 
+  @Patch('/reset-password/:token')
   @ApiOkResponse({
     description: 'Senha alterada com sucesso!',
   })
   @ApiNotFoundResponse({ description: 'Token inválido!' })
-  @Patch('/reset-password/:token')
   async resetPassword(
     @Param('token') token: string,
     @Body(ValidationPipe) changePasswordDto: ChangePasswordDto,
@@ -134,6 +134,7 @@ export class AuthController {
     };
   }
 
+  @Patch(':id/change-password')
   @ApiBearerAuth()
   @ApiOkResponse({
     description: 'Senha alterada com sucesso!',
@@ -147,7 +148,6 @@ export class AuthController {
       'A senha deve conter pelo menos uma letra maiúscula, uma letra minúscula, um número ou um símbulo',
   })
   @ApiUnprocessableEntityResponse({ description: 'As senhas não conferem' })
-  @Patch(':id/change-password')
   @UseGuards(AuthGuard())
   async changePassword(
     @Param('id') id: string,
@@ -165,6 +165,7 @@ export class AuthController {
     };
   }
 
+  @Get('/me')
   @ApiBearerAuth()
   @ApiOkResponse({
     description: 'Retorna o dados pessoais do usuário',
@@ -174,7 +175,6 @@ export class AuthController {
     type: UnauthorizedResponseDto,
     description: 'Não autorizado',
   })
-  @Get('/me')
   @UseGuards(AuthGuard())
   getMe(@GetUser() user: User): User {
     return user;

@@ -43,6 +43,7 @@ import { UnauthorizedResponseDto } from '../auth/dtos/unauthorized-response.dto'
 export class DecksController {
   constructor(private readonly decksService: DecksService) {}
 
+  @Post()
   @ApiCreatedResponse({
     description: 'Deck criado com sucesso.',
     type: CreateDeckResponseDto,
@@ -53,7 +54,6 @@ export class DecksController {
   @ApiInternalServerErrorResponse({
     description: 'Erro ao salvar o deck no banco de dados.',
   })
-  @Post()
   async create(
     @Body() createDeckDto: CreateDeckDto,
     @GetUser() user: User,
@@ -65,6 +65,7 @@ export class DecksController {
     };
   }
 
+  @Patch('/add-card-deck')
   @ApiOkResponse({
     description: 'Retorna o deck que a carta foi adicionada.',
     type: Deck,
@@ -80,7 +81,6 @@ export class DecksController {
   @ApiInternalServerErrorResponse({
     description: 'Erro ao adicionar a carta ao deck.',
   })
-  @Patch('/add-card-deck')
   async addCardInDeck(
     @GetUser() user: User,
     @Body(ValidationPipe) addCardDeckUserDto: AddCardInDeckDto,
@@ -88,6 +88,7 @@ export class DecksController {
     return await this.decksService.addCardInDeck(addCardDeckUserDto, user);
   }
 
+  @Patch('/remove-card-deck')
   @ApiOkResponse({
     description: 'Retorna o deck que a carta foi removida.',
     type: Deck,
@@ -103,7 +104,6 @@ export class DecksController {
   @ApiInternalServerErrorResponse({
     description: 'Erro ao remover a carta do deck.',
   })
-  @Patch('/remove-card-deck')
   async removeCardDeck(
     @GetUser() user: User,
     @Body(ValidationPipe) removeCardDeckUserDto: RemoveCardInDeckDto,
@@ -114,13 +114,13 @@ export class DecksController {
     );
   }
 
+  @Delete('/:id')
   @ApiOkResponse({
     description: 'Deck removido com sucesso.',
   })
   @ApiNotFoundResponse({
     description: 'Não foi encontrada o deck do ID informado.',
   })
-  @Delete('/:id')
   async remove(@Param('id') id: string) {
     await this.decksService.remove(id);
     return {

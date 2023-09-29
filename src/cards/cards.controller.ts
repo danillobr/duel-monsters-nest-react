@@ -40,13 +40,13 @@ import { UserMonster } from './entities/user-monster.entity';
 import { RemoveCardInUserResponse } from './dtos/return-remove-card-user.dto';
 import { UnauthorizedResponseDto } from '../auth/dtos/unauthorized-response.dto';
 
+@Controller('cards')
 @ApiBearerAuth()
 @ApiTags('cards')
 @ApiUnauthorizedResponse({
   type: UnauthorizedResponseDto,
   description: 'Não autorizado',
 })
-@Controller('cards')
 @UseGuards(AuthGuard(), RolesGuard)
 export class CardsController {
   constructor(
@@ -56,6 +56,7 @@ export class CardsController {
     private usersCardsService: UsersCardsService,
   ) {}
 
+  @Post('monsters')
   @ApiCreatedResponse({ description: 'Carta de monstro criada com sucesso.' })
   @ApiConflictResponse({
     description: 'Uma carta com esse nome já foi cadastrada.',
@@ -63,7 +64,6 @@ export class CardsController {
   @ApiInternalServerErrorResponse({
     description: 'Erro ao salvar salvar carta no banco de dados.',
   })
-  @Post('monsters')
   @Role(UserRole.ADMIN)
   async createMonster(
     @Body(ValidationPipe) createMonsterDto: CreateMonsterDto,
@@ -75,6 +75,7 @@ export class CardsController {
     };
   }
 
+  @Post('traps')
   @ApiCreatedResponse({ description: 'Carta armadilha criada com sucesso.' })
   @ApiConflictResponse({
     description: 'Uma carta com esse nome já foi cadastrada.',
@@ -82,7 +83,6 @@ export class CardsController {
   @ApiInternalServerErrorResponse({
     description: 'Erro ao salvar salvar carta no banco de dados.',
   })
-  @Post('traps')
   @Role(UserRole.ADMIN)
   async createTrap(
     @Body(ValidationPipe) createTrapDto: CreateTrapDto,
@@ -94,6 +94,7 @@ export class CardsController {
     };
   }
 
+  @Post('spells')
   @ApiCreatedResponse({ description: 'Carta mágica criada com sucesso.' })
   @ApiConflictResponse({
     description: 'Uma carta com esse nome já foi cadastrada.',
@@ -101,7 +102,6 @@ export class CardsController {
   @ApiInternalServerErrorResponse({
     description: 'Erro ao salvar salvar carta no banco de dados.',
   })
-  @Post('spells')
   @Role(UserRole.ADMIN)
   async createSpell(
     @Body(ValidationPipe) createSpellDto: CreateSpellDto,
@@ -113,6 +113,7 @@ export class CardsController {
     };
   }
 
+  @Patch('/add-spells-cards-user')
   @ApiOkResponse({
     description:
       'Retorna um objeto do tipo UserSpell que é a carta que foi adicionada.',
@@ -121,7 +122,6 @@ export class CardsController {
   @ApiInternalServerErrorResponse({
     description: 'Erro ao salvar a(s) carta(s) no banco de dados.',
   })
-  @Patch('/add-spells-cards-user')
   async addSpellCard(
     @GetUser() user: User,
     @Body(ValidationPipe) addCardUserDto: AddCardInUserDto,
@@ -132,6 +132,7 @@ export class CardsController {
     );
   }
 
+  @Patch('/add-traps-cards-user')
   @ApiOkResponse({
     description:
       'Retorna um objeto do tipo UserTrap que é a carta que foi adicionada.',
@@ -140,7 +141,6 @@ export class CardsController {
   @ApiInternalServerErrorResponse({
     description: 'Erro ao salvar a(s) carta(s) no banco de dados.',
   })
-  @Patch('/add-traps-cards-user')
   async addTrapCard(
     @GetUser() user: User,
     @Body(ValidationPipe) addCardUserDto: AddCardInUserDto,
@@ -151,6 +151,7 @@ export class CardsController {
     );
   }
 
+  @Patch('/add-monsters-cards-user')
   @ApiOkResponse({
     description:
       'Retorna um objeto do tipo UserMonster que é a carta que foi adicionada.',
@@ -159,7 +160,6 @@ export class CardsController {
   @ApiInternalServerErrorResponse({
     description: 'Erro ao salvar a(s) carta(s) no banco de dados.',
   })
-  @Patch('/add-monsters-cards-user')
   async addCard(
     @GetUser() user: User,
     @Body(ValidationPipe) addCardUserDto: AddCardInUserDto,
@@ -170,6 +170,7 @@ export class CardsController {
     );
   }
 
+  @Patch('/remove-card-user')
   @ApiOkResponse({
     description:
       'Retorna a carta que foi removida em forma de objeto do tipo UserMonster, UserSpell ou UserTrap.',
@@ -179,7 +180,6 @@ export class CardsController {
   @ApiInternalServerErrorResponse({
     description: 'Erro ao remover carta no banco de dados.',
   })
-  @Patch('/remove-card-user')
   async removeCardInUserCards(
     @GetUser() user: User,
     @Body(ValidationPipe) removeCardUserDto: RemoveCardInUserDto,
@@ -189,37 +189,7 @@ export class CardsController {
       user,
     );
   }
-
-  @ApiOkResponse({
-    description: 'Carta removida com sucesso.',
-  })
-  @ApiNotFoundResponse({
-    description: 'Não foi encontrada a carta do ID informado',
-  })
-  @Role(UserRole.ADMIN)
-  @Delete('/monsters/:id')
-  async removeMonster(@Param('id') id: string) {
-    await this.monstersService.remove(id);
-    return {
-      message: 'Carta removida com sucesso',
-    };
-  }
-
-  @ApiOkResponse({
-    description: 'Carta removida com sucesso.',
-  })
-  @ApiNotFoundResponse({
-    description: 'Não foi encontrada a carta do ID informado',
-  })
-  @Role(UserRole.ADMIN)
-  @Delete('/traps/:id')
-  async removeTrap(@Param('id') id: string) {
-    await this.trapsService.remove(id);
-    return {
-      message: 'Carta removida com sucesso',
-    };
-  }
-
+  @Delete('/spells/:id')
   @ApiOkResponse({
     description: 'Carta removida com sucesso.',
   })
@@ -227,11 +197,40 @@ export class CardsController {
     description: 'Não foi encontrada a carta do ID informado.',
   })
   @Role(UserRole.ADMIN)
-  @Delete('/spells/:id')
   async removeSpell(@Param('id') id: string) {
     await this.spellsService.remove(id);
     return {
       message: 'Carta removida com sucesso.',
+    };
+  }
+
+  @Delete('/traps/:id')
+  @ApiOkResponse({
+    description: 'Carta removida com sucesso.',
+  })
+  @ApiNotFoundResponse({
+    description: 'Não foi encontrada a carta do ID informado',
+  })
+  @Role(UserRole.ADMIN)
+  async removeTrap(@Param('id') id: string) {
+    await this.trapsService.remove(id);
+    return {
+      message: 'Carta removida com sucesso',
+    };
+  }
+
+  @Delete('/monsters/:id')
+  @ApiOkResponse({
+    description: 'Carta removida com sucesso.',
+  })
+  @ApiNotFoundResponse({
+    description: 'Não foi encontrada a carta do ID informado',
+  })
+  @Role(UserRole.ADMIN)
+  async removeMonster(@Param('id') id: string) {
+    await this.monstersService.remove(id);
+    return {
+      message: 'Carta removida com sucesso',
     };
   }
 }
