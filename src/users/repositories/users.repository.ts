@@ -71,7 +71,6 @@ export class UsersRepository extends Repository<User> {
       delete user.password;
       delete user.salt;
       delete user.cards;
-      delete user.confirmationToken;
       delete user.recoverToken;
       return user;
     } catch (error) {

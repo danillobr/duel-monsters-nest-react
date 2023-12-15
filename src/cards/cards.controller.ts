@@ -189,6 +189,7 @@ export class CardsController {
       user,
     );
   }
+
   @Delete('/spells/:id')
   @ApiOkResponse({
     description: 'Carta removida com sucesso.',

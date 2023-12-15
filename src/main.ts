@@ -3,13 +3,13 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { useContainer } from 'class-validator';
 import 'dotenv/config';
-import {
-  utilities as nestWinstonModuleUtilities,
-  WinstonModule,
-} from 'nest-winston';
-const { Logtail } = require('@logtail/node');
-const { LogtailTransport } = require('@logtail/winston');
-import * as winston from 'winston';
+// import {
+//   utilities as nestWinstonModuleUtilities,
+//   WinstonModule,
+// } from 'nest-winston';
+// const { Logtail } = require('@logtail/node');
+// const { LogtailTransport } = require('@logtail/winston');
+// import * as winston from 'winston';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 // const logtail = new Logtail(process.env.TOKEN_LOGTAIL);
