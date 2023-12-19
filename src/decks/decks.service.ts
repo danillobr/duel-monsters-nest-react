@@ -22,7 +22,7 @@ import { RemoveCardInDeckDto } from './dtos/remove-card-deck-user.dto';
 export class DecksService {
   constructor(
     private readonly decksRepository: DecksRepository,
-    private usersCardsRepository: UsersCardsRepository,
+    private readonly usersCardsRepository: UsersCardsRepository,
   ) {}
 
   async create(createDeckDto: CreateDeckDto, user: User): Promise<Deck> {

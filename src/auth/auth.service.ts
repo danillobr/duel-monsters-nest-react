@@ -3,6 +3,7 @@ import {
   UnprocessableEntityException,
   UnauthorizedException,
   NotFoundException,
+  BadRequestException,
 } from '@nestjs/common';
 import { UsersRepository } from '../users/repositories/users.repository';
 import { CreateUserDto } from '../users/dtos/create-user.dto';
@@ -10,16 +11,16 @@ import { User } from '../users/entities/user.entity';
 import { UserRole } from '../users/enum/user-roles.enum';
 import { CredentialsDto } from './dtos/credentials.dto';
 import { JwtService } from '@nestjs/jwt';
-import { MailerService } from '@nestjs-modules/mailer';
 import { randomBytes } from 'crypto';
 import { ChangePasswordDto } from './dtos/change-password.dto';
+import { EmailOptions, MailingService } from 'src/mailing/mailing.service';
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly usersRepository: UsersRepository,
-    private jwtService: JwtService,
-    private mailerService: MailerService,
+    private readonly jwtService: JwtService,
+    private readonly mailingService: MailingService,
   ) {}
 
   async signUp(createUserDto: CreateUserDto): Promise<User> {
@@ -30,7 +31,7 @@ export class AuthService {
         createUserDto,
         UserRole.USER,
       );
-      const mail = {
+      const mail: EmailOptions = {
         to: user.email,
         from: 'noreply@application.com',
         subject: 'Email de confirmação',
@@ -39,7 +40,7 @@ export class AuthService {
           token: user.confirmationToken,
         },
       };
-      await this.mailerService.sendMail(mail);
+      await this.mailingService.sendMail(mail);
       return user;
     }
   }
@@ -53,6 +54,21 @@ export class AuthService {
 
     const jwtPayload = {
       id: user.id,
+    };
+    const token = await this.jwtService.sign(jwtPayload);
+
+    return { token };
+  }
+
+  async googleLogin(req) {
+    const { user } = req;
+    if (!user) {
+      throw new BadRequestException('Nenhum usuário do Google');
+    }
+
+    const jwtPayload = {
+      sub: user.id,
+      email: user.email,
     };
     const token = await this.jwtService.sign(jwtPayload);
 
@@ -76,7 +92,7 @@ export class AuthService {
     user.recoverToken = randomBytes(32).toString('hex');
     await user.save();
 
-    const mail = {
+    const mail: EmailOptions = {
       to: user.email,
       from: 'noreply@application.com',
       subject: 'Recuperação de senha',
@@ -85,7 +101,7 @@ export class AuthService {
         token: user.recoverToken,
       },
     };
-    await this.mailerService.sendMail(mail);
+    await this.mailingService.sendMail(mail);
   }
 
   async changePassword(

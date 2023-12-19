@@ -8,6 +8,7 @@ import {
   Patch,
   Param,
   UnauthorizedException,
+  Req,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { CreateUserDto } from '../users/dtos/create-user.dto';
@@ -32,11 +33,13 @@ import {
 } from '@nestjs/swagger';
 import { ReturnSignInDto } from './dtos/return-singn-in.dto';
 import { UnauthorizedResponseDto } from './dtos/unauthorized-response.dto';
+// import { GoogleOauthGuard } from './guards/google-oauth.guard';
+// import * as cookieParser from 'cookie-parser';
 
 @Controller('auth')
 @ApiTags('auth')
 export class AuthController {
-  constructor(private authService: AuthService) {}
+  constructor(private readonly authService: AuthService) {}
 
   @Post('/signup')
   @ApiCreatedResponse({
@@ -178,5 +181,16 @@ export class AuthController {
   @UseGuards(AuthGuard())
   getMe(@GetUser() user: User): User {
     return user;
+  }
+
+  @Get('google')
+  @UseGuards(AuthGuard('google'))
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
+  async googleAuth() {}
+
+  @Get('google/callback')
+  @UseGuards(AuthGuard('google'))
+  async googleAuthCallback(@Req() req) {
+    return await this.authService.googleLogin(req);
   }
 }

@@ -5,8 +5,10 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { UsersRepository } from '../users/repositories/users.repository';
 import { JwtModule } from '@nestjs/jwt';
 import 'dotenv/config';
-import { JwtStrategy } from './jwt.strategy';
+import { JwtStrategy } from './strategies/jwt.strategy';
 import { PassportModule } from '@nestjs/passport';
+import { MailingService } from 'src/mailing/mailing.service';
+import { GoogleStrategy } from './strategies/google.strategy';
 
 @Module({
   imports: [
@@ -20,7 +22,13 @@ import { PassportModule } from '@nestjs/passport';
     }),
   ],
   controllers: [AuthController],
-  providers: [AuthService, UsersRepository, JwtStrategy],
+  providers: [
+    AuthService,
+    UsersRepository,
+    JwtStrategy,
+    GoogleStrategy,
+    MailingService,
+  ],
   exports: [JwtStrategy, PassportModule],
 })
 export class AuthModule {}

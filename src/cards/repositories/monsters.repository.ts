@@ -11,7 +11,7 @@ import { Monster } from '../entities/monster.entity';
 
 @Injectable()
 export class MonstersRepository extends Repository<Monster> {
-  constructor(private dataSource: DataSource) {
+  constructor(private readonly dataSource: DataSource) {
     super(Monster, dataSource.createEntityManager());
   }
 

@@ -9,8 +9,8 @@ import {
   OneToMany,
   OneToOne,
   JoinColumn,
-  BeforeInsert,
-  AfterInsert,
+  // BeforeInsert,
+  // AfterInsert,
 } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { UserRole } from '../enum/user-roles.enum';
@@ -18,10 +18,9 @@ import { Deck } from '../../decks/entities/deck.entity';
 import { UserCards } from '../../cards/entities/user-cards.entity';
 import { v4 as uuidV4 } from 'uuid';
 import { ApiProperty } from '@nestjs/swagger';
-import * as crypto from 'crypto';
 
 @Entity('users')
-@Unique(['email'])
+@Unique(['email', 'username'])
 export class User extends BaseEntity {
   @ApiProperty({ example: uuidV4() })
   @PrimaryGeneratedColumn('uuid')
@@ -30,6 +29,10 @@ export class User extends BaseEntity {
   @ApiProperty({ example: 'joao@gmail.com' })
   @Column({ nullable: false, type: 'varchar', length: 200 })
   email: string;
+
+  @ApiProperty({ example: 'danilo games' })
+  @Column({ nullable: false, type: 'varchar', length: 200 })
+  username: string;
 
   @ApiProperty({ example: 'João Vitor da Silva' })
   @Column({ nullable: false, type: 'varchar', length: 200 })

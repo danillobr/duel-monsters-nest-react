@@ -15,7 +15,7 @@ import { UserCards } from '../../cards/entities/user-cards.entity';
 
 @Injectable()
 export class UsersRepository extends Repository<User> {
-  constructor(private dataSource: DataSource) {
+  constructor(private readonly dataSource: DataSource) {
     super(User, dataSource.createEntityManager());
   }
 
@@ -55,10 +55,11 @@ export class UsersRepository extends Repository<User> {
     createUserDto: CreateUserDto,
     role: UserRole,
   ): Promise<User> {
-    const { email, name, password } = createUserDto;
+    const { email, name, password, username } = createUserDto;
     const user = this.create();
     const userCards = new UserCards();
     user.email = email;
+    user.username = username;
     user.name = name;
     user.role = role;
     user.status = true;
@@ -66,6 +67,7 @@ export class UsersRepository extends Repository<User> {
     user.salt = await bcrypt.genSalt();
     user.password = await this.hashPassword(password, user.salt);
     user.cards = userCards;
+
     try {
       await user.save();
       delete user.password;

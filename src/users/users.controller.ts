@@ -14,7 +14,7 @@ import { CreateUserDto } from './dtos/create-user.dto';
 import { UsersService } from './users.service';
 import { ReturnUserDto } from './dtos/return-user.dto';
 import { AuthGuard } from '@nestjs/passport';
-import { RolesGuard } from '../auth/roles.guard';
+import { RolesGuard } from '../auth/guards/roles.guard';
 import { UserRole } from './enum/user-roles.enum';
 import { Role } from '../auth/decorations/role.decorator';
 import { GetUser } from '../auth/decorations/get-user.decorator';
@@ -46,7 +46,7 @@ import { ReturnGetUserDto } from './dtos/return-get-user.dto';
 @ApiTags('users')
 @UseGuards(AuthGuard(), RolesGuard)
 export class UsersController {
-  constructor(private usersService: UsersService) {}
+  constructor(private readonly usersService: UsersService) {}
 
   @Post()
   @ApiCreatedResponse({

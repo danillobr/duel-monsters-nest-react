@@ -9,7 +9,7 @@ import { User } from '../../users/entities/user.entity';
 
 @Injectable()
 export class DecksRepository extends Repository<Deck> {
-  constructor(private dataSource: DataSource) {
+  constructor(private readonly dataSource: DataSource) {
     super(Deck, dataSource.createEntityManager());
   }
 

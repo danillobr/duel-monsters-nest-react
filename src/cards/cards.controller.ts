@@ -18,7 +18,7 @@ import { CreateSpellDto } from './dtos/create-spell.dto';
 import { Role } from '../auth/decorations/role.decorator';
 import { UserRole } from '../users/enum/user-roles.enum';
 import { AuthGuard } from '@nestjs/passport';
-import { RolesGuard } from '../auth/roles.guard';
+import { RolesGuard } from '../auth/guards/roles.guard';
 import { GetUser } from '../auth/decorations/get-user.decorator';
 import { User } from '../users/entities/user.entity';
 import { UsersCardsService } from './users-cards.service';
@@ -50,10 +50,10 @@ import { UnauthorizedResponseDto } from '../auth/dtos/unauthorized-response.dto'
 @UseGuards(AuthGuard(), RolesGuard)
 export class CardsController {
   constructor(
-    private monstersService: MonstersService,
-    private trapsService: TrapsService,
-    private spellsService: SpellsService,
-    private usersCardsService: UsersCardsService,
+    private readonly monstersService: MonstersService,
+    private readonly trapsService: TrapsService,
+    private readonly spellsService: SpellsService,
+    private readonly usersCardsService: UsersCardsService,
   ) {}
 
   @Post('monsters')

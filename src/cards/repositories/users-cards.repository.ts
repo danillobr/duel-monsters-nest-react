@@ -4,7 +4,7 @@ import { UserCards } from '../entities/user-cards.entity';
 
 @Injectable()
 export class UsersCardsRepository extends Repository<UserCards> {
-  constructor(private dataSource: DataSource) {
+  constructor(private readonly dataSource: DataSource) {
     super(UserCards, dataSource.createEntityManager());
   }
 

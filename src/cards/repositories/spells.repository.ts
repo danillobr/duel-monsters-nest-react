@@ -11,7 +11,7 @@ import { CreateSpellDto } from '../dtos/create-spell.dto';
 
 @Injectable()
 export class SpellsRepository extends Repository<Spell> {
-  constructor(private dataSource: DataSource) {
+  constructor(private readonly dataSource: DataSource) {
     super(Spell, dataSource.createEntityManager());
   }
 

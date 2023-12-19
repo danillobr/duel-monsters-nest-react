@@ -24,10 +24,10 @@ import { DecksRepository } from '../decks/repositories/decks.repository';
 export class UsersCardsService {
   constructor(
     private readonly usersCardsRepository: UsersCardsRepository,
-    private decksRepository: DecksRepository,
-    private spellsService: SpellsService,
-    private trapsService: TrapsService,
-    private monstersService: MonstersService,
+    private readonly decksRepository: DecksRepository,
+    private readonly spellsService: SpellsService,
+    private readonly trapsService: TrapsService,
+    private readonly monstersService: MonstersService,
   ) {}
 
   async findUserCardsByUserCardsId(userCardsId: string): Promise<UserCards> {

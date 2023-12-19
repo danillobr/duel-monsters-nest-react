@@ -43,6 +43,19 @@ export class CreateUserDto {
   email: string;
 
   @ApiProperty({
+    description: 'É usado para fazer login, assim como o email.',
+    example: 'danilo games',
+  })
+  @IsString()
+  @IsNotEmpty({
+    message: 'Informe o username do usuário',
+  })
+  @MaxLength(200, {
+    message: 'O username deve ter menos de 200 caracteres',
+  })
+  username: string;
+
+  @ApiProperty({
     description:
       'Senha utilizada no login, deve conter pelo menos uma letra maiúscula, uma letra minúscula, um número ou um símbolo',
     example: 'Senha321!',

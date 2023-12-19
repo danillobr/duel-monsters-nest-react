@@ -10,7 +10,7 @@ import { CreateTrapDto } from '../dtos/create-trap.dto';
 
 @Injectable()
 export class TrapsRepository extends Repository<Trap> {
-  constructor(private dataSource: DataSource) {
+  constructor(private readonly dataSource: DataSource) {
     super(Trap, dataSource.createEntityManager());
   }
 
