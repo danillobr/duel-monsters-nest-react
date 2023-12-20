@@ -12,6 +12,7 @@ import {
 import { CredentialsDto } from '../../auth/dtos/credentials.dto';
 import { FindUsersQueryDto } from '../dtos/find-users-query.dto';
 import { UserCards } from '../../cards/entities/user-cards.entity';
+import { CreateUserWithGoogleDto } from '../dtos/create-user-with-google.dto';
 
 @Injectable()
 export class UsersRepository extends Repository<User> {
@@ -77,13 +78,66 @@ export class UsersRepository extends Repository<User> {
       return user;
     } catch (error) {
       if (error.code.toString() === '23505') {
-        throw new ConflictException('Endereço de email já está em uso');
+        throw new ConflictException(
+          'Endereço de email ou username já está em uso',
+        );
       } else {
         throw new InternalServerErrorException(
           'Erro ao salvar o usuário no banco de dados',
         );
       }
     }
+  }
+
+  async createUserWithGoogle(
+    createUserDto: CreateUserWithGoogleDto,
+    role: UserRole,
+  ): Promise<User> {
+    const { email, name } = createUserDto;
+    const user = this.create();
+    const userCards = new UserCards();
+    user.email = email;
+    user.username = await this.generateUniqueUsername(name);
+    user.name = name;
+    user.role = role;
+    user.status = true;
+    user.confirmationToken = crypto.randomBytes(32).toString('hex');
+    user.cards = userCards;
+
+    try {
+      await user.save();
+      delete user.cards;
+      delete user.recoverToken;
+      return user;
+    } catch (error) {
+      if (error.code.toString() === '23505') {
+        throw new ConflictException(
+          'Endereço de email ou username já está em uso',
+        );
+      } else {
+        throw new InternalServerErrorException(
+          'Erro ao salvar o usuário no banco de dados',
+        );
+      }
+    }
+  }
+
+  private async generateUniqueUsername(name: string): Promise<string> {
+    const baseUsername = name.toLowerCase().replace(/\s/g, '_');
+    let suffix = 0;
+    let uniqueUsername = baseUsername;
+
+    while (await this.findOne({ where: { username: uniqueUsername } })) {
+      // Gera um inteiro aleatório entre 1 e 1000
+      const randomNumber1 = Math.floor(Math.random() * 999) + 1;
+      // Gera um inteiro aleatório entre 1 e 5
+      const randomNumber2 = Math.floor(Math.random() * 4) + 1;
+
+      suffix += randomNumber1 * randomNumber2;
+      uniqueUsername = `${baseUsername}_${suffix}`;
+    }
+
+    return uniqueUsername;
   }
 
   async changePassword(id: string, password: string) {

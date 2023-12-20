@@ -6,6 +6,7 @@ import {
   MinLength,
   Matches,
   IsString,
+  IsLowercase,
 } from 'class-validator';
 
 export class CreateUserDto {
@@ -43,15 +44,21 @@ export class CreateUserDto {
   email: string;
 
   @ApiProperty({
-    description: 'É usado para fazer login, assim como o email.',
-    example: 'danilo games',
+    description: 'Username é usado para fazer login, assim como o email.',
+    example: 'danilo_games5932!',
   })
   @IsString()
   @IsNotEmpty({
     message: 'Informe o username do usuário',
   })
   @MaxLength(200, {
-    message: 'O username deve ter menos de 200 caracteres',
+    message: 'O username deve ter no máximo 200 caracteres',
+  })
+  @Matches(/^[^\s]*$/, {
+    message: 'Username não pode conter espaço, use o símbolo de underline',
+  })
+  @IsLowercase({
+    message: 'O username deve conter apenas letras minúsculas sem acento',
   })
   username: string;
 

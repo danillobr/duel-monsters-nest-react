@@ -20,7 +20,8 @@ import { v4 as uuidV4 } from 'uuid';
 import { ApiProperty } from '@nestjs/swagger';
 
 @Entity('users')
-@Unique(['email', 'username'])
+@Unique(['email'])
+@Unique(['username'])
 export class User extends BaseEntity {
   @ApiProperty({ example: uuidV4() })
   @PrimaryGeneratedColumn('uuid')
@@ -30,7 +31,7 @@ export class User extends BaseEntity {
   @Column({ nullable: false, type: 'varchar', length: 200 })
   email: string;
 
-  @ApiProperty({ example: 'danilo games' })
+  @ApiProperty({ example: 'joao_games5932!' })
   @Column({ nullable: false, type: 'varchar', length: 200 })
   username: string;
 
@@ -49,10 +50,10 @@ export class User extends BaseEntity {
   @Column({ nullable: false, default: true })
   status: boolean;
 
-  @Column({ nullable: false })
+  @Column({ nullable: true })
   password: string;
 
-  @Column({ nullable: false })
+  @Column({ nullable: true })
   salt: string;
 
   @Column({ nullable: true, type: 'varchar', length: 64 })

@@ -3,6 +3,8 @@ import { PassportStrategy } from '@nestjs/passport';
 import { Strategy, VerifyCallback } from 'passport-google-oauth2';
 import 'dotenv/config';
 import { UsersRepository } from 'src/users/repositories/users.repository';
+import { CreateUserWithGoogleDto } from 'src/users/dtos/create-user-with-google.dto';
+import { UserRole } from 'src/users/enum/user-roles.enum';
 // import * as jwt from 'jsonwebtoken';
 
 @Injectable()
@@ -33,19 +35,28 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
     if (existUser) {
       done(null, existUser);
     } else {
+      const fullName =
+        name.givenName.toString() + ' ' + name.familyName.toString();
       const newUser = {
         provider: 'google',
         providerId: id,
         email: userEmail,
-        name: `${name.givenName} ${name.familyName}`,
+        name: fullName,
         picture: photos[0].value,
         accessToken,
       };
 
-      // const savedUser = await this.usersRepository.save(newUser);
+      const createUserDto: CreateUserWithGoogleDto = {
+        name: fullName,
+        email: userEmail,
+      };
+
+      await this.usersRepository.createUserWithGoogle(
+        createUserDto,
+        UserRole.USER,
+      );
 
       done(null, newUser);
-      // done(null, savedUser);
     }
   }
 }
