@@ -1,41 +1,44 @@
-import './App.css';
-import Avaliacao from './components/Avaliacao';
-import Botao from './components/Botao';
-import Cabecalho from './components/Cabecalho';
-import Container from './components/Container';
-import Grafico from './components/Grafico';
-import Rodape from './components/Rodape';
-import Subtitulo from './components/Subtitulo';
-import Tabela from './components/Tabela';
-import Titulo from './components/Titulo';
-import useDadosConsulta from './useDadosConsulta';
-import useDadosProfissional from './useDadosProfissional';
+import { ThemeProvider } from 'styled-components'
+import { Button } from './components/Button'
 
-function App() {
-  const { dados: consultas, erro: consultasErro } = useDadosConsulta();
-  const { dados: profissionais, erro: profissionaisErro } = useDadosProfissional();
+import { GlobalStyle } from './styles/global'
+import { defaultTheme } from './styles/themes/default'
+import { authWithGoogle } from './services/auth-service'
+import { createUserDto, signup } from './services/user-service'
 
-  if (consultasErro || profissionaisErro) {
-    console.log("Ocorreu um erro na requisição")
-  }
-
-  return (
-    <>
-      <Cabecalho />
-      <Container>
-        <Titulo>Área Administrativa</Titulo>
-        <Botao>Cadastrar especialista</Botao>
-        <Titulo imagem="consulta">Consultas do Dia</Titulo>
-        <Tabela consultas={consultas} />
-        <Titulo imagem="grafico">Consultas mensais por especialista</Titulo>
-        <Subtitulo>Dezembro/22</Subtitulo>
-        <Grafico consultas={consultas} profissionais={profissionais} />
-        <Titulo imagem="avaliacao">Avaliações de especialistas</Titulo>
-        <Avaliacao profissionais={profissionais} />
-      </Container>
-      <Rodape />
-    </>
-  );
+async function clickFunction1() {
+  await authWithGoogle()
+    .then((data) => console.log(data))
+    .catch((err) => console.error(err))
 }
 
-export default App;
+const user: createUserDto = {
+  name: 'danillo',
+  email: 'danillorodriguesabreu1211313@gmail.com',
+  username: 'danilo_1231222',
+  password: '321!!!',
+  passwordConfirmation: '321!!!',
+}
+
+async function clickFunction2() {
+  await signup(user)
+    .then((data) => console.log(data))
+    .catch((err) => console.error(err))
+}
+
+export function App() {
+  return (
+    <ThemeProvider theme={defaultTheme}>
+      <Button variant="primary" />
+      <Button variant="secondary" />
+      <Button variant="success" />
+      <Button variant="danger" />
+      <Button />
+
+      <button onClick={clickFunction1}>Clique aqui</button>
+      <button onClick={clickFunction2}>Clique aqui</button>
+
+      <GlobalStyle />
+    </ThemeProvider>
+  )
+}
