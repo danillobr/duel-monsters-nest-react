@@ -11,7 +11,7 @@ import {
   Req,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { CreateUserDto } from '../users/dtos/create-user.dto';
+import { createUser } from '../users/dtos/create-user.dto';
 import { CredentialsDto } from './dtos/credentials.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { User } from '../users/entities/user.entity';
@@ -58,9 +58,9 @@ export class AuthController {
     description: 'Erro ao salvar o usuário no banco de dados.',
   })
   async signUp(
-    @Body(ValidationPipe) createUserDto: CreateUserDto,
+    @Body(ValidationPipe) createUser: createUser,
   ): Promise<{ message: string }> {
-    await this.authService.signUp(createUserDto);
+    await this.authService.signUp(createUser);
     return {
       message: 'Cadastro realizado com sucesso',
     };

@@ -9,7 +9,7 @@ import {
   IsLowercase,
 } from 'class-validator';
 
-export class CreateUserDto {
+export class createUser {
   @ApiProperty({
     description:
       'O nome é utilizado para qualquer coisa (Perfil, Home Page, etc) que precise exibir dados do usuário',

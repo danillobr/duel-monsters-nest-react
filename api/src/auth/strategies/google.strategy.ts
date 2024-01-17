@@ -46,13 +46,13 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
         accessToken,
       };
 
-      const createUserDto: CreateUserWithGoogleDto = {
+      const createUser: CreateUserWithGoogleDto = {
         name: fullName,
         email: userEmail,
       };
 
       await this.usersRepository.createUserWithGoogle(
-        createUserDto,
+        createUser,
         UserRole.USER,
       );
 

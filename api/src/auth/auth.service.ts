@@ -6,7 +6,7 @@ import {
   BadRequestException,
 } from '@nestjs/common';
 import { UsersRepository } from '../users/repositories/users.repository';
-import { CreateUserDto } from '../users/dtos/create-user.dto';
+import { createUser } from '../users/dtos/create-user.dto';
 import { User } from '../users/entities/user.entity';
 import { UserRole } from '../users/enum/user-roles.enum';
 import { CredentialsDto } from './dtos/credentials.dto';
@@ -23,12 +23,12 @@ export class AuthService {
     private readonly mailingService: MailingService,
   ) {}
 
-  async signUp(createUserDto: CreateUserDto): Promise<User> {
-    if (createUserDto.password != createUserDto.passwordConfirmation) {
+  async signUp(createUser: createUser): Promise<User> {
+    if (createUser.password != createUser.passwordConfirmation) {
       throw new UnprocessableEntityException('As senhas não conferem');
     } else {
       const user = await this.usersRepository.createUser(
-        createUserDto,
+        createUser,
         UserRole.USER,
       );
       const mail: EmailOptions = {

@@ -1,6 +1,6 @@
 import { DataSource, Repository } from 'typeorm';
 import { User } from '../entities/user.entity';
-import { CreateUserDto } from '../dtos/create-user.dto';
+import { createUser } from '../dtos/create-user.dto';
 import { UserRole } from '../enum/user-roles.enum';
 import * as bcrypt from 'bcrypt';
 import * as crypto from 'crypto';
@@ -53,10 +53,10 @@ export class UsersRepository extends Repository<User> {
   }
 
   async createUser(
-    createUserDto: CreateUserDto,
+    createUser: createUser,
     role: UserRole,
   ): Promise<User> {
-    const { email, name, password, username } = createUserDto;
+    const { email, name, password, username } = createUser;
     const user = this.create();
     const userCards = new UserCards();
     user.email = email;
@@ -90,10 +90,10 @@ export class UsersRepository extends Repository<User> {
   }
 
   async createUserWithGoogle(
-    createUserDto: CreateUserWithGoogleDto,
+    createUser: CreateUserWithGoogleDto,
     role: UserRole,
   ): Promise<User> {
-    const { email, name } = createUserDto;
+    const { email, name } = createUser;
     const user = this.create();
     const userCards = new UserCards();
     user.email = email;

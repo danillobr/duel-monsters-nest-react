@@ -7,7 +7,7 @@ import {
 } from '@nestjs/common';
 import { UserRole } from './enum/user-roles.enum';
 import { User } from './entities/user.entity';
-import { CreateUserDto } from './dtos/create-user.dto';
+import { createUser } from './dtos/create-user.dto';
 import { UsersRepository } from './repositories/users.repository';
 import { UpdateUserDto } from './dtos/update-user.dto';
 import { FindUsersQueryDto } from './dtos/find-users-query.dto';
@@ -16,14 +16,11 @@ import { FindUsersQueryDto } from './dtos/find-users-query.dto';
 export class UsersService {
   constructor(private readonly usersRepository: UsersRepository) {}
 
-  async createAdminUser(createUserDto: CreateUserDto): Promise<User> {
-    if (createUserDto.password != createUserDto.passwordConfirmation) {
+  async createAdminUser(createUser: createUser): Promise<User> {
+    if (createUser.password != createUser.passwordConfirmation) {
       throw new UnprocessableEntityException('As senhas não conferem');
     } else {
-      return await this.usersRepository.createUser(
-        createUserDto,
-        UserRole.ADMIN,
-      );
+      return await this.usersRepository.createUser(createUser, UserRole.ADMIN);
     }
   }
 

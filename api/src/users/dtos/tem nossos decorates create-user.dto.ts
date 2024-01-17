@@ -8,7 +8,7 @@
 // } from 'class-validator';
 // import { IsUniqueEmail } from '../is-unique-email.validator';
 
-// export class CreateUserDto {
+// export class createUser {
 //   @IsUniqueEmail({ message: 'email must be unique' })
 //   @IsEmail()
 //   @IsNotEmpty()

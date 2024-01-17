@@ -10,7 +10,7 @@ import {
   Delete,
   Query,
 } from '@nestjs/common';
-import { CreateUserDto } from './dtos/create-user.dto';
+import { createUser } from './dtos/create-user.dto';
 import { UsersService } from './users.service';
 import { ReturnUserDto } from './dtos/return-user.dto';
 import { AuthGuard } from '@nestjs/passport';
@@ -70,9 +70,9 @@ export class UsersController {
   })
   @Role(UserRole.ADMIN)
   async createAdminUser(
-    @Body(ValidationPipe) createUserDto: CreateUserDto,
+    @Body(ValidationPipe) createUser: createUser,
   ): Promise<ReturnUserDto> {
-    const user = await this.usersService.createAdminUser(createUserDto);
+    const user = await this.usersService.createAdminUser(createUser);
     return {
       user,
       message: 'Administrador cadastrado com sucesso',

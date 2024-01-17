@@ -7,7 +7,7 @@
 //   ValidatorConstraintInterface,
 // } from 'class-validator';
 
-// import { CreateUserDto } from './dtos/tem nossos decorates create-user.dto';
+// import { createUser } from './dtos/tem nossos decorates create-user.dto';
 // import { UsersService } from './user.service';
 // import { PlayerService } from 'src/players/player.service';
 
@@ -25,7 +25,7 @@
 // }
 
 // export function IsUniqueEmail(validationOptions?: ValidationOptions) {
-//   return function (object: CreateUserDto, propertyName: string) {
+//   return function (object: createUser, propertyName: string) {
 //     registerDecorator({
 //       target: object.constructor,
 //       propertyName: propertyName,
