@@ -1,10 +1,11 @@
 import { LeftContainer } from './components/leftContainer'
-
+import { SignupContainer } from './styles'
 export function Signup() {
   return (
     <div>
-      <span> Hello world </span>
-      <LeftContainer />
+      <SignupContainer>
+        <LeftContainer />
+      </SignupContainer>
     </div>
   )
 }

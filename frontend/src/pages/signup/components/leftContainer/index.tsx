@@ -5,6 +5,7 @@ import {
   Plus,
 } from '@phosphor-icons/react'
 import {
+  DeckContainer,
   Deck,
   Icons,
   MoreContent,
@@ -12,7 +13,7 @@ import {
   TitleContent,
 } from '../../styles'
 
-import gaming from '../../../../assets/Game.svg'
+import gaming from '../../../../assets/game.svg'
 
 export function LeftContainer() {
   return (
@@ -23,17 +24,21 @@ export function LeftContainer() {
           <span>DuelMonsters</span>
         </TitleContent>
         <span>Os Decks mais acessados do momento!!!</span>
-        <Deck />
-        <Deck />
-        <Deck />
+        <DeckContainer>
+          <Deck />
+          <Deck />
+          <Deck />
+        </DeckContainer>
         <MoreContent>
-          <Plus size={32} color="#00b37e" />
+          <div>
+            <Plus size={15} color="#FFFFFF" />
+          </div>
           <span>Descubra mais</span>
         </MoreContent>
         <Icons>
-          <StarAndCrescent size={32} color="#00b37e" />
-          <ToggleLeft size={32} color="#00b37e" />
-          <DownloadSimple size={32} color="#00b37e" />
+          <StarAndCrescent size={24} color="#8D8D99" />
+          <ToggleLeft size={24} color="#8D8D99" />
+          <DownloadSimple size={24} color="#8D8D99" />
         </Icons>
       </RegistationContent>
     </div>
