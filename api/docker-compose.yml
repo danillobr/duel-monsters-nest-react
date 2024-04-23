@@ -2,16 +2,16 @@ version: "3.9"
 
 services:
   pgsql:
-    image: postgres:alpine
+    image: bitnami/postgresql
     ports:
       - 5432:5432
     container_name: database_duel_monsters
     restart: always
-    
+
     environment:
-      - POSTGRES_USER=user_duel_monsters
-      - POSTGRES_PASSWORD=password_duel_monsters
-      - POSTGRES_DB=db_duel_monsters
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_DATABASE}
     volumes:
       - pg-data:/var/lib/postgresql/data
 
