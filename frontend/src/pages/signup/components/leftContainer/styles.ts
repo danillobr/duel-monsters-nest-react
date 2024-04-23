@@ -93,6 +93,7 @@ export const Deck = styled.li`
   &:hover {
     outline: 2px solid ${(props) => props.theme['gray-300']};
     background: ${(props) => props.theme['gray-700']};
+    transition: background-color 0.4s;
 
     span,
     p {

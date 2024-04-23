@@ -93,7 +93,7 @@ export function LeftContainer() {
 
         <MoreContent>
           <div>
-            <Plus size={15} color="#FFFFFF" />
+            <Plus size={15} weight="bold" color="#FFFFFF" />
           </div>
           <span>Descubra mais</span>
         </MoreContent>

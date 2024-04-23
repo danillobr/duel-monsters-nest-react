@@ -10,4 +10,5 @@ export const SignupContainer = styled.main`
   justify-content: center; /* Centraliza os elementos horizontalmente */
   align-items: center; /* Centraliza os elementos verticalmente */
   height: 100vh; /* 100% da altura da viewport */
+  gap: 16rem;
 `
