@@ -31,26 +31,26 @@ export class AdminSeeder implements Seeder {
               values('${cardsId}')
           `,
       );
-      // await userRepository.query(
-      //   `INSERT INTO USERS(id, name, email, password, salt, role, status)
-      //         values('${id}', 'admin', 'admin@gmail.com', '${password}', '${salt}', 'ADMIN', 'true')
-      //     `,
-      // );
-      await userRepository
-        .createQueryBuilder()
-        .insert()
-        .into(User)
-        .values({
-          cards: cardsId,
-          id,
-          name,
-          email,
-          password,
-          salt,
-          role,
-          status,
-        })
-        .execute();
+      await userRepository.query(
+        `INSERT INTO USERS(id, username, name, email, password, salt, role, status)
+              values('${id}', '${name}', '${name}', '${email}', '${password}', '${salt}', 'ADMIN', 'true')
+          `,
+      );
+      // await userRepository
+      //   .createQueryBuilder()
+      //   .insert()
+      //   .into(User)
+      //   .values({
+      //     cards: cardsId,
+      //     id,
+      //     name,
+      //     email,
+      //     password,
+      //     salt,
+      //     role,
+      //     status,
+      //   })
+      //   .execute();
     }
   }
 }
